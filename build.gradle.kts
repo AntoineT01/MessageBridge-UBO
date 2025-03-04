@@ -17,3 +17,18 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+// Configuration d'encodage en Kotlin DSL
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType<JavaExec> {
+    systemProperty("file.encoding", "UTF-8")
+}
+
+// Pour la tâche run spécifique si vous en avez une
+tasks.findByName("run")?.let {
+    it as JavaExec
+    it.systemProperty("file.encoding", "UTF-8")
+}
