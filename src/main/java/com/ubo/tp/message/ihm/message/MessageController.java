@@ -17,16 +17,9 @@ public class MessageController implements MessageObserver {
 
   private final IMessageService messageService;
   private final ISession session;
-  private final MessagePanel messagePanel;
+  private final ModernChatPanel messagePanel;
 
-  /**
-   * Construit un MessageController avec le service de message, la session et la vue associée.
-   *
-   * @param messageService le service de gestion des messages
-   * @param session la session active
-   * @param messagePanel la vue pour l’affichage et l’envoi des messages
-   */
-  public MessageController(IMessageService messageService, ISession session, MessagePanel messagePanel) {
+  public MessageController(IMessageService messageService, ISession session, ModernChatPanel messagePanel) {
     this.messageService = messageService;
     this.session = session;
     this.messagePanel = messagePanel;
@@ -34,11 +27,6 @@ public class MessageController implements MessageObserver {
     this.messageService.addObserver(this);
   }
 
-  /**
-   * Traite l’envoi d’un message.
-   *
-   * @param text le texte du message
-   */
   public void sendMessage(String text) {
     User connectedUser = session.getConnectedUser();
     if (connectedUser == null) {
@@ -53,11 +41,6 @@ public class MessageController implements MessageObserver {
     }
   }
 
-  /**
-   * Traite la recherche de messages en fonction d’une requête.
-   *
-   * @param query la requête de recherche
-   */
   public void searchMessages(String query) {
     Set<Message> results = messageService.searchMessages(query);
     messagePanel.updateSearchResults(results);
@@ -65,14 +48,12 @@ public class MessageController implements MessageObserver {
 
   @Override
   public void onMessageSent(Message message) {
-    // Si le message émane d’un utilisateur différent et que l’utilisateur connecté s’est abonné à cet utilisateur,
-    // une notification est affichée.
     User connectedUser = session.getConnectedUser();
+    // Notification si l'utilisateur connecté ne l'est pas et qu'il suit l'expéditeur
     if (connectedUser != null && !message.getSender().equals(connectedUser)
         && connectedUser.getFollows().contains(message.getSender().getUserTag())) {
-      JOptionPane.showMessageDialog(messagePanel,
-        "Nouvelle publication de " + message.getSender().getUserTag(),
-        "Notification", JOptionPane.INFORMATION_MESSAGE);
+      // Affichage d'une notification toast non bloquante pendant 3 secondes (3000 ms)
+      ToastNotification.showToast("Nouvelle publication de " + message.getSender().getUserTag(), 3000);
     }
     // Mise à jour de la vue avec le nouveau message
     messagePanel.addMessageToFeed(message);
