@@ -2,7 +2,12 @@ package com.ubo.tp.message.ihm;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
+
+import com.ubo.tp.message.common.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
+
+import static com.ubo.tp.message.ihm.MessageApp.loadScaledIcon;
 
 public class MessageAppMainView extends JFrame {
 
@@ -22,6 +27,11 @@ public class MessageAppMainView extends JFrame {
 
     // On fixe une taille ou on pack() plus tard
     this.setSize(600, 400);
+
+    ImageIcon windowIcon = ImageUtils.loadScaledIcon("/tux_logo.png", 32, 32);
+    if(windowIcon != null){
+      this.setIconImage(windowIcon.getImage());
+    }
 
     // --- Barre de menu ---
     JMenuBar menuBar = new JMenuBar();
@@ -70,9 +80,9 @@ public class MessageAppMainView extends JFrame {
   private void showAboutDialog() {
     // Boîte de dialogue “A propos”
     // Par exemple un simple JOptionPane :
-    ImageIcon logoIcon = new ImageIcon("resources/tux_logo.png");
+    ImageIcon logoIcon = ImageUtils.loadScaledIcon("/tux_logo.png", 100, 100);
     JOptionPane.showMessageDialog(
-      this,
+    this,
       "UBO M2-TIIL\nDépartement Informatique",
       "A propos",
       JOptionPane.INFORMATION_MESSAGE,

@@ -6,7 +6,10 @@ import com.ubo.tp.message.core.directory.IWatchableDirectory;
 import com.ubo.tp.message.core.directory.WatchableDirectory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
+import java.util.Objects;
+
 
 
 /**
@@ -153,5 +156,13 @@ public class MessageApp {
 			if (mMainView != null) {
 				mMainView.setVisible(true);
 			}
-		});	}
+		});
+	}
+
+	public static ImageIcon loadScaledIcon(String resourcePath, int width, int height) {
+		ImageIcon originalIcon = new ImageIcon(Objects.requireNonNull(MessageApp.class.getResource(resourcePath)));
+		Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		return new ImageIcon(scaledImage);
+	}
+
 }
