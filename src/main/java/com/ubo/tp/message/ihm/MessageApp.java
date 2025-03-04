@@ -5,6 +5,7 @@ import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.directory.IWatchableDirectory;
 import com.ubo.tp.message.core.directory.WatchableDirectory;
 
+import javax.swing.*;
 import java.io.File;
 
 
@@ -73,13 +74,22 @@ public class MessageApp {
 	 * Initialisation du look and feel de l'application.
 	 */
 	protected void initLookAndFeel() {
+		try {
+			// Par exemple, le look & feel système :
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			// Ou Nimbus:
+			// UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Initialisation de l'interface graphique.
 	 */
 	protected void initGui() {
-		// this.mMainView...
+		// On crée la vue principale
+		mMainView = new MessageAppMainView(mDatabase);
 	}
 
 	/**
@@ -89,6 +99,27 @@ public class MessageApp {
 	 * pouvoir utiliser l'application</b>
 	 */
 	protected void initDirectory() {
+		// À toi de voir comment tu veux le faire :
+		// - lire un chemin dans un fichier de config
+		// - ou ouvrir un JFileChooser
+		File directory = selectExchangeDirectory();
+		if (directory != null && isValideExchangeDirectory(directory)) {
+			initDirectory(directory.getAbsolutePath());
+		} else {
+			System.err.println("Répertoire invalide, l’appli ne pourra pas fonctionner correctement.");
+		}
+	}
+
+	protected File selectExchangeDirectory() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Choisir le répertoire d'échange");
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		int result = chooser.showOpenDialog(null);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile();
+		}
+		return null;
 	}
 
 	/**
@@ -117,6 +148,10 @@ public class MessageApp {
 	}
 
 	public void show() {
-		// ... setVisible?
-	}
+		// On rend la fenêtre visible
+		SwingUtilities.invokeLater(() -> {
+			if (mMainView != null) {
+				mMainView.setVisible(true);
+			}
+		});	}
 }

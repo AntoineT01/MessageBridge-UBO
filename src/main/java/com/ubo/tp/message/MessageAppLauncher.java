@@ -5,6 +5,7 @@ import com.ubo.tp.message.core.database.Database;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.ihm.MessageApp;
 import com.ubo.tp.message.mock.MessageAppMock;
+import com.ubo.tp.message.observers.ConsoleDatabaseObserver;
 
 /**
  * Classe de lancement de l'application.
@@ -26,6 +27,8 @@ public class MessageAppLauncher {
 	public static void main(String[] args) {
 
 		IDatabase database = new Database();
+
+		database.addObserver(new ConsoleDatabaseObserver());
 
 		EntityManager entityManager = new EntityManager(database);
 
