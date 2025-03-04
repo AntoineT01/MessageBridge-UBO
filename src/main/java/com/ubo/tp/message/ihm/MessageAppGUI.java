@@ -1,10 +1,11 @@
 package com.ubo.tp.message.ihm;
 
-import com.ubo.tp.message.common.ImageUtils;
-import com.ubo.tp.message.core.database.IDatabase;
+import com.ubo.tp.message.core.EntityManager;
+import com.ubo.tp.message.core.session.ISession;
+import com.ubo.tp.message.core.session.Session;
+import com.ubo.tp.message.ihm.login.LoginDialog;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 
 /**
@@ -22,12 +23,19 @@ public class MessageAppGUI {
   protected MessageApp mMessageApp;
 
   /**
+   * Session utilisateur
+   */
+  protected ISession mSession;
+
+  /**
    * Constructeur.
    *
    * @param messageApp L'instance de MessageApp (partie métier)
    */
   public MessageAppGUI(MessageApp messageApp) {
     this.mMessageApp = messageApp;
+    // Création d'une session
+    this.mSession = new Session();
   }
 
   /**
@@ -76,7 +84,6 @@ public class MessageAppGUI {
     System.out.println("MessageAppGUI: Arrêt propre de l'interface graphique");
   }
 
-
   /**
    * Initialisation du look and feel de l'application.
    */
@@ -92,9 +99,10 @@ public class MessageAppGUI {
    * Initialisation de l'interface graphique.
    */
   protected void initGui() {
-    // On crée la vue principale en lui passant la base de données
-    mMainView = new MessageAppMainView(mMessageApp.getDatabase());
+    // On crée la vue principale en lui passant la base de données et la session
+    mMainView = new MessageAppMainView(mMessageApp.getDatabase(), mSession);
 
+    // Gestion de la fermeture de l'application
     mMainView.addPropertyChangeListener("ACTION_EXIT", evt -> {
       // Demander confirmation à l'utilisateur
       int response = JOptionPane.showConfirmDialog(
@@ -112,10 +120,27 @@ public class MessageAppGUI {
       }
     });
 
-
+    // Gestion de l'action de connexion
+    mMainView.addPropertyChangeListener("ACTION_LOGIN", evt -> {
+      // Ouvrir la boîte de dialogue de connexion
+      openLoginDialog();
+    });
 
     // Configurer l'action pour changer le répertoire d'échange dans le menu
     configureChangeDirectoryMenuItem();
+  }
+
+  /**
+   * Ouvre la boîte de dialogue de connexion.
+   */
+  protected void openLoginDialog() {
+    LoginDialog loginDialog = new LoginDialog(
+      mMainView,
+      mMessageApp.getDatabase(),
+      mSession,
+      mMessageApp.getEntityManager()
+    );
+    loginDialog.setVisible(true);
   }
 
   /**
@@ -168,6 +193,11 @@ public class MessageAppGUI {
     SwingUtilities.invokeLater(() -> {
       if (mMainView != null) {
         mMainView.setVisible(true);
+
+        // Si l'utilisateur n'est pas connecté, ouvrir la boîte de dialogue de connexion
+        if (mSession.getConnectedUser() == null) {
+          openLoginDialog();
+        }
       }
     });
   }
