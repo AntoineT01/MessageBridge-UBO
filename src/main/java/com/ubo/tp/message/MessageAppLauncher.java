@@ -7,6 +7,8 @@ import com.ubo.tp.message.ihm.MessageApp;
 import com.ubo.tp.message.mock.MessageAppMock;
 import com.ubo.tp.message.observers.ConsoleDatabaseObserver;
 
+import java.nio.charset.Charset;
+
 /**
  * Classe de lancement de l'application.
  *
@@ -25,6 +27,9 @@ public class MessageAppLauncher {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+
+		System.out.println("JVM file.encoding = " + System.getProperty("file.encoding"));
+		System.out.println("JVM file.encoding = " + Charset.defaultCharset().displayName());
 
 		IDatabase database = new Database();
 
