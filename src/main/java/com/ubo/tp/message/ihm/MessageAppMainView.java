@@ -36,6 +36,16 @@ public class MessageAppMainView extends JFrame {
 
     // 1) Menu Fichier
     JMenu menuFichier = new JMenu("Fichier");
+
+    // Ajout d'un item pour changer le répertoire d'échange
+    JMenuItem itemChangeDir = new JMenuItem("Changer le répertoire d'échange");
+    itemChangeDir.setToolTipText("Sélectionner un nouveau répertoire d'échange pour les messages");
+    itemChangeDir.addActionListener(e -> {
+      // L'action sera définie plus tard, car nous avons besoin d'une référence à MessageAppGUI
+    });
+    menuFichier.add(itemChangeDir);
+    menuFichier.addSeparator(); // Ajouter un séparateur avant "Quitter"
+
     JMenuItem itemQuitter = new JMenuItem("Quitter");
     // Optionnel : associer une icône
     // itemQuitter.setIcon(new ImageIcon("resources/exit.png"));
@@ -50,6 +60,10 @@ public class MessageAppMainView extends JFrame {
       System.exit(0);
     });
     menuFichier.add(itemQuitter);
+
+
+
+
     menuBar.add(menuFichier);
 
     // 2) Menu A propos

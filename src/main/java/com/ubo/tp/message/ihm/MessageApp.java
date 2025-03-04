@@ -4,17 +4,14 @@ import com.ubo.tp.message.core.EntityManager;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.directory.IWatchableDirectory;
 import com.ubo.tp.message.core.directory.WatchableDirectory;
+import com.ubo.tp.message.common.Constants;
+import com.ubo.tp.message.common.PropertiesManager;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
-import java.util.Objects;
-
+import java.util.Properties;
 
 /**
- * Classe principale l'application.
- *
- * @author S.Lucas
+ * Classe principale métier de l'application.
  */
 public class MessageApp {
   /**
@@ -28,11 +25,6 @@ public class MessageApp {
   protected EntityManager mEntityManager;
 
   /**
-   * Vue principale de l'application.
-   */
-  protected MessageAppMainView mMainView;
-
-  /**
    * Classe de surveillance de répertoire
    */
   protected IWatchableDirectory mWatchableDirectory;
@@ -43,15 +35,7 @@ public class MessageApp {
   protected String mExchangeDirectoryPath;
 
   /**
-   * Nom de la classe de l'UI.
-   */
-  protected String mUiClassName;
-
-  /**
    * Constructeur.
-   *
-   * @param entityManager
-   * @param database
    */
   public MessageApp(IDatabase database, EntityManager entityManager) {
     this.mDatabase = database;
@@ -60,70 +44,51 @@ public class MessageApp {
 
   /**
    * Initialisation de l'application.
+   * Cette méthode n'initialise plus automatiquement le répertoire d'échange
    */
   public void init() {
-    // Init du look and feel de l'application
-    this.initLookAndFeel();
-
-    // Initialisation de l'IHM
-    this.initGui();
-
-    // Initialisation du répertoire d'échange
-    this.initDirectory();
+    // L'initialisation du répertoire d'échange est maintenant gérée par l'interface graphique
   }
 
   /**
-   * Initialisation du look and feel de l'application.
+   * Change le répertoire d'échange.
+   *
+   * @param directoryPath Le chemin du nouveau répertoire
+   * @return true si le changement a réussi, false sinon
    */
-  protected void initLookAndFeel() {
-    try {
-      // Par exemple, le look & feel système :
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      // Ou Nimbus:
-      // UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-    } catch (Exception e) {
-      e.printStackTrace();
+  public boolean changeExchangeDirectory(String directoryPath) {
+    if (directoryPath != null && !directoryPath.isEmpty()) {
+      File directory = new File(directoryPath);
+      if (isValideExchangeDirectory(directory)) {
+        // Arrêter la surveillance du répertoire actuel si nécessaire
+        if (mWatchableDirectory != null) {
+          mWatchableDirectory.stopWatching();
+        }
+
+        // Initialiser avec le nouveau répertoire
+        initDirectory(directory.getAbsolutePath());
+
+        // Sauvegarder dans la configuration
+        Properties props = PropertiesManager.loadProperties(Constants.CONFIGURATION_FILE);
+        props.setProperty(Constants.CONFIGURATION_KEY_EXCHANGE_DIRECTORY, directoryPath);
+        PropertiesManager.writeProperties(props, Constants.CONFIGURATION_FILE);
+
+        return true;
+      }
     }
-  }
-
-  /**
-   * Initialisation de l'interface graphique.
-   */
-  protected void initGui() {
-    // On crée la vue principale
-    mMainView = new MessageAppMainView(mDatabase);
-  }
-
-  /**
-   * Initialisation du répertoire d'échange (depuis la conf ou depuis un file
-   * chooser). <br/>
-   * <b>Le chemin doit obligatoirement avoir été saisi et être valide avant de
-   * pouvoir utiliser l'application</b>
-   */
-  protected void initDirectory() {
-    File directory = FileChooserWithLogo.showDirectoryChooser(null);
-    if (directory != null && isValideExchangeDirectory(directory)) {
-      initDirectory(directory.getAbsolutePath());
-    } else {
-      System.err.println("Répertoire invalide.");
-    }
+    return false;
   }
 
   /**
    * Indique si le fichier donné est valide pour servir de répertoire d'échange
-   *
-   * @param directory , Répertoire à tester.
    */
   protected boolean isValideExchangeDirectory(File directory) {
-    // Valide si répertoire disponible en lecture et écriture
     return directory != null && directory.exists() && directory.isDirectory() && directory.canRead()
-           && directory.canWrite();
+      && directory.canWrite();
   }
 
   /**
    * Initialisation du répertoire d'échange.
-   *
-   * @param directoryPath
    */
   protected void initDirectory(String directoryPath) {
     mExchangeDirectoryPath = directoryPath;
@@ -134,19 +99,24 @@ public class MessageApp {
     mWatchableDirectory.addObserver(mEntityManager);
   }
 
-  public void show() {
-    // On rend la fenêtre visible
-    SwingUtilities.invokeLater(() -> {
-      if (mMainView != null) {
-        mMainView.setVisible(true);
-      }
-    });
+  /**
+   * Getter pour la base de données
+   */
+  public IDatabase getDatabase() {
+    return mDatabase;
   }
 
-  public static ImageIcon loadScaledIcon(String resourcePath, int width, int height) {
-    ImageIcon originalIcon = new ImageIcon(Objects.requireNonNull(MessageApp.class.getResource(resourcePath)));
-    Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-    return new ImageIcon(scaledImage);
+  /**
+   * Getter pour le gestionnaire d'entités
+   */
+  public EntityManager getEntityManager() {
+    return mEntityManager;
   }
 
+  /**
+   * Getter pour le répertoire d'échange actuel
+   */
+  public String getExchangeDirectoryPath() {
+    return mExchangeDirectoryPath;
+  }
 }

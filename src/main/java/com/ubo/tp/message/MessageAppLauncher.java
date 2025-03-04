@@ -4,6 +4,7 @@ import com.ubo.tp.message.core.EntityManager;
 import com.ubo.tp.message.core.database.Database;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.ihm.MessageApp;
+import com.ubo.tp.message.ihm.MessageAppGUI;
 import com.ubo.tp.message.mock.MessageAppMock;
 import com.ubo.tp.message.observers.ConsoleDatabaseObserver;
 
@@ -11,8 +12,6 @@ import java.nio.charset.Charset;
 
 /**
  * Classe de lancement de l'application.
- *
- * @author S.Lucas
  */
 public class MessageAppLauncher {
 
@@ -23,18 +22,13 @@ public class MessageAppLauncher {
 
 	/**
 	 * Launcher.
-	 *
-	 * @param args
 	 */
 	public static void main(String[] args) {
-
 		System.out.println("JVM file.encoding = " + System.getProperty("file.encoding"));
 		System.out.println("JVM file.encoding = " + Charset.defaultCharset().displayName());
 
 		IDatabase database = new Database();
-
 		database.addObserver(new ConsoleDatabaseObserver());
-
 		EntityManager entityManager = new EntityManager(database);
 
 		if (IS_MOCK_ENABLED) {
@@ -42,9 +36,13 @@ public class MessageAppLauncher {
 			mock.showGUI();
 		}
 
+		// Création de la partie métier
 		MessageApp messageApp = new MessageApp(database, entityManager);
 		messageApp.init();
-		messageApp.show();
 
+		// Création, initialisation et affichage de la partie graphique
+		MessageAppGUI gui = new MessageAppGUI(messageApp);
+		gui.init(); // Cette méthode ouvre maintenant automatiquement le sélecteur de répertoire
+		gui.show();
 	}
 }
