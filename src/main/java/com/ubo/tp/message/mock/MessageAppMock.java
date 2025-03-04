@@ -1,226 +1,121 @@
 package com.ubo.tp.message.mock;
 
-import com.ubo.tp.message.core.EntityManager;
+import com.ubo.tp.message.common.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
-import com.ubo.tp.message.datamodel.Message;
+import com.ubo.tp.message.core.EntityManager;
 import com.ubo.tp.message.datamodel.User;
-
-import java.awt.Button;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.UUID;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-
+import com.ubo.tp.message.datamodel.Message;
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 public class MessageAppMock {
 
-  /**
-   * Fenetre du bouchon
-   */
   protected JFrame mFrame;
-
-  /**
-   * Base de donénes de l'application.
-   */
   protected IDatabase mDatabase;
-
-  /**
-   * Gestionnaire de bdd et de fichier.
-   */
   protected EntityManager mEntityManager;
 
-  /**
-   * Constructeur.
-   *
-   * @param database , Base de données de l'application.
-   */
   public MessageAppMock(IDatabase database, EntityManager entityManager) {
     this.mDatabase = database;
     this.mEntityManager = entityManager;
   }
 
-  /**
-   * Lance l'afficahge de l'IHM.
-   */
   public void showGUI() {
-    // Init auto de l'IHM au cas ou ;)
     if (mFrame == null) {
-      this.initGUI();
+      initGUI();
     }
 
-    // Affichage dans l'EDT
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        // Custom de l'affichage
-        JFrame frame = MessageAppMock.this.mFrame;
-        Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation((screenSize.width - frame.getWidth()) / 6,
-          (screenSize.height - frame.getHeight()) / 4);
-
-        // Affichage
-        MessageAppMock.this.mFrame.setVisible(true);
-
-        MessageAppMock.this.mFrame.pack();
-      }
+    SwingUtilities.invokeLater(() -> {
+      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      mFrame.setLocation((screenSize.width - mFrame.getWidth()) / 6,
+        (screenSize.height - mFrame.getHeight()) / 4);
+      mFrame.setVisible(true);
+      mFrame.pack();
     });
   }
 
-  /**
-   * Initialisation de l'IHM
-   */
   protected void initGUI() {
-    // Création de la fenetre principale
+    // Création de la fenêtre principale du mock
     mFrame = new JFrame("MOCK");
+    // Utilisation de l'icône dans la fenêtre
+    ImageIcon windowIcon = ImageUtils.loadScaledIcon("/tux_logo.png", 32, 32);
+    if (windowIcon != null) {
+      mFrame.setIconImage(windowIcon.getImage());
+    }
+
     mFrame.setLayout(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(5, 5, 5, 5);
 
-    //
-    // Gestion de la base de données
-
+    // Section base de données
     JLabel dbLabel = new JLabel("Database");
+    gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2; gbc.anchor = GridBagConstraints.CENTER;
+    mFrame.add(dbLabel, gbc);
 
     Button addUserButton = new Button("Add User");
     addUserButton.setPreferredSize(new Dimension(100, 50));
-    addUserButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        MessageAppMock.this.addUserInDatabase();
-      }
-    });
+    addUserButton.addActionListener(e -> addUserInDatabase());
+    gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1; gbc.anchor = GridBagConstraints.WEST;
+    mFrame.add(addUserButton, gbc);
 
     Button addMessageButton = new Button("Add Message");
     addMessageButton.setPreferredSize(new Dimension(100, 50));
-    addMessageButton.addActionListener(new ActionListener() {
+    addMessageButton.addActionListener(e -> addMessageInDatabase());
+    gbc.gridx = 1; gbc.gridy = 1; gbc.anchor = GridBagConstraints.EAST;
+    mFrame.add(addMessageButton, gbc);
 
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        MessageAppMock.this.addMessageInDatabase();
-      }
-    });
-
-    //
-    // Gestion des fichiers
-
+    // Section fichiers
     JLabel fileLabel = new JLabel("Files");
+    gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2; gbc.anchor = GridBagConstraints.CENTER;
+    mFrame.add(fileLabel, gbc);
 
     Button sendUserButton = new Button("Write User");
     sendUserButton.setPreferredSize(new Dimension(100, 50));
-    sendUserButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        MessageAppMock.this.writeUser();
-      }
-    });
+    sendUserButton.addActionListener(e -> writeUser());
+    gbc.gridx = 0; gbc.gridy = 3; gbc.anchor = GridBagConstraints.WEST;
+    mFrame.add(sendUserButton, gbc);
 
     Button sendMessageButton = new Button("Write Message");
     sendMessageButton.setPreferredSize(new Dimension(100, 50));
-    sendMessageButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        MessageAppMock.this.writeMessage();
-      }
-    });
-
-    //
-    // Ajout des composants à la fenêtre
-    this.mFrame.add(dbLabel, new GridBagConstraints(0, 0, 2, 1, 1, 1, GridBagConstraints.CENTER,
-      GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
-    this.mFrame.add(addUserButton, new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.WEST,
-      GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-    this.mFrame.add(addMessageButton, new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.EAST,
-      GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-    this.mFrame.add(fileLabel, new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.CENTER,
-      GridBagConstraints.NONE, new Insets(15, 5, 0, 5), 0, 0));
-    this.mFrame.add(sendUserButton, new GridBagConstraints(0, 3, 1, 1, 1, 1, GridBagConstraints.WEST,
-      GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-    this.mFrame.add(sendMessageButton, new GridBagConstraints(1, 3, 1, 1, 1, 1, GridBagConstraints.EAST,
-      GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+    sendMessageButton.addActionListener(e -> writeMessage());
+    gbc.gridx = 1; gbc.gridy = 3; gbc.anchor = GridBagConstraints.EAST;
+    mFrame.add(sendMessageButton, gbc);
   }
 
-  /**
-   * Ajoute un utilisateur fictif à la base de donnée.
-   */
   protected void addUserInDatabase() {
-    // Création d'un utilisateur fictif
-    User newUser = this.generateUser();
-
-    // Ajout de l'utilisateur à la base
-    this.mDatabase.addUser(newUser);
+    User newUser = generateUser();
+    mDatabase.addUser(newUser);
   }
 
-  /**
-   * Génération et envoi d'un fichier utilisateur
-   */
   protected void writeUser() {
-    // Création d'un utilisateur fictif
-    User newUser = this.generateUser();
-
-    // Génération du fichier utilisateur
-    this.mEntityManager.writeUserFile(newUser);
+    User newUser = generateUser();
+    mEntityManager.writeUserFile(newUser);
   }
 
-  /**
-   * Génération d'un utilisateur fictif.
-   */
   protected User generateUser() {
     int randomInt = new Random().nextInt(99999);
     String userName = "MockUser" + randomInt;
-    User newUser = new User(UUID.randomUUID(), userName, "This_Is_Not_A_Password", userName, new HashSet<>(), "");
-
-    return newUser;
+    return new User(UUID.randomUUID(), userName, "This_Is_Not_A_Password", userName, new HashSet<>(), "");
   }
 
-  /**
-   * Ajoute un message fictif à la base de données.
-   */
   protected void addMessageInDatabase() {
-    // Création 'un message fictif
-    Message newMessage = this.generateMessage();
-
-    // Ajout du message
-    this.mDatabase.addMessage(newMessage);
+    Message newMessage = generateMessage();
+    mDatabase.addMessage(newMessage);
   }
 
-  /**
-   * Génération et envoi d'un fichier message
-   */
   protected void writeMessage() {
-    // Création d'un message fictif
-    Message newMessage = this.generateMessage();
-
-    // Génération du fichier message
-    this.mEntityManager.writeMessageFile(newMessage);
+    Message newMessage = generateMessage();
+    mEntityManager.writeMessageFile(newMessage);
   }
 
-  /**
-   * Génération d'un message fictif.
-   */
   protected Message generateMessage() {
-    // Si la base n'a pas d'utilisateur
-    if (this.mDatabase.getUsers().size() == 0) {
-      // Création d'un utilisateur
-      this.addUserInDatabase();
+    if (mDatabase.getUsers().isEmpty()) {
+      addUserInDatabase();
     }
-
-    // Récupération d'un utilisateur au hazard
-    int userIndex = new Random().nextInt(this.mDatabase.getUsers().size());
-    User randomUser = new ArrayList<>(this.mDatabase.getUsers()).get(Math.max(0, userIndex - 1));
-
-    // Création d'un message fictif
-
-    return new Message(randomUser, "Message fictif!! #Mock #test ;)");
+    List<User> users = new ArrayList<>(mDatabase.getUsers());
+    int userIndex = new Random().nextInt(users.size());
+    User randomUser = users.get(userIndex);
+    return new Message(randomUser, "Message fictif!! #Mock #test");
   }
 }
