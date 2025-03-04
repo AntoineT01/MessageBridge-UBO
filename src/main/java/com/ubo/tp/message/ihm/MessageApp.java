@@ -51,6 +51,23 @@ public class MessageApp {
   }
 
   /**
+   * Arrête proprement la partie métier de l'application.
+   */
+  public void shutdown() {
+    // Arrêter la surveillance du répertoire
+    if (mWatchableDirectory != null) {
+      mWatchableDirectory.stopWatching();
+    }
+
+    // Vous pourriez ajouter ici d'autres nettoyages nécessaires
+    // Par exemple, fermer les connexions à la base de données, etc.
+
+    System.out.println("MessageApp: Arrêt propre de la partie métier");
+  }
+
+
+
+  /**
    * Change le répertoire d'échange.
    *
    * @param directoryPath Le chemin du nouveau répertoire

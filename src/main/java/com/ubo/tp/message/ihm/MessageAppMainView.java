@@ -2,6 +2,8 @@ package com.ubo.tp.message.ihm;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import com.ubo.tp.message.common.IconFactory;
 import com.ubo.tp.message.common.ImageUtils;
@@ -56,8 +58,9 @@ public class MessageAppMainView extends JFrame {
 
 
     itemQuitter.addActionListener(e -> {
-      // Action de quitter
-      System.exit(0);
+      // Nous utiliserons ce code pour notifier que l'utilisateur souhaite quitter
+      // La méthode de fermeture propre sera appelée depuis MessageAppGUI
+      firePropertyChange("ACTION_EXIT", false, true);
     });
     menuFichier.add(itemQuitter);
 
@@ -85,7 +88,17 @@ public class MessageAppMainView extends JFrame {
     this.setJMenuBar(menuBar);
 
     // Par défaut, on ferme la fenêtre quand on clique sur la croix
-    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    // Dans la méthode initGUI()
+    this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    this.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        // Utiliser le même mécanisme que le bouton Quitter
+        firePropertyChange("ACTION_EXIT", false, true);
+      }
+    });
 
     // Layout par défaut
     this.setLayout(new BorderLayout());

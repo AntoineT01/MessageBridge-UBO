@@ -60,6 +60,24 @@ public class MessageAppGUI {
   }
 
   /**
+   * Ferme proprement l'application, en fermant d'abord la partie GUI puis la partie métier.
+   */
+  public void shutdown() {
+    // Fermer proprement les composants GUI
+    if (mMainView != null) {
+      mMainView.dispose();
+    }
+
+    // Fermer proprement la partie métier
+    if (mMessageApp != null) {
+      mMessageApp.shutdown();
+    }
+
+    System.out.println("MessageAppGUI: Arrêt propre de l'interface graphique");
+  }
+
+
+  /**
    * Initialisation du look and feel de l'application.
    */
   protected void initLookAndFeel() {
@@ -76,6 +94,25 @@ public class MessageAppGUI {
   protected void initGui() {
     // On crée la vue principale en lui passant la base de données
     mMainView = new MessageAppMainView(mMessageApp.getDatabase());
+
+    mMainView.addPropertyChangeListener("ACTION_EXIT", evt -> {
+      // Demander confirmation à l'utilisateur
+      int response = JOptionPane.showConfirmDialog(
+        mMainView,
+        "Voulez-vous vraiment quitter l'application ?",
+        "Confirmation",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE
+      );
+
+      if (response == JOptionPane.YES_OPTION) {
+        // Arrêt propre puis fermeture
+        shutdown();
+        System.exit(0);
+      }
+    });
+
+
 
     // Configurer l'action pour changer le répertoire d'échange dans le menu
     configureChangeDirectoryMenuItem();
