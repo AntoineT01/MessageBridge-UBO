@@ -70,7 +70,7 @@ public class MessageAppMainView extends JFrame {
   private void showAboutDialog() {
     // Boîte de dialogue “A propos”
     // Par exemple un simple JOptionPane :
-    ImageIcon logoIcon = new ImageIcon("resources/ubo_logo.png");
+    ImageIcon logoIcon = new ImageIcon("resources/tux_logo.png");
     JOptionPane.showMessageDialog(
       this,
       "UBO M2-TIIL\nDépartement Informatique",
