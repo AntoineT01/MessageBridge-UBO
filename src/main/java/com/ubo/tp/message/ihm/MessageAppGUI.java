@@ -1,11 +1,15 @@
 package com.ubo.tp.message.ihm;
 
-import com.ubo.tp.message.common.ImageUtils;
-import com.ubo.tp.message.core.database.IDatabase;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.io.File;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import com.ubo.tp.message.core.EntityManager;
+import com.ubo.tp.message.core.database.IDatabase;
 
 /**
  * Classe gérant l'interface graphique de l'application.
@@ -15,6 +19,11 @@ public class MessageAppGUI {
    * Vue principale de l'application.
    */
   protected MessageAppMainView mMainView;
+
+  /**
+   * Le contrôleur principal de l'application
+   */
+  protected MessageAppController mController;
 
   /**
    * L'instance de MessageApp (partie métier)
@@ -55,6 +64,16 @@ public class MessageAppGUI {
       // Sinon, on continue avec le répertoire par défaut qui a été configuré dans MessageApp
     }
 
+    // Nettoyer les utilisateurs en double
+    int removedUsers = UserDatabaseCleaner.cleanDuplicateUsers(
+      mMessageApp.getDatabase(),
+      mMessageApp.getEntityManager()
+    );
+
+    if (removedUsers > 0) {
+      System.out.println("Nettoyage de la base de données : " + removedUsers + " utilisateurs en double supprimés.");
+    }
+
     // Initialisation de l'IHM
     this.initGui();
   }
@@ -76,7 +95,6 @@ public class MessageAppGUI {
     System.out.println("MessageAppGUI: Arrêt propre de l'interface graphique");
   }
 
-
   /**
    * Initialisation du look and feel de l'application.
    */
@@ -95,6 +113,7 @@ public class MessageAppGUI {
     // On crée la vue principale en lui passant la base de données
     mMainView = new MessageAppMainView(mMessageApp.getDatabase());
 
+    // Événement pour la fermeture de l'application
     mMainView.addPropertyChangeListener("ACTION_EXIT", evt -> {
       // Demander confirmation à l'utilisateur
       int response = JOptionPane.showConfirmDialog(
@@ -112,7 +131,25 @@ public class MessageAppGUI {
       }
     });
 
+    // Créer le contrôleur principal
+    mController = new MessageAppController(
+      mMainView,
+      mMessageApp.getDatabase(),
+      mMessageApp.getEntityManager()
+    );
 
+    // Configurer les événements pour le contrôleur
+    mMainView.addPropertyChangeListener("ACTION_SHOW_PROFILE", evt -> {
+      mController.showUserProfileView();
+    });
+
+    mMainView.addPropertyChangeListener("ACTION_SEARCH_USERS", evt -> {
+      mController.showSearchUserView();
+    });
+
+    mMainView.addPropertyChangeListener("ACTION_LOGOUT", evt -> {
+      mController.mSessionManager.logout();
+    });
 
     // Configurer l'action pour changer le répertoire d'échange dans le menu
     configureChangeDirectoryMenuItem();
@@ -123,7 +160,7 @@ public class MessageAppGUI {
    */
   private void configureChangeDirectoryMenuItem() {
     for (int i = 0; i < mMainView.getJMenuBar().getMenu(0).getItemCount(); i++) {
-      JMenuItem item = mMainView.getJMenuBar().getMenu(0).getItem(i);
+      javax.swing.JMenuItem item = mMainView.getJMenuBar().getMenu(0).getItem(i);
       if (item != null && "Changer le répertoire d'échange".equals(item.getText())) {
         item.addActionListener(e -> {
           boolean success = this.selectAndChangeExchangeDirectory();
