@@ -2,6 +2,9 @@ package com.ubo.tp.message.ihm;
 
 import javax.swing.*;
 import java.awt.*;
+
+import com.ubo.tp.message.common.IconFactory;
+import com.ubo.tp.message.common.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
 
 public class MessageAppMainView extends JFrame {
@@ -39,6 +42,9 @@ public class MessageAppMainView extends JFrame {
 
     itemQuitter.setIcon(IconFactory.createCloseIcon(IconFactory.ICON_SMALL));
 
+    itemQuitter.setToolTipText("Fermer l'application");
+
+
     itemQuitter.addActionListener(e -> {
       // Action de quitter
       System.exit(0);
@@ -50,6 +56,7 @@ public class MessageAppMainView extends JFrame {
     JMenu menuAPropos = new JMenu("?");
     JMenuItem itemAbout = new JMenuItem("A propos");
     itemAbout.setIcon(IconFactory.createInfoIcon(IconFactory.ICON_SMALL));
+    itemAbout.setToolTipText("Informations sur l'application");
     itemAbout.addActionListener(e -> {
       // Action : ouvrir une boite de dialogue
       showAboutDialog();
@@ -57,6 +64,9 @@ public class MessageAppMainView extends JFrame {
     menuAPropos.add(itemAbout);
     menuBar.add(menuAPropos);
 
+
+    menuFichier.setToolTipText("Opérations sur les fichiers");
+    menuAPropos.setToolTipText("Aide et informations");
     // On ajoute la barre de menu à la fenêtre
     this.setJMenuBar(menuBar);
 
@@ -76,7 +86,7 @@ public class MessageAppMainView extends JFrame {
   }
 
   private void showAboutDialog() {
-    // Boîte de dialogue “A propos”
+    // Boîte de dialogue “A propos"
     // Par exemple un simple JOptionPane :
     ImageIcon logoIcon = ImageUtils.loadScaledIcon("/tux_logo.png", 100, 100);
     JOptionPane.showMessageDialog(
