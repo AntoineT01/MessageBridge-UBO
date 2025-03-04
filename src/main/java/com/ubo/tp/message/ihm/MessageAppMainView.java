@@ -2,12 +2,7 @@ package com.ubo.tp.message.ihm;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
-
-import com.ubo.tp.message.common.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
-
-import static com.ubo.tp.message.ihm.MessageApp.loadScaledIcon;
 
 public class MessageAppMainView extends JFrame {
 
@@ -41,6 +36,9 @@ public class MessageAppMainView extends JFrame {
     JMenuItem itemQuitter = new JMenuItem("Quitter");
     // Optionnel : associer une icône
     // itemQuitter.setIcon(new ImageIcon("resources/exit.png"));
+
+    itemQuitter.setIcon(IconFactory.createCloseIcon(IconFactory.ICON_SMALL));
+
     itemQuitter.addActionListener(e -> {
       // Action de quitter
       System.exit(0);
@@ -51,7 +49,7 @@ public class MessageAppMainView extends JFrame {
     // 2) Menu A propos
     JMenu menuAPropos = new JMenu("?");
     JMenuItem itemAbout = new JMenuItem("A propos");
-    // itemAbout.setIcon(new ImageIcon("resources/info.png"));
+    itemAbout.setIcon(IconFactory.createInfoIcon(IconFactory.ICON_SMALL));
     itemAbout.addActionListener(e -> {
       // Action : ouvrir une boite de dialogue
       showAboutDialog();
