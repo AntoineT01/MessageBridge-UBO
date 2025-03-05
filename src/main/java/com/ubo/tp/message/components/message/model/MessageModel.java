@@ -4,6 +4,8 @@ import com.ubo.tp.message.core.datamodel.Message;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: FAire en sorte qu'il soit instancié et rempli avec les messages filtrés par ceux qui follow l'utilisateur connecté
+//  Attention : quand les follow changent, les messages aussi mais USER n'est pas observable DONC rendre User observable
 public class MessageModel {
   private final List<Message> messages = new ArrayList<>();
   private final List<IMessageObserver> observers = new ArrayList<>();

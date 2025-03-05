@@ -6,6 +6,7 @@ import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.database.IDatabaseObserver;
 import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.datamodel.User;
+import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.ISession;
 import com.ubo.tp.message.common.ui.ToastNotification;
 
@@ -20,15 +21,19 @@ public class MessageController implements IMessageController, IDatabaseObserver 
   private final ModernChatView messageView;
   private final IDatabase database;
   private final MessageModel model;
+  protected EntityManager mEntityManager;
+
   private static final int MAX_MESSAGE_LENGTH = 200;
 
-  public MessageController(ISession session, ModernChatView messageView, IDatabase database, MessageModel model) {
+  public MessageController(ISession session, ModernChatView messageView, IDatabase database, MessageModel model,
+                           EntityManager mEntityManager) {
     this.session = session;
     this.messageView = messageView;
     this.database = database;
     this.model = model;
     // S'inscrire comme observateur de la base de données
     this.database.addObserver(this);
+    this.mEntityManager = mEntityManager;
     // Charger les messages existants dans le modèle
     for (Message m : database.getMessages()) {
       model.addMessage(m);
@@ -51,7 +56,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
       }
       Message newMessage = new Message(connectedUser, text);
       // L'ajout en base déclenche notifyMessageAdded
-      database.addMessage(newMessage);
+      mEntityManager.writeMessageFile(newMessage);
       messageView.clearMessageInput();
     } catch (MessageValidationException e) {
       JOptionPane.showMessageDialog(messageView, e.getMessage(), "Erreur de validation", JOptionPane.ERROR_MESSAGE);

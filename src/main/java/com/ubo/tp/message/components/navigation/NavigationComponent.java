@@ -7,8 +7,10 @@ import com.ubo.tp.message.components.navigation.view.NavigationViewConnected;
 import com.ubo.tp.message.components.navigation.view.NavigationViewDisconnected;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 
 /**

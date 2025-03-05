@@ -2,10 +2,8 @@ package com.ubo.tp.message.components;
 
 import com.ubo.tp.message.app.MessageAppView;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
+import com.ubo.tp.message.components.message.MessageComponent;
 import com.ubo.tp.message.components.message.controller.MessageController;
-import com.ubo.tp.message.components.message.service.IMessageService;
-import com.ubo.tp.message.components.message.service.MessageService;
-import com.ubo.tp.message.components.message.view.MessagePanel;
 import com.ubo.tp.message.components.navigation.NavigationComponent;
 import com.ubo.tp.message.components.user.auth.AuthComponent;
 import com.ubo.tp.message.components.user.auth.IAuthComponent;
@@ -76,7 +74,7 @@ public class ComponentsController implements ISessionObserver {
   /**
    * Panel de messages
    */
-  protected MessagePanel messagePanel;
+//  protected MessagePanel messagePanel;
 
   /**
    * Contrôleur de messages
@@ -143,9 +141,7 @@ public class ComponentsController implements ISessionObserver {
     navigationComponent.setMainFrame(mainView);
 
     // Créer le service et le panneau de messages
-    IMessageService messageService = new MessageService(database);
-    messagePanel = new MessagePanel();
-    messageController = new MessageController(messageService, sessionManager.getSession(), messagePanel);
+    MessageComponent messageComponent = new MessageComponent(database, sessionManager.getSession(), entityManager);
 
     // Configurer les actions pour le composant d'authentification
     authComponent.setAuthSuccessListener(new ActionListener() {
@@ -168,7 +164,7 @@ public class ComponentsController implements ISessionObserver {
 
     // Créer un panneau pour afficher les messages
     JPanel messagesContainer = new JPanel(new BorderLayout());
-    messagesContainer.add(messagePanel, BorderLayout.CENTER);
+    messagesContainer.add(messageComponent.getMessagePanel(), BorderLayout.CENTER);
     centerPanel.add(messagesContainer, "messages");
 
     mainContentPanel.add(centerPanel, BorderLayout.CENTER);
