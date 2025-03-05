@@ -1,7 +1,7 @@
 package com.ubo.tp.message.core.database;
 
-import com.ubo.tp.message.datamodel.Message;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.User;
 
 /**
  * Interface des observateurs des modifications de la base de données.

@@ -1,6 +1,6 @@
 package com.ubo.tp.message.ihm;
 
-import com.ubo.tp.message.common.ImageUtils;
+import com.ubo.tp.message.common.utils.ImageUtils;
 
 import javax.swing.*;
 import java.awt.*;

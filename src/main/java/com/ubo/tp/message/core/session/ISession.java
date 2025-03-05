@@ -1,7 +1,7 @@
 package com.ubo.tp.message.core.session;
 
 
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.User;
 
 /**
  * Interface représentant la session active.

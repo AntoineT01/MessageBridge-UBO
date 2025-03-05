@@ -1,8 +1,8 @@
 package com.ubo.tp.message.core.database;
 
-import com.ubo.tp.message.common.Constants;
-import com.ubo.tp.message.datamodel.Message;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.common.constants.Constants;
+import com.ubo.tp.message.core.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.User;
 
 import java.util.HashSet;
 import java.util.Set;

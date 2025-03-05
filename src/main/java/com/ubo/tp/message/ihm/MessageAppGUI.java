@@ -1,12 +1,10 @@
 package com.ubo.tp.message.ihm;
 
-import com.ubo.tp.message.core.EntityManager;
-import com.ubo.tp.message.core.session.ISession;
-import com.ubo.tp.message.core.session.Session;
-import com.ubo.tp.message.ihm.login.LoginDialog;
-
-import javax.swing.*;
 import java.io.File;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * Classe gérant l'interface graphique de l'application.
@@ -18,14 +16,14 @@ public class MessageAppGUI {
   protected MessageAppMainView mMainView;
 
   /**
+   * Le contrôleur principal de l'application
+   */
+  protected MessageAppController mController;
+
+  /**
    * L'instance de MessageApp (partie métier)
    */
   protected MessageApp mMessageApp;
-
-  /**
-   * Session utilisateur
-   */
-  protected ISession mSession;
 
   /**
    * Constructeur.
@@ -34,8 +32,6 @@ public class MessageAppGUI {
    */
   public MessageAppGUI(MessageApp messageApp) {
     this.mMessageApp = messageApp;
-    // Création d'une session
-    this.mSession = new Session();
   }
 
   /**
@@ -61,6 +57,16 @@ public class MessageAppGUI {
         System.exit(0); // Quitter l'application si l'utilisateur refuse
       }
       // Sinon, on continue avec le répertoire par défaut qui a été configuré dans MessageApp
+    }
+
+    // Nettoyer les utilisateurs en double
+    int removedUsers = UserDatabaseCleaner.cleanDuplicateUsers(
+      mMessageApp.getDatabase(),
+      mMessageApp.getEntityManager()
+    );
+
+    if (removedUsers > 0) {
+      System.out.println("Nettoyage de la base de données : " + removedUsers + " utilisateurs en double supprimés.");
     }
 
     // Initialisation de l'IHM
@@ -99,10 +105,10 @@ public class MessageAppGUI {
    * Initialisation de l'interface graphique.
    */
   protected void initGui() {
-    // On crée la vue principale en lui passant la base de données et la session
-    mMainView = new MessageAppMainView(mMessageApp.getDatabase(), mSession);
+    // On crée la vue principale en lui passant la base de données
+    mMainView = new MessageAppMainView(mMessageApp.getDatabase());
 
-    // Gestion de la fermeture de l'application
+    // Événement pour la fermeture de l'application
     mMainView.addPropertyChangeListener("ACTION_EXIT", evt -> {
       // Demander confirmation à l'utilisateur
       int response = JOptionPane.showConfirmDialog(
@@ -120,10 +126,24 @@ public class MessageAppGUI {
       }
     });
 
-    // Gestion de l'action de connexion
-    mMainView.addPropertyChangeListener("ACTION_LOGIN", evt -> {
-      // Ouvrir la boîte de dialogue de connexion
-      openLoginDialog();
+    // Créer le contrôleur principal
+    mController = new MessageAppController(
+      mMainView,
+      mMessageApp.getDatabase(),
+      mMessageApp.getEntityManager()
+    );
+
+    // Configurer les événements pour le contrôleur
+    mMainView.addPropertyChangeListener("ACTION_SHOW_PROFILE", evt -> {
+      mController.showUserProfileView();
+    });
+
+    mMainView.addPropertyChangeListener("ACTION_SEARCH_USERS", evt -> {
+      mController.showSearchUserView();
+    });
+
+    mMainView.addPropertyChangeListener("ACTION_LOGOUT", evt -> {
+      mController.mSessionManager.logout();
     });
 
     // Configurer l'action pour changer le répertoire d'échange dans le menu
@@ -131,24 +151,11 @@ public class MessageAppGUI {
   }
 
   /**
-   * Ouvre la boîte de dialogue de connexion.
-   */
-  protected void openLoginDialog() {
-    LoginDialog loginDialog = new LoginDialog(
-      mMainView,
-      mMessageApp.getDatabase(),
-      mSession,
-      mMessageApp.getEntityManager()
-    );
-    loginDialog.setVisible(true);
-  }
-
-  /**
    * Configure l'élément de menu pour changer le répertoire d'échange.
    */
   private void configureChangeDirectoryMenuItem() {
     for (int i = 0; i < mMainView.getJMenuBar().getMenu(0).getItemCount(); i++) {
-      JMenuItem item = mMainView.getJMenuBar().getMenu(0).getItem(i);
+      javax.swing.JMenuItem item = mMainView.getJMenuBar().getMenu(0).getItem(i);
       if (item != null && "Changer le répertoire d'échange".equals(item.getText())) {
         item.addActionListener(e -> {
           boolean success = this.selectAndChangeExchangeDirectory();
@@ -193,11 +200,6 @@ public class MessageAppGUI {
     SwingUtilities.invokeLater(() -> {
       if (mMainView != null) {
         mMainView.setVisible(true);
-
-        // Si l'utilisateur n'est pas connecté, ouvrir la boîte de dialogue de connexion
-        if (mSession.getConnectedUser() == null) {
-          openLoginDialog();
-        }
       }
     });
   }
