@@ -1,12 +1,13 @@
-package com.ubo.tp.message.message;
+package com.ubo.tp.message.test;
 
+import com.ubo.tp.message.components.message.controller.MessageController;
+import com.ubo.tp.message.components.message.service.IMessageService;
+import com.ubo.tp.message.components.message.service.MessageService;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.session.ISession;
 import com.ubo.tp.message.core.datamodel.User;
-import com.ubo.tp.message.message.view.MessagePanel;
-import com.ubo.tp.message.message.controller.MessageController;
-import com.ubo.tp.message.message.service.IMessageService;
-import com.ubo.tp.message.message.service.MessageService;
+import com.ubo.tp.message.components.message.view.MessagePanel;
+
 import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;

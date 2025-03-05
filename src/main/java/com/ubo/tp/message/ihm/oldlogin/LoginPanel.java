@@ -1,9 +1,9 @@
-package com.ubo.tp.message.ihm.components;
+package com.ubo.tp.message.ihm.oldlogin;
 
 import com.ubo.tp.message.common.ui.IconFactory;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.datamodel.User;
-import com.ubo.tp.message.ihm.session.SessionManager;
+import com.ubo.tp.message.core.session.SessionManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

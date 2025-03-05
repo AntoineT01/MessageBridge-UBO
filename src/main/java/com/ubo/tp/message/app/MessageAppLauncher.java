@@ -6,7 +6,7 @@ import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.ihm.MessageApp;
 import com.ubo.tp.message.ihm.MessageAppGUI;
 import com.ubo.tp.message.mock.MessageAppMock;
-import com.ubo.tp.message.observers.ConsoleDatabaseObserver;
+import com.ubo.tp.message.test.ConsoleDatabaseObserver;
 
 import java.nio.charset.Charset;
 

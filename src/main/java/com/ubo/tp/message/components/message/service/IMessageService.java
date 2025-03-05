@@ -1,4 +1,4 @@
-package com.ubo.tp.message.message.service;
+package com.ubo.tp.message.components.message.service;
 
 import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.datamodel.User;

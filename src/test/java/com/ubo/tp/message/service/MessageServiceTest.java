@@ -2,7 +2,7 @@ package com.ubo.tp.message.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.ubo.tp.message.message.service.MessageService;
+import com.ubo.tp.message.components.message.service.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

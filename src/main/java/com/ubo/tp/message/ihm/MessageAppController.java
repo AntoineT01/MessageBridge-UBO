@@ -4,11 +4,11 @@ import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.session.ISessionObserver;
 import com.ubo.tp.message.core.datamodel.User;
-import com.ubo.tp.message.ihm.components.LoginPanel;
-import com.ubo.tp.message.ihm.components.RegisterPanel;
-import com.ubo.tp.message.ihm.components.SearchUserPanel;
-import com.ubo.tp.message.ihm.components.UserProfilePanel;
-import com.ubo.tp.message.ihm.session.SessionManager;
+import com.ubo.tp.message.ihm.oldlogin.LoginPanel;
+import com.ubo.tp.message.ihm.oldlogin.RegisterPanel;
+import com.ubo.tp.message.ihm.oldlogin.SearchUserPanel;
+import com.ubo.tp.message.ihm.oldlogin.UserProfilePanel;
+import com.ubo.tp.message.core.session.SessionManager;
 
 import javax.swing.*;
 import java.awt.*;

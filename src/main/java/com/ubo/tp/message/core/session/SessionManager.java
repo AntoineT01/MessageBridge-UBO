@@ -1,4 +1,4 @@
-package com.ubo.tp.message.ihm.session;
+package com.ubo.tp.message.core.session;
 
 import com.ubo.tp.message.core.session.ISession;
 import com.ubo.tp.message.core.session.ISessionObserver;

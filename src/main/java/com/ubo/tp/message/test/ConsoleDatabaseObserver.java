@@ -1,4 +1,4 @@
-package com.ubo.tp.message.observers;
+package com.ubo.tp.message.test;
 
 import com.ubo.tp.message.core.database.IDatabaseObserver;
 import com.ubo.tp.message.core.datamodel.Message;

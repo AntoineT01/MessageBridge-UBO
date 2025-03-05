@@ -1,11 +1,11 @@
-package com.ubo.tp.message.message.controller;
+package com.ubo.tp.message.components.message.controller;
 
+import com.ubo.tp.message.components.message.service.IMessageService;
+import com.ubo.tp.message.components.message.service.MessageObserver;
+import com.ubo.tp.message.components.message.service.MessageValidationException;
 import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.datamodel.User;
-import com.ubo.tp.message.message.view.MessagePanel;
-import com.ubo.tp.message.message.service.IMessageService;
-import com.ubo.tp.message.message.service.MessageObserver;
-import com.ubo.tp.message.message.service.MessageValidationException;
+import com.ubo.tp.message.components.message.view.MessagePanel;
 import com.ubo.tp.message.core.session.ISession;
 import javax.swing.JOptionPane;
 import java.util.Set;

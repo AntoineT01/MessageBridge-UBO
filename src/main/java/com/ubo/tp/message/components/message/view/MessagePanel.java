@@ -1,4 +1,4 @@
-package com.ubo.tp.message.message.view;
+package com.ubo.tp.message.components.message.view;
 
 import com.ubo.tp.message.core.datamodel.Message;
 import javax.swing.*;
