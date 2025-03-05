@@ -81,6 +81,14 @@ public class SessionManager implements ISessionObserver {
     return this.mSession.getConnectedUser() != null;
   }
 
+  /**
+   * Retourne l'objet de session
+   * @return L'objet ISession sous-jacent
+   */
+  public ISession getSession() {
+    return this.mSession;
+  }
+
   @Override
   public void notifyLogin(User connectedUser) {
     // Quand la session métier notifie une connexion, propager à tous les observateurs GUI
