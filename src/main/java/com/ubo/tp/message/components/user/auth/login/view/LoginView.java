@@ -1,4 +1,4 @@
-package com.ubo.tp.message.ihm.auth.view;
+package com.ubo.tp.message.components.user.auth.login.view;
 
 import com.ubo.tp.message.common.ui.IconFactory;
 

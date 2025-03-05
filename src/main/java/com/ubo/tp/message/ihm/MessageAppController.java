@@ -4,14 +4,17 @@ import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.session.ISessionObserver;
 import com.ubo.tp.message.core.datamodel.User;
-import com.ubo.tp.message.ihm.oldlogin.LoginPanel;
-import com.ubo.tp.message.ihm.oldlogin.RegisterPanel;
-import com.ubo.tp.message.ihm.oldlogin.SearchUserPanel;
-import com.ubo.tp.message.ihm.oldlogin.UserProfilePanel;
+import com.ubo.tp.message.components.user.auth.AuthComponent;
+import com.ubo.tp.message.components.user.auth.IAuthComponent;
 import com.ubo.tp.message.core.session.SessionManager;
+
+import com.ubo.tp.message.components.user.profil.ProfileComponent;
+import com.ubo.tp.message.components.user.profil.IProfileComponent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Contrôleur principal de l'application
@@ -44,24 +47,14 @@ public class MessageAppController implements ISessionObserver {
   protected EntityManager mEntityManager;
 
   /**
-   * Panel de connexion
+   * Composant d'authentification
    */
-  protected LoginPanel mLoginPanel;
+  protected IAuthComponent mAuthComponent;
 
   /**
-   * Panel d'inscription
+   * Composant de profil
    */
-  protected RegisterPanel mRegisterPanel;
-
-  /**
-   * Panel de profil utilisateur
-   */
-  protected UserProfilePanel mUserProfilePanel;
-
-  /**
-   * Panel de recherche d'utilisateurs
-   */
-  protected SearchUserPanel mSearchUserPanel;
+  protected IProfileComponent mProfileComponent;
 
   /**
    * Constructeur
@@ -92,33 +85,42 @@ public class MessageAppController implements ISessionObserver {
     mContentPanel = new JPanel(new CardLayout());
     mMainView.setContentPanel(mContentPanel);
 
-    // Créer les différentes vues
-    mLoginPanel = new LoginPanel(mDatabase, mSessionManager);
-    mRegisterPanel = new RegisterPanel(mDatabase, mEntityManager, mSessionManager);
+    // Créer le composant d'authentification
+    mAuthComponent = new AuthComponent(mDatabase, mEntityManager, mSessionManager);
 
-    // Connecter les boutons de navigation
-    mLoginPanel.getRegisterButton().addActionListener(e -> showRegisterView());
-    mRegisterPanel.getLoginButton().addActionListener(e -> showLoginView());
+    // Créer le composant de profil
+    mProfileComponent = new ProfileComponent(mDatabase, mEntityManager, mSessionManager);
+
+    // Configurer les actions pour le composant d'authentification
+    mAuthComponent.setAuthSuccessListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // Cette méthode est appelée quand l'authentification réussit
+        showUserProfileView();
+      }
+    });
 
     // Ajouter les vues au panneau de contenu
-    mContentPanel.add(mLoginPanel, "login");
-    mContentPanel.add(mRegisterPanel, "register");
+    mContentPanel.add(mAuthComponent.getComponent(), "auth");
+    mContentPanel.add(mProfileComponent.getComponent(), "profile");
   }
 
   /**
    * Affiche la vue de connexion
    */
   public void showLoginView() {
+    mAuthComponent.showLoginView();
     CardLayout cl = (CardLayout) mContentPanel.getLayout();
-    cl.show(mContentPanel, "login");
+    cl.show(mContentPanel, "auth");
   }
 
   /**
    * Affiche la vue d'inscription
    */
   public void showRegisterView() {
+    mAuthComponent.showRegisterView();
     CardLayout cl = (CardLayout) mContentPanel.getLayout();
-    cl.show(mContentPanel, "register");
+    cl.show(mContentPanel, "auth");
   }
 
   /**
@@ -130,11 +132,8 @@ public class MessageAppController implements ISessionObserver {
       return;
     }
 
-    // Créer le panel de profil s'il n'existe pas
-    if (mUserProfilePanel == null) {
-      mUserProfilePanel = new UserProfilePanel(mDatabase, mSessionManager);
-      mContentPanel.add(mUserProfilePanel, "profile");
-    }
+    // Rafraîchir les données du profil
+    mProfileComponent.refreshProfileData();
 
     // Afficher le profil
     CardLayout cl = (CardLayout) mContentPanel.getLayout();
@@ -150,12 +149,6 @@ public class MessageAppController implements ISessionObserver {
       return;
     }
 
-    // Créer le panel de recherche s'il n'existe pas
-    if (mSearchUserPanel == null) {
-      mSearchUserPanel = new SearchUserPanel(mDatabase, mSessionManager);
-      mContentPanel.add(mSearchUserPanel, "search");
-    }
-
     // Afficher la recherche
     CardLayout cl = (CardLayout) mContentPanel.getLayout();
     cl.show(mContentPanel, "search");
@@ -166,19 +159,8 @@ public class MessageAppController implements ISessionObserver {
     // Mettre à jour le menu
     mMainView.updateMenuForConnectedUser(true);
 
-    // Recréer le panel de profil pour s'assurer d'afficher les données à jour
-    if (mUserProfilePanel != null) {
-      mContentPanel.remove(mUserProfilePanel);
-      mUserProfilePanel = null;
-    }
-
-    // Créer un nouveau panel avec l'utilisateur connecté
-    mUserProfilePanel = new UserProfilePanel(mDatabase, mSessionManager, connectedUser);
-    mContentPanel.add(mUserProfilePanel, "profile");
-
     // Afficher le profil
-    CardLayout cl = (CardLayout) mContentPanel.getLayout();
-    cl.show(mContentPanel, "profile");
+    showUserProfileView();
   }
 
   @Override
