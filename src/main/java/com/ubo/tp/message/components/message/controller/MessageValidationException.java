@@ -1,4 +1,4 @@
-package com.ubo.tp.message.components.message.service;
+package com.ubo.tp.message.components.message.controller;
 
 /**
  * Exception levée lorsque la validation d’un message échoue.

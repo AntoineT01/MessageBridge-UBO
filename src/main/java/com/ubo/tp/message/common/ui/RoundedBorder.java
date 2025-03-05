@@ -1,4 +1,4 @@
-package com.ubo.tp.message.ihm.message;
+package com.ubo.tp.message.common.ui;
 
 import javax.swing.border.Border;
 import java.awt.*;

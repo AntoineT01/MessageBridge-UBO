@@ -24,9 +24,6 @@ public class MessageAppLauncher {
 	 * Launcher.
 	 */
 	public static void main(String[] args) {
-		System.out.println("JVM file.encoding = " + System.getProperty("file.encoding"));
-		System.out.println("JVM file.encoding = " + Charset.defaultCharset().displayName());
-
 		IDatabase database = new Database();
 		database.addObserver(new ConsoleDatabaseObserver());
 		EntityManager entityManager = new EntityManager(database);

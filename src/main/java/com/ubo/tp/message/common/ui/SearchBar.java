@@ -1,7 +1,4 @@
-package com.ubo.tp.message.ihm.component;
-
-import com.ubo.tp.message.ihm.message.RoundedBorder;
-import com.ubo.tp.message.ihm.message.RoundedTextArea;
+package com.ubo.tp.message.common.ui;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;

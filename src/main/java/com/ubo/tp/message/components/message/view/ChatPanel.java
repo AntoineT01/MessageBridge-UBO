@@ -1,7 +1,17 @@
-package com.ubo.tp.message.ihm.message;
+package com.ubo.tp.message.components.message.view;
 
-import javax.swing.*;
-import java.awt.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 
 public class ChatPanel extends JPanel {
   private final JPanel messagesContainer;

@@ -1,25 +1,27 @@
-package com.ubo.tp.message.ihm.message;
+package com.ubo.tp.message.test;
 
+import com.ubo.tp.message.components.message.MessageComponent;
 import com.ubo.tp.message.core.database.Database;
 import com.ubo.tp.message.core.database.IDatabase;
+import com.ubo.tp.message.core.datamodel.User;
+import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.ISession;
 import com.ubo.tp.message.core.session.Session;
-import com.ubo.tp.message.datamodel.User;
-import com.ubo.tp.message.service.IMessageService;
-import com.ubo.tp.message.service.MessageService;
+import com.ubo.tp.message.ihm.MessageApp;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import java.awt.GridLayout;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class Main2 {
+public class MessageMainTestStandalone {
   public static void main(String[] args) {
     // Base de données partagée
     IDatabase database = new Database();
-
-    // Création d'une instance partagée de MessageService
-    IMessageService sharedMessageService = new MessageService(database);
+    // Exemple dans le main de test
+    EntityManager entityManager = new EntityManager(database);
+    MessageApp messageApp = new MessageApp(database, entityManager);
+    messageApp.changeExchangeDirectory("C:\\Users\\darwh\\Documents\\Test");
 
     // Création de deux sessions distinctes
     ISession sessionA = new Session();
@@ -41,9 +43,9 @@ public class Main2 {
     sessionA.connect(userA);
     sessionB.connect(userB);
 
-    // Création de deux intégrations MessageIntegration en passant le MessageService partagé
-    MessageIntegration integrationA = new MessageIntegration(database, sessionA, sharedMessageService);
-    MessageIntegration integrationB = new MessageIntegration(database, sessionB, sharedMessageService);
+    // Création de deux intégrations MessageComponent en passant le MessageService partagé
+    MessageComponent integrationA = new MessageComponent(database, sessionA);
+    MessageComponent integrationB = new MessageComponent(database, sessionB);
 
     // Création d'une fenêtre principale affichant les deux panneaux côte à côte
     JFrame frame = new JFrame("Test Multi-User Messaging");

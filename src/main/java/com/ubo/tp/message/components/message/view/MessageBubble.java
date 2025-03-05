@@ -1,4 +1,4 @@
-package com.ubo.tp.message.ihm.message;
+package com.ubo.tp.message.components.message.view;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,7 +37,7 @@ public class MessageBubble extends JPanel {
       // Si le mot lui-même dépasse maxWidth, le découper
       if (fm.stringWidth(word) > maxWidth) {
         // Si currentLine contient déjà du texte, l'ajouter et réinitialiser
-        if (currentLine.length() > 0) {
+        if (!currentLine.isEmpty()) {
           lines.add(currentLine.toString());
           currentLine = new StringBuilder();
         }
@@ -52,7 +52,7 @@ public class MessageBubble extends JPanel {
           }
         }
         // Ajoute la dernière partie du mot
-        if (chunk.length() > 0) {
+        if (!chunk.isEmpty()) {
           lines.add(chunk.toString());
         }
       } else {
@@ -70,7 +70,7 @@ public class MessageBubble extends JPanel {
         }
       }
     }
-    if (currentLine.length() > 0) {
+    if (!currentLine.isEmpty()) {
       lines.add(currentLine.toString());
     }
     return lines;

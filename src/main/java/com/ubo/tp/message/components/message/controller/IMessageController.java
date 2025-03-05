@@ -1,22 +1,24 @@
-package com.ubo.tp.message.components.message.service;
+package com.ubo.tp.message.components.message.controller;
 
 import com.ubo.tp.message.core.datamodel.Message;
-import com.ubo.tp.message.core.datamodel.User;
-import java.util.Set;
 
 /**
  * Interface définissant les opérations de gestion des messages.
  * Fournit des fonctionnalités d’envoi et de recherche.
  */
-public interface IMessageService {
+public interface IMessageController {
+  /**
+   * Méthode appelée lorsqu’un nouveau message est envoyé.
+   *
+   * @param message le nouveau message
+   */
+  void onMessageSent(Message message);
   /**
    * Envoie un message depuis l’utilisateur donné.
    *
-   * @param sender l’utilisateur émetteur
    * @param text le contenu du message (max 200 caractères)
-   * @throws MessageValidationException si la validation du message échoue
    */
-  void sendMessage(User sender, String text) throws MessageValidationException;
+  void sendMessage(String text);
 
   /**
    * Recherche des messages en fonction d’une requête.
@@ -30,21 +32,6 @@ public interface IMessageService {
    * </p>
    *
    * @param query la requête de recherche
-   * @return l’ensemble des messages correspondants
    */
-  Set<Message> searchMessages(String query);
-
-  /**
-   * Ajoute un observateur qui sera notifié lorsqu’un nouveau message est envoyé.
-   *
-   * @param observer l’observateur à ajouter
-   */
-  void addObserver(MessageObserver observer);
-
-  /**
-   * Supprime un observateur précédemment ajouté.
-   *
-   * @param observer l’observateur à supprimer
-   */
-  void removeObserver(MessageObserver observer);
+  void searchMessages(String query);
 }
