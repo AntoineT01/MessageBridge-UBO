@@ -31,14 +31,13 @@ public class MessageAppLauncher {
 		database.addObserver(new ConsoleDatabaseObserver());
 		EntityManager entityManager = new EntityManager(database);
 
-		if (IS_MOCK_ENABLED) {
-			MessageAppMock mock = new MessageAppMock(database, entityManager);
-			mock.showGUI();
-		}
+//		if (IS_MOCK_ENABLED) {
+//			MessageAppMock mock = new MessageAppMock(database, entityManager);
+//			mock.showGUI();
+//		}
 
 		// Création de la partie métier
 		MessageApp messageApp = new MessageApp(database, entityManager);
-		messageApp.init();
 
 		// Création, initialisation et affichage de la partie graphique
 		MessageAppGUI gui = new MessageAppGUI(messageApp);

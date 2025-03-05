@@ -1,5 +1,8 @@
 package com.ubo.tp.message.ihm;
 
+import com.ubo.tp.message.common.utils.UserDatabaseCleaner;
+import com.ubo.tp.message.components.directory.view.FileChooserWithLogo;
+
 import java.io.File;
 
 import javax.swing.JOptionPane;

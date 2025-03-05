@@ -1,4 +1,4 @@
-package com.ubo.tp.message.ihm;
+package com.ubo.tp.message.common.utils;
 
 import com.ubo.tp.message.common.constants.Constants;
 import com.ubo.tp.message.core.entity.EntityManager;

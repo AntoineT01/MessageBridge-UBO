@@ -43,14 +43,6 @@ public class MessageApp {
   }
 
   /**
-   * Initialisation de l'application.
-   * Cette méthode n'initialise plus automatiquement le répertoire d'échange
-   */
-  public void init() {
-    // L'initialisation du répertoire d'échange est maintenant gérée par l'interface graphique
-  }
-
-  /**
    * Arrête proprement la partie métier de l'application.
    */
   public void shutdown() {
@@ -65,7 +57,7 @@ public class MessageApp {
     System.out.println("MessageApp: Arrêt propre de la partie métier");
   }
 
-
+// TODO: à mettre dans le controller @link DirectoryController
 
   /**
    * Change le répertoire d'échange.
@@ -115,6 +107,8 @@ public class MessageApp {
     mWatchableDirectory.initWatching();
     mWatchableDirectory.addObserver(mEntityManager);
   }
+
+
 
   /**
    * Getter pour la base de données
