@@ -8,6 +8,9 @@ import com.ubo.tp.message.components.user.auth.AuthComponent;
 import com.ubo.tp.message.components.user.auth.IAuthComponent;
 import com.ubo.tp.message.core.session.SessionManager;
 
+import com.ubo.tp.message.components.user.profil.ProfileComponent;
+import com.ubo.tp.message.components.user.profil.IProfileComponent;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -49,6 +52,11 @@ public class MessageAppController implements ISessionObserver {
   protected IAuthComponent mAuthComponent;
 
   /**
+   * Composant de profil
+   */
+  protected IProfileComponent mProfileComponent;
+
+  /**
    * Constructeur
    */
   public MessageAppController(MessageAppMainView mainView, IDatabase database, EntityManager entityManager) {
@@ -80,6 +88,9 @@ public class MessageAppController implements ISessionObserver {
     // Créer le composant d'authentification
     mAuthComponent = new AuthComponent(mDatabase, mEntityManager, mSessionManager);
 
+    // Créer le composant de profil
+    mProfileComponent = new ProfileComponent(mDatabase, mEntityManager, mSessionManager);
+
     // Configurer les actions pour le composant d'authentification
     mAuthComponent.setAuthSuccessListener(new ActionListener() {
       @Override
@@ -91,6 +102,7 @@ public class MessageAppController implements ISessionObserver {
 
     // Ajouter les vues au panneau de contenu
     mContentPanel.add(mAuthComponent.getComponent(), "auth");
+    mContentPanel.add(mProfileComponent.getComponent(), "profile");
   }
 
   /**
@@ -120,6 +132,9 @@ public class MessageAppController implements ISessionObserver {
       return;
     }
 
+    // Rafraîchir les données du profil
+    mProfileComponent.refreshProfileData();
+
     // Afficher le profil
     CardLayout cl = (CardLayout) mContentPanel.getLayout();
     cl.show(mContentPanel, "profile");
@@ -145,8 +160,7 @@ public class MessageAppController implements ISessionObserver {
     mMainView.updateMenuForConnectedUser(true);
 
     // Afficher le profil
-    CardLayout cl = (CardLayout) mContentPanel.getLayout();
-    cl.show(mContentPanel, "profile");
+    showUserProfileView();
   }
 
   @Override
