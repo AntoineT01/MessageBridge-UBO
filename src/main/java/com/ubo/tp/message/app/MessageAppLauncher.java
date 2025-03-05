@@ -14,11 +14,12 @@ import java.nio.charset.Charset;
 
 /**
  * Classe de lancement de l'application.
+ * Version modifiée pour intégrer la navigation par menus.
  */
 public class MessageAppLauncher {
 
 	/**
-	 * Indique si le mode bouchoné est activé.
+	 * Indique si le mode bouchonné est activé.
 	 */
 	protected static boolean IS_MOCK_ENABLED = true;
 
@@ -111,32 +112,19 @@ public class MessageAppLauncher {
 			}
 		});
 
-		// Configurer l'action pour changer le répertoire d'échange dans le menu
-		configureChangeDirectoryMenuItem(mainView, directoryController);
-	}
-
-	/**
-	 * Configure l'élément de menu pour changer le répertoire d'échange
-	 */
-	private static void configureChangeDirectoryMenuItem(MessageAppView mainView, DirectoryController directoryController) {
-		for (int i = 0; i < mainView.getJMenuBar().getMenu(0).getItemCount(); i++) {
-			javax.swing.JMenuItem item = mainView.getJMenuBar().getMenu(0).getItem(i);
-			if (item != null && "Changer le répertoire d'échange".equals(item.getText())) {
-				item.addActionListener(e -> {
-					boolean success = directoryController.selectAndChangeExchangeDirectory(mainView);
-					if (success) {
-						JOptionPane.showMessageDialog(mainView,
-						                              "Le répertoire d'échange a été changé avec succès.",
-						                              "Succès", JOptionPane.INFORMATION_MESSAGE);
-					} else {
-						JOptionPane.showMessageDialog(mainView,
-						                              "Impossible de changer le répertoire d'échange.",
-						                              "Erreur", JOptionPane.ERROR_MESSAGE);
-					}
-				});
-				break;
+		// Configurer l'action pour changer le répertoire d'échange
+		mainView.addPropertyChangeListener("ACTION_CHANGE_DIRECTORY", evt -> {
+			boolean success = directoryController.selectAndChangeExchangeDirectory(mainView);
+			if (success) {
+				JOptionPane.showMessageDialog(mainView,
+				                              "Le répertoire d'échange a été changé avec succès.",
+				                              "Succès", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(mainView,
+				                              "Impossible de changer le répertoire d'échange.",
+				                              "Erreur", JOptionPane.ERROR_MESSAGE);
 			}
-		}
+		});
 	}
 
 	/**

@@ -5,6 +5,7 @@ import com.ubo.tp.message.components.message.controller.MessageController;
 import com.ubo.tp.message.components.message.service.IMessageService;
 import com.ubo.tp.message.components.message.service.MessageService;
 import com.ubo.tp.message.components.message.view.MessagePanel;
+import com.ubo.tp.message.components.navigation.NavigationComponent;
 import com.ubo.tp.message.components.user.auth.AuthComponent;
 import com.ubo.tp.message.components.user.auth.IAuthComponent;
 import com.ubo.tp.message.components.user.profil.IProfileComponent;
@@ -23,7 +24,7 @@ import java.awt.event.ActionListener;
 /**
  * Contrôleur principal de l'application
  * Gère les transitions entre les différentes vues et les composants
- * Remplace MessageAppController.java du package ihm
+ * Version modifiée pour utiliser la navigation avec JMenus
  */
 public class ComponentsController implements ISessionObserver {
   /**
@@ -60,6 +61,11 @@ public class ComponentsController implements ISessionObserver {
    * Composant de profil
    */
   protected IProfileComponent profileComponent;
+
+  /**
+   * Composant de navigation
+   */
+  protected NavigationComponent navigationComponent;
 
   /**
    * Panel de messages
@@ -99,7 +105,7 @@ public class ComponentsController implements ISessionObserver {
    * Initialisation de l'interface graphique
    */
   protected void initGUI() {
-    // Initialiser le panneau de contenu principal
+    // Initialiser le panneau de contenu principal avec CardLayout
     contentPanel = new JPanel(new CardLayout());
     mainView.setContentPanel(contentPanel);
 
@@ -108,6 +114,10 @@ public class ComponentsController implements ISessionObserver {
 
     // Créer le composant de profil
     profileComponent = new ProfileComponent(database, entityManager, sessionManager);
+
+    // Créer le composant de navigation
+    navigationComponent = new NavigationComponent(sessionManager);
+    navigationComponent.setMainView(mainView); // Important pour mettre à jour les menus
 
     // Créer le service et le panneau de messages
     IMessageService messageService = new MessageService(database);
@@ -123,14 +133,51 @@ public class ComponentsController implements ISessionObserver {
       }
     });
 
+    // Configurer les actions pour le composant de navigation
+    setupNavigationActions();
+
+    // Panneau central avec CardLayout pour les différentes vues
+    JPanel centerPanel = new JPanel(new CardLayout());
+    centerPanel.add(profileComponent.getComponent(), "profile");
+
     // Créer un panneau pour afficher les messages
     JPanel messagesContainer = new JPanel(new BorderLayout());
     messagesContainer.add(messagePanel, BorderLayout.CENTER);
+    centerPanel.add(messagesContainer, "messages");
 
     // Ajouter les vues au panneau de contenu
     contentPanel.add(authComponent.getComponent(), "auth");
-    contentPanel.add(profileComponent.getComponent(), "profile");
-    contentPanel.add(messagesContainer, "messages");
+    contentPanel.add(centerPanel, "main");
+  }
+
+  /**
+   * Configure les actions pour le composant de navigation
+   */
+  private void setupNavigationActions() {
+    // Action pour afficher le profil
+    navigationComponent.setProfileActionListener(e -> showUserProfileView());
+
+    // Action pour afficher les messages
+    navigationComponent.setMessagesActionListener(e -> showMessagesView());
+
+    // Action pour la recherche
+    navigationComponent.setSearchActionListener(e -> showSearchUserView());
+
+    // Action pour la déconnexion
+    navigationComponent.setLogoutActionListener(e -> sessionManager.logout());
+
+    // Action pour la connexion
+    navigationComponent.setLoginActionListener(e -> showLoginView());
+
+    // Action pour l'inscription
+    navigationComponent.setRegisterActionListener(e -> showRegisterView());
+
+    // Action pour "À propos"
+    navigationComponent.setAboutActionListener(e -> mainView.showAboutDialog());
+
+    // Action pour changer le répertoire
+//    navigationComponent.setChangeDirectoryActionListener(e ->
+//                                                           mainView.firePropertyChange("ACTION_CHANGE_DIRECTORY", false, true));
   }
 
   /**
@@ -158,6 +205,9 @@ public class ComponentsController implements ISessionObserver {
     authComponent.showLoginView();
     CardLayout cl = (CardLayout) contentPanel.getLayout();
     cl.show(contentPanel, "auth");
+
+    // Afficher la vue de navigation déconnectée
+    navigationComponent.showDisconnectedView();
   }
 
   /**
@@ -167,6 +217,9 @@ public class ComponentsController implements ISessionObserver {
     authComponent.showRegisterView();
     CardLayout cl = (CardLayout) contentPanel.getLayout();
     cl.show(contentPanel, "auth");
+
+    // Afficher la vue de navigation déconnectée
+    navigationComponent.showDisconnectedView();
   }
 
   /**
@@ -181,9 +234,14 @@ public class ComponentsController implements ISessionObserver {
     // Rafraîchir les données du profil
     profileComponent.refreshProfileData();
 
-    // Afficher le profil
-    CardLayout cl = (CardLayout) contentPanel.getLayout();
-    cl.show(contentPanel, "profile");
+    // Afficher la vue principale
+    CardLayout mainCl = (CardLayout) contentPanel.getLayout();
+    mainCl.show(contentPanel, "main");
+
+    // Afficher le profil dans le panneau central
+    JPanel centerPanel = (JPanel) contentPanel.getComponent(1);
+    CardLayout centerCl = (CardLayout) centerPanel.getLayout();
+    centerCl.show(centerPanel, "profile");
   }
 
   /**
@@ -195,9 +253,14 @@ public class ComponentsController implements ISessionObserver {
       return;
     }
 
-    // Afficher les messages
-    CardLayout cl = (CardLayout) contentPanel.getLayout();
-    cl.show(contentPanel, "messages");
+    // Afficher la vue principale
+    CardLayout mainCl = (CardLayout) contentPanel.getLayout();
+    mainCl.show(contentPanel, "main");
+
+    // Afficher les messages dans le panneau central
+    JPanel centerPanel = (JPanel) contentPanel.getComponent(1);
+    CardLayout centerCl = (CardLayout) centerPanel.getLayout();
+    centerCl.show(centerPanel, "messages");
   }
 
   /**
@@ -219,8 +282,8 @@ public class ComponentsController implements ISessionObserver {
    */
   @Override
   public void notifyLogin(User connectedUser) {
-    // Mettre à jour le menu
-    mainView.updateMenuForConnectedUser(true);
+    // Afficher la vue de navigation connectée
+    navigationComponent.showConnectedView();
 
     // Afficher le profil
     showUserProfileView();
@@ -231,8 +294,8 @@ public class ComponentsController implements ISessionObserver {
    */
   @Override
   public void notifyLogout() {
-    // Mettre à jour le menu
-    mainView.updateMenuForConnectedUser(false);
+    // Afficher la vue de navigation déconnectée
+    navigationComponent.showDisconnectedView();
 
     // Revenir à la vue de connexion
     showLoginView();
