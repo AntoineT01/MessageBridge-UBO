@@ -1,11 +1,11 @@
-package com.ubo.tp.message.core;
+package com.ubo.tp.message.core.entity;
 
-import com.ubo.tp.message.common.Constants;
-import com.ubo.tp.message.common.DataFilesManager;
+import com.ubo.tp.message.common.constants.Constants;
+import com.ubo.tp.message.common.utils.DataFilesManager;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.directory.IWatchableDirectoryObserver;
-import com.ubo.tp.message.datamodel.Message;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.User;
 
 import java.io.File;
 import java.util.HashMap;

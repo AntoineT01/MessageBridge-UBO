@@ -1,8 +1,8 @@
 package com.ubo.tp.message.ihm.components;
 
-import com.ubo.tp.message.common.IconFactory;
+import com.ubo.tp.message.common.ui.IconFactory;
 import com.ubo.tp.message.core.database.IDatabase;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.ihm.session.SessionManager;
 
 import javax.swing.*;

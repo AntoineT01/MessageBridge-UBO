@@ -1,4 +1,4 @@
-package com.ubo.tp.message.datamodel;
+package com.ubo.tp.message.core.datamodel;
 
 import java.util.HashSet;
 import java.util.Set;

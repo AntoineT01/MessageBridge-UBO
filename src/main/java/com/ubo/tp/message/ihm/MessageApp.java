@@ -1,11 +1,11 @@
 package com.ubo.tp.message.ihm;
 
-import com.ubo.tp.message.core.EntityManager;
+import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.directory.IWatchableDirectory;
 import com.ubo.tp.message.core.directory.WatchableDirectory;
-import com.ubo.tp.message.common.Constants;
-import com.ubo.tp.message.common.PropertiesManager;
+import com.ubo.tp.message.common.constants.Constants;
+import com.ubo.tp.message.common.utils.PropertiesManager;
 
 import java.io.File;
 import java.util.Properties;

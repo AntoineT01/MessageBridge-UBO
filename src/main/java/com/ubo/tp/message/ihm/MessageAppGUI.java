@@ -1,15 +1,10 @@
 package com.ubo.tp.message.ihm;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import com.ubo.tp.message.core.EntityManager;
-import com.ubo.tp.message.core.database.IDatabase;
 
 /**
  * Classe gérant l'interface graphique de l'application.

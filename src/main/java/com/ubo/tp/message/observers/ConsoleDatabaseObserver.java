@@ -1,8 +1,8 @@
 package com.ubo.tp.message.observers;
 
 import com.ubo.tp.message.core.database.IDatabaseObserver;
-import com.ubo.tp.message.datamodel.Message;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.User;
 
 public class ConsoleDatabaseObserver implements IDatabaseObserver {
 

@@ -1,12 +1,14 @@
 package com.ubo.tp.message.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import com.ubo.tp.message.message.service.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ubo.tp.message.core.database.Database;
-import com.ubo.tp.message.datamodel.Message;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.User;
 
 import java.util.HashSet;
 import java.util.Set;

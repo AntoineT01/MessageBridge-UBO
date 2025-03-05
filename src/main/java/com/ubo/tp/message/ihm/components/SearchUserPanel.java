@@ -2,7 +2,7 @@ package com.ubo.tp.message.ihm.components;
 
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.session.ISessionObserver;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.ihm.session.SessionManager;
 
 import javax.swing.*;

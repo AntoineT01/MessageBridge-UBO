@@ -1,6 +1,6 @@
-package com.ubo.tp.message;
+package com.ubo.tp.message.app;
 
-import com.ubo.tp.message.core.EntityManager;
+import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.database.Database;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.ihm.MessageApp;

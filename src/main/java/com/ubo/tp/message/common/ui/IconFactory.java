@@ -1,4 +1,4 @@
-package com.ubo.tp.message.common;
+package com.ubo.tp.message.common.ui;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,10 +1,12 @@
-package com.ubo.tp.message.ihm.message;
+package com.ubo.tp.message.message;
 
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.session.ISession;
-import com.ubo.tp.message.datamodel.User;
-import com.ubo.tp.message.service.IMessageService;
-import com.ubo.tp.message.service.MessageService;
+import com.ubo.tp.message.core.datamodel.User;
+import com.ubo.tp.message.message.view.MessagePanel;
+import com.ubo.tp.message.message.controller.MessageController;
+import com.ubo.tp.message.message.service.IMessageService;
+import com.ubo.tp.message.message.service.MessageService;
 import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
@@ -80,7 +82,7 @@ public class MessageIntegration {
     ISession session = new com.ubo.tp.message.core.session.Session();
 
     // Connecter un utilisateur fictif afin de pouvoir envoyer des messages
-    User testUser = new com.ubo.tp.message.datamodel.User(
+    User testUser = new User(
       java.util.UUID.randomUUID(), "TestUser", "password", "Test User", new java.util.HashSet<>(), ""
     );
     session.connect(testUser);

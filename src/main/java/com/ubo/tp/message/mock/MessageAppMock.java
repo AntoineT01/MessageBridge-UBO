@@ -1,10 +1,10 @@
 package com.ubo.tp.message.mock;
 
-import com.ubo.tp.message.common.ImageUtils;
+import com.ubo.tp.message.common.utils.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
-import com.ubo.tp.message.core.EntityManager;
-import com.ubo.tp.message.datamodel.User;
-import com.ubo.tp.message.datamodel.Message;
+import com.ubo.tp.message.core.entity.EntityManager;
+import com.ubo.tp.message.core.datamodel.User;
+import com.ubo.tp.message.core.datamodel.Message;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;

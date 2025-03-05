@@ -1,4 +1,4 @@
-package com.ubo.tp.message.common;
+package com.ubo.tp.message.common.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

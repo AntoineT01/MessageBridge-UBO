@@ -1,6 +1,6 @@
-package com.ubo.tp.message.ihm.message;
+package com.ubo.tp.message.message.view;
 
-import com.ubo.tp.message.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.Message;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;

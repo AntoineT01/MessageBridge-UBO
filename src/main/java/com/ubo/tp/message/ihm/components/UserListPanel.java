@@ -1,10 +1,11 @@
 package com.ubo.tp.message.ihm.components;
 
-import com.ubo.tp.message.common.IconFactory;
+import com.ubo.tp.message.common.ui.IconFactory;
+import com.ubo.tp.message.common.constants.Constants;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.database.IDatabaseObserver;
-import com.ubo.tp.message.datamodel.Message;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.ihm.session.SessionManager;
 
 import javax.swing.*;
@@ -172,7 +173,7 @@ public class UserListPanel extends JPanel implements IDatabaseObserver {
     // Filtrer les doublons
     for (User user : allUsers) {
       // Ignorer l'utilisateur inconnu
-      if (user.getUuid().equals(com.ubo.tp.message.common.Constants.UNKNONWN_USER_UUID)) {
+      if (user.getUuid().equals(Constants.UNKNONWN_USER_UUID)) {
         continue;
       }
 
@@ -210,7 +211,7 @@ public class UserListPanel extends JPanel implements IDatabaseObserver {
     // Récupérer tous les utilisateurs et filtrer
     for (User user : mDatabase.getUsers()) {
       // Ignorer l'utilisateur inconnu
-      if (user.getUuid().equals(com.ubo.tp.message.common.Constants.UNKNONWN_USER_UUID)) {
+      if (user.getUuid().equals(Constants.UNKNONWN_USER_UUID)) {
         continue;
       }
 
@@ -236,7 +237,7 @@ public class UserListPanel extends JPanel implements IDatabaseObserver {
    */
   protected void addUserToTable(User user) {
     // Ignorer l'utilisateur inconnu
-    if (user.getUuid().equals(com.ubo.tp.message.common.Constants.UNKNONWN_USER_UUID)) {
+    if (user.getUuid().equals(Constants.UNKNONWN_USER_UUID)) {
       return;
     }
 

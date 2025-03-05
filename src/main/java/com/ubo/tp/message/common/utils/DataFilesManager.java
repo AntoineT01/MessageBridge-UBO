@@ -1,7 +1,8 @@
-package com.ubo.tp.message.common;
+package com.ubo.tp.message.common.utils;
 
-import com.ubo.tp.message.datamodel.Message;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.common.constants.Constants;
+import com.ubo.tp.message.core.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.User;
 
 import java.io.File;
 import java.util.Base64;
@@ -11,8 +12,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.ubo.tp.message.common.PropertiesManager.loadProperties;
-import static com.ubo.tp.message.common.PropertiesManager.writeProperties;
+import static com.ubo.tp.message.common.utils.PropertiesManager.loadProperties;
+import static com.ubo.tp.message.common.utils.PropertiesManager.writeProperties;
 
 
 /**
@@ -24,7 +25,7 @@ import static com.ubo.tp.message.common.PropertiesManager.writeProperties;
 public class DataFilesManager {
 
 	public static final User UNKNOWN_USER = new User(Constants.UNKNONWN_USER_UUID, "<Inconnu>", "--", "<Inconnu>",
-			new HashSet<>(), "");
+	                                                 new HashSet<>(), "");
 
 	/**
 	 * Clé du fichier de propriété pour l'attribut uuid

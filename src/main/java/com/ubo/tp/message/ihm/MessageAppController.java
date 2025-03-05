@@ -1,9 +1,9 @@
 package com.ubo.tp.message.ihm;
 
-import com.ubo.tp.message.core.EntityManager;
+import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.session.ISessionObserver;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.ihm.components.LoginPanel;
 import com.ubo.tp.message.ihm.components.RegisterPanel;
 import com.ubo.tp.message.ihm.components.SearchUserPanel;

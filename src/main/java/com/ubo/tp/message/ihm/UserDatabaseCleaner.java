@@ -1,8 +1,9 @@
 package com.ubo.tp.message.ihm;
 
-import com.ubo.tp.message.core.EntityManager;
+import com.ubo.tp.message.common.constants.Constants;
+import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.database.IDatabase;
-import com.ubo.tp.message.datamodel.User;
+import com.ubo.tp.message.core.datamodel.User;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ public class UserDatabaseCleaner {
       String tag = user.getUserTag();
 
       // Ignorer l'utilisateur inconnu
-      if (user.getUuid().equals(com.ubo.tp.message.common.Constants.UNKNONWN_USER_UUID)) {
+      if (user.getUuid().equals(Constants.UNKNONWN_USER_UUID)) {
         continue;
       }
 

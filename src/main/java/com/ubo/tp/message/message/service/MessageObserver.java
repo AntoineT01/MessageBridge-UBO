@@ -1,6 +1,6 @@
-package com.ubo.tp.message.service;
+package com.ubo.tp.message.message.service;
 
-import com.ubo.tp.message.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.Message;
 
 /**
  * Interface d’observation pour la réception de notifications lors de l’envoi d’un nouveau message.

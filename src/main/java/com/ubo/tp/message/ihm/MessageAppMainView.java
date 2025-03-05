@@ -5,8 +5,8 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import com.ubo.tp.message.common.IconFactory;
-import com.ubo.tp.message.common.ImageUtils;
+import com.ubo.tp.message.common.ui.IconFactory;
+import com.ubo.tp.message.common.utils.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
 
 /**
