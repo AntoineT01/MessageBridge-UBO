@@ -1,6 +1,7 @@
 package com.ubo.tp.message.components;
 
 import com.ubo.tp.message.app.MessageAppView;
+import com.ubo.tp.message.components.directory.controller.DirectoryController;
 import com.ubo.tp.message.components.message.controller.MessageController;
 import com.ubo.tp.message.components.message.service.IMessageService;
 import com.ubo.tp.message.components.message.service.MessageService;
@@ -24,7 +25,7 @@ import java.awt.event.ActionListener;
 /**
  * Contrôleur principal de l'application
  * Gère les transitions entre les différentes vues et les composants
- * Version modifiée pour utiliser la navigation avec JMenus
+ * Version simplifiée pour intégrer la navigation par menus avec correction du layout
  */
 public class ComponentsController implements ISessionObserver {
   /**
@@ -36,6 +37,11 @@ public class ComponentsController implements ISessionObserver {
    * Panneau de contenu principal
    */
   protected JPanel contentPanel;
+
+  /**
+   * Panneau central avec CardLayout
+   */
+  protected JPanel centerPanel;
 
   /**
    * Gestionnaire de session
@@ -78,6 +84,11 @@ public class ComponentsController implements ISessionObserver {
   protected MessageController messageController;
 
   /**
+   * Contrôleur de répertoire
+   */
+  protected DirectoryController directoryController;
+
+  /**
    * Constructeur
    */
   public ComponentsController(MessageAppView mainView, IDatabase database, EntityManager entityManager) {
@@ -102,6 +113,18 @@ public class ComponentsController implements ISessionObserver {
   }
 
   /**
+   * Configure le contrôleur de répertoire
+   */
+  public void setDirectoryController(DirectoryController directoryController) {
+    this.directoryController = directoryController;
+
+    // Connecter le contrôleur de répertoire au composant de navigation
+    if (navigationComponent != null) {
+      navigationComponent.setDirectoryController(directoryController);
+    }
+  }
+
+  /**
    * Initialisation de l'interface graphique
    */
   protected void initGUI() {
@@ -117,7 +140,7 @@ public class ComponentsController implements ISessionObserver {
 
     // Créer le composant de navigation
     navigationComponent = new NavigationComponent(sessionManager);
-    navigationComponent.setMainView(mainView); // Important pour mettre à jour les menus
+    navigationComponent.setMainFrame(mainView);
 
     // Créer le service et le panneau de messages
     IMessageService messageService = new MessageService(database);
@@ -136,8 +159,11 @@ public class ComponentsController implements ISessionObserver {
     // Configurer les actions pour le composant de navigation
     setupNavigationActions();
 
+    // Créer un panneau pour le contenu principal
+    JPanel mainContentPanel = new JPanel(new BorderLayout());
+
     // Panneau central avec CardLayout pour les différentes vues
-    JPanel centerPanel = new JPanel(new CardLayout());
+    centerPanel = new JPanel(new CardLayout());
     centerPanel.add(profileComponent.getComponent(), "profile");
 
     // Créer un panneau pour afficher les messages
@@ -145,9 +171,11 @@ public class ComponentsController implements ISessionObserver {
     messagesContainer.add(messagePanel, BorderLayout.CENTER);
     centerPanel.add(messagesContainer, "messages");
 
+    mainContentPanel.add(centerPanel, BorderLayout.CENTER);
+
     // Ajouter les vues au panneau de contenu
     contentPanel.add(authComponent.getComponent(), "auth");
-    contentPanel.add(centerPanel, "main");
+    contentPanel.add(mainContentPanel, "main");
   }
 
   /**
@@ -174,27 +202,30 @@ public class ComponentsController implements ISessionObserver {
 
     // Action pour "À propos"
     navigationComponent.setAboutActionListener(e -> mainView.showAboutDialog());
-
-    // Action pour changer le répertoire
-//    navigationComponent.setChangeDirectoryActionListener(e ->
-//                                                           mainView.firePropertyChange("ACTION_CHANGE_DIRECTORY", false, true));
   }
 
   /**
    * Configure les événements pour la vue principale
    */
   public void setupViewEvents() {
-    // Configurer les événements pour le contrôleur
-    mainView.addPropertyChangeListener("ACTION_SHOW_PROFILE", evt -> {
-      showUserProfileView();
-    });
+    // Configurer l'action de sortie
+    mainView.setExitListener(e -> {
+      // Demander confirmation à l'utilisateur
+      int response = JOptionPane.showConfirmDialog(
+        mainView,
+        "Voulez-vous vraiment quitter l'application ?",
+        "Confirmation",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE
+      );
 
-    mainView.addPropertyChangeListener("ACTION_SEARCH_USERS", evt -> {
-      showSearchUserView();
-    });
-
-    mainView.addPropertyChangeListener("ACTION_LOGOUT", evt -> {
-      sessionManager.logout();
+      if (response == JOptionPane.YES_OPTION) {
+        // Arrêter proprement l'application
+        if (directoryController != null) {
+          directoryController.shutdown();
+        }
+        System.exit(0);
+      }
     });
   }
 
@@ -239,7 +270,6 @@ public class ComponentsController implements ISessionObserver {
     mainCl.show(contentPanel, "main");
 
     // Afficher le profil dans le panneau central
-    JPanel centerPanel = (JPanel) contentPanel.getComponent(1);
     CardLayout centerCl = (CardLayout) centerPanel.getLayout();
     centerCl.show(centerPanel, "profile");
   }
@@ -258,7 +288,6 @@ public class ComponentsController implements ISessionObserver {
     mainCl.show(contentPanel, "main");
 
     // Afficher les messages dans le panneau central
-    JPanel centerPanel = (JPanel) contentPanel.getComponent(1);
     CardLayout centerCl = (CardLayout) centerPanel.getLayout();
     centerCl.show(centerPanel, "messages");
   }
@@ -306,5 +335,12 @@ public class ComponentsController implements ISessionObserver {
    */
   public SessionManager getSessionManager() {
     return sessionManager;
+  }
+
+  /**
+   * Récupère le composant de navigation
+   */
+  public NavigationComponent getNavigationComponent() {
+    return navigationComponent;
   }
 }

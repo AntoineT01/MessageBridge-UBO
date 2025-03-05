@@ -1,6 +1,7 @@
 package com.ubo.tp.message.components.navigation.view;
 
 import com.ubo.tp.message.common.ui.IconFactory;
+import com.ubo.tp.message.components.directory.controller.DirectoryController;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -40,6 +41,16 @@ public class NavigationViewDisconnected extends JPanel {
   private JMenuItem registerMenuItem;
   private JMenuItem changeDirectoryMenuItem;
   private JMenuItem aboutMenuItem;
+
+  /**
+   * Contrôleur de répertoire
+   */
+  private DirectoryController directoryController;
+
+  /**
+   * Frame parente
+   */
+  private JFrame parentFrame;
 
   /**
    * Constructeur
@@ -107,6 +118,22 @@ public class NavigationViewDisconnected extends JPanel {
     JLabel welcomeLabel = new JLabel("Bienvenue dans MessageApp - Veuillez vous connecter ou vous inscrire");
     welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
     add(welcomeLabel, BorderLayout.EAST);
+
+    // Action par défaut pour le changement de répertoire
+    changeDirectoryMenuItem.addActionListener(e -> {
+      if (directoryController != null && parentFrame != null) {
+        boolean success = directoryController.selectAndChangeExchangeDirectory(parentFrame);
+        if (success) {
+          JOptionPane.showMessageDialog(parentFrame,
+                                        "Le répertoire d'échange a été changé avec succès.",
+                                        "Succès", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+          JOptionPane.showMessageDialog(parentFrame,
+                                        "Impossible de changer le répertoire d'échange.",
+                                        "Erreur", JOptionPane.ERROR_MESSAGE);
+        }
+      }
+    });
   }
 
   /**
@@ -134,7 +161,21 @@ public class NavigationViewDisconnected extends JPanel {
    * Définit l'écouteur pour le bouton de changement de répertoire.
    */
   public void setChangeDirectoryButtonListener(ActionListener listener) {
-    changeDirectoryMenuItem.addActionListener(listener);
+    // Nous gérons maintenant directement cette action
+  }
+
+  /**
+   * Définit le contrôleur de répertoire
+   */
+  public void setDirectoryController(DirectoryController directoryController) {
+    this.directoryController = directoryController;
+  }
+
+  /**
+   * Définit la frame parente
+   */
+  public void setParentFrame(JFrame parentFrame) {
+    this.parentFrame = parentFrame;
   }
 
   /**

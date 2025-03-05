@@ -55,8 +55,8 @@ public class MessageAppLauncher {
 			// Création du contrôleur de répertoire
 			DirectoryController directoryController = new DirectoryController(entityManager);
 
-			// Configurer les actions pour la vue principale
-			configureViewActions(mainView, controller, directoryController);
+			// Connecter le contrôleur de répertoire au contrôleur principal
+			controller.setDirectoryController(directoryController);
 
 			// Demander à l'utilisateur de sélectionner un répertoire d'échange
 			boolean directorySelected = directoryController.selectAndChangeExchangeDirectory(mainView);
@@ -87,43 +87,6 @@ public class MessageAppLauncher {
 
 			// Afficher la fenêtre principale
 			mainView.setVisible(true);
-		});
-	}
-
-	/**
-	 * Configure les actions pour la vue principale
-	 */
-	private static void configureViewActions(MessageAppView mainView, ComponentsController controller, DirectoryController directoryController) {
-		// Action pour quitter l'application
-		mainView.addPropertyChangeListener("ACTION_EXIT", evt -> {
-			// Demander confirmation à l'utilisateur
-			int response = JOptionPane.showConfirmDialog(
-				mainView,
-				"Voulez-vous vraiment quitter l'application ?",
-				"Confirmation",
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE
-			);
-
-			if (response == JOptionPane.YES_OPTION) {
-				// Arrêter proprement l'application
-				directoryController.shutdown();
-				System.exit(0);
-			}
-		});
-
-		// Configurer l'action pour changer le répertoire d'échange
-		mainView.addPropertyChangeListener("ACTION_CHANGE_DIRECTORY", evt -> {
-			boolean success = directoryController.selectAndChangeExchangeDirectory(mainView);
-			if (success) {
-				JOptionPane.showMessageDialog(mainView,
-				                              "Le répertoire d'échange a été changé avec succès.",
-				                              "Succès", JOptionPane.INFORMATION_MESSAGE);
-			} else {
-				JOptionPane.showMessageDialog(mainView,
-				                              "Impossible de changer le répertoire d'échange.",
-				                              "Erreur", JOptionPane.ERROR_MESSAGE);
-			}
 		});
 	}
 

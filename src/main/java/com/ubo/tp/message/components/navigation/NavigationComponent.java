@@ -1,6 +1,6 @@
 package com.ubo.tp.message.components.navigation;
 
-import com.ubo.tp.message.app.MessageAppView;
+import com.ubo.tp.message.components.directory.controller.DirectoryController;
 import com.ubo.tp.message.components.navigation.controller.NavigationController;
 import com.ubo.tp.message.components.navigation.model.NavigationModel;
 import com.ubo.tp.message.components.navigation.view.NavigationViewConnected;
@@ -43,9 +43,14 @@ public class NavigationComponent {
   private final NavigationController controller;
 
   /**
-   * Vue principale de l'application
+   * Frame principale
    */
-  private MessageAppView mainView;
+  private JFrame mainFrame;
+
+  /**
+   * Contrôleur de répertoire
+   */
+  private DirectoryController directoryController;
 
   /**
    * Constructeur.
@@ -78,10 +83,42 @@ public class NavigationComponent {
   }
 
   /**
-   * Définit la vue principale de l'application
+   * Définit la frame principale
    */
-  public void setMainView(MessageAppView mainView) {
-    this.mainView = mainView;
+  public void setMainFrame(JFrame mainFrame) {
+    this.mainFrame = mainFrame;
+
+    // Mettre à jour les vues avec la frame parente
+    connectedView.setParentFrame(mainFrame);
+    disconnectedView.setParentFrame(mainFrame);
+
+    // Mettre à jour la barre de menu de la frame
+    updateMenu();
+  }
+
+  /**
+   * Définit le contrôleur de répertoire
+   */
+  public void setDirectoryController(DirectoryController directoryController) {
+    this.directoryController = directoryController;
+
+    // Mettre à jour les vues avec le contrôleur
+    connectedView.setDirectoryController(directoryController);
+    disconnectedView.setDirectoryController(directoryController);
+  }
+
+  /**
+   * Met à jour la barre de menu de la frame principale
+   */
+  private void updateMenu() {
+    if (mainFrame != null) {
+      if (controller.isShowingConnectedView()) {
+        mainFrame.setJMenuBar(connectedView.getMenuBar());
+      } else {
+        mainFrame.setJMenuBar(disconnectedView.getMenuBar());
+      }
+      mainFrame.revalidate();
+    }
   }
 
   /**
@@ -89,17 +126,6 @@ public class NavigationComponent {
    */
   public JComponent getComponent() {
     return mainPanel;
-  }
-
-  /**
-   * Récupère la barre de menu appropriée (connectée ou déconnectée)
-   */
-  public JMenuBar getMenuBar() {
-    if (controller.isShowingConnectedView()) {
-      return connectedView.getMenuBar();
-    } else {
-      return disconnectedView.getMenuBar();
-    }
   }
 
   /**
@@ -135,11 +161,8 @@ public class NavigationComponent {
     mainPanel.revalidate();
     mainPanel.repaint();
 
-    // Si la vue principale est définie, mettre à jour sa barre de menu
-    if (mainView != null) {
-      mainView.setJMenuBar(connectedView.getMenuBar());
-      mainView.revalidate();
-    }
+    // Mettre à jour la barre de menu
+    updateMenu();
   }
 
   /**
@@ -152,11 +175,8 @@ public class NavigationComponent {
     mainPanel.revalidate();
     mainPanel.repaint();
 
-    // Si la vue principale est définie, mettre à jour sa barre de menu
-    if (mainView != null) {
-      mainView.setJMenuBar(disconnectedView.getMenuBar());
-      mainView.revalidate();
-    }
+    // Mettre à jour la barre de menu
+    updateMenu();
   }
 
   /**
@@ -210,8 +230,10 @@ public class NavigationComponent {
 
   /**
    * Définit l'écouteur pour l'action de changement de répertoire.
+   * Cette méthode est maintenant une no-op car nous utilisons directement
+   * le DirectoryController dans les vues.
    */
   public void setChangeDirectoryActionListener(ActionListener listener) {
-    controller.setChangeDirectoryActionListener(listener);
+    // Ne rien faire - géré directement dans les vues
   }
 }

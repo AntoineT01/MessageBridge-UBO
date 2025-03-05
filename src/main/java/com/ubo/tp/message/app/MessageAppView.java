@@ -1,17 +1,18 @@
 package com.ubo.tp.message.app;
 
-import com.ubo.tp.message.common.ui.IconFactory;
 import com.ubo.tp.message.common.utils.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
  * Vue principale de l'application MessageApp.
- * Version simplifiée pour utiliser les menus du composant de navigation.
+ * Version extrêmement simplifiée pour éviter les problèmes de PropertyChangeSupport.
  */
 public class MessageAppView extends JFrame {
 
@@ -24,6 +25,11 @@ public class MessageAppView extends JFrame {
    * Panneau de contenu principal
    */
   private JPanel contentPanel;
+
+  /**
+   * Écouteur pour l'action de sortie
+   */
+  private ActionListener exitListener;
 
   /**
    * Constructeur
@@ -51,7 +57,9 @@ public class MessageAppView extends JFrame {
     this.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
-        firePropertyChange("ACTION_EXIT", false, true);
+        if (exitListener != null) {
+          exitListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "exit"));
+        }
       }
     });
 
@@ -95,4 +103,19 @@ public class MessageAppView extends JFrame {
     this.repaint();
   }
 
+  /**
+   * Définit l'écouteur pour l'action de sortie
+   */
+  public void setExitListener(ActionListener exitListener) {
+    this.exitListener = exitListener;
+  }
+
+  /**
+   * Met à jour le menu en fonction de l'état de connexion
+   * Cette méthode est maintenant vide car la gestion des menus
+   * est entièrement déléguée au composant de navigation
+   */
+  public void updateMenuForConnectedUser(boolean isConnected) {
+    // Ne rien faire - la mise à jour est gérée par NavigationComponent
+  }
 }
