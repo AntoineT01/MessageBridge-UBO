@@ -1,4 +1,4 @@
-package com.ubo.tp.message.ihm;
+package com.ubo.tp.message.components.directory.view;
 
 import com.ubo.tp.message.common.utils.ImageUtils;
 
@@ -31,4 +31,25 @@ public class FileChooserWithLogo {
     }
     return null;
   }
+
+  public static class MyFileChooser extends JFileChooser {
+
+    private final Image iconImage;
+
+    public MyFileChooser(Image iconImage) {
+      super();
+      this.iconImage = iconImage;
+    }
+
+    @Override
+    protected JDialog createDialog(Component parent) throws HeadlessException {
+      // On laisse JFileChooser créer le JDialog
+      JDialog dialog = super.createDialog(parent);
+      // Puis on applique l’icône souhaitée
+      dialog.setIconImage(iconImage);
+      return dialog;
+    }
+  }
 }
+
+
