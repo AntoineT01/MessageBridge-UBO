@@ -28,4 +28,14 @@ public interface IAuthComponent extends IComponent {
    * @param listener L'écouteur à définir.
    */
   void setAuthSwitchListener(ActionListener listener);
+
+  /**
+   * Affiche la vue de connexion.
+   */
+  void showLoginView();
+
+  /**
+   * Affiche la vue d'inscription.
+   */
+  void showRegisterView();
 }

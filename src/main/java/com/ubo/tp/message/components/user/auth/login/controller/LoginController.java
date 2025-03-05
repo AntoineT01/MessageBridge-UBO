@@ -1,7 +1,7 @@
-package com.ubo.tp.message.ihm.auth.controller;
+package com.ubo.tp.message.components.user.auth.login.controller;
 
-import com.ubo.tp.message.ihm.auth.model.LoginModel;
-import com.ubo.tp.message.ihm.auth.view.LoginView;
+import com.ubo.tp.message.components.user.auth.login.model.LoginModel;
+import com.ubo.tp.message.components.user.auth.login.view.LoginView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
