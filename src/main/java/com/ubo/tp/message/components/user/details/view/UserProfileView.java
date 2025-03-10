@@ -14,16 +14,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Vue pour l'affichage du profil d'un utilisateur.
  */
 public class UserProfileView extends JPanel {
-  /**
-   * Icône de l'utilisateur.
-   */
-  private JLabel userIconLabel;
 
   /**
    * Tag de l'utilisateur.
@@ -96,6 +91,7 @@ public class UserProfileView extends JPanel {
    * Initialisation de l'interface graphique.
    */
   private void initGUI() {
+    JLabel userIconLabel;
     this.setLayout(new BorderLayout(10, 10));
     this.setBorder(new EmptyBorder(20, 20, 20, 20));
 
@@ -177,9 +173,9 @@ public class UserProfileView extends JPanel {
     messagesPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     messagesScrollPane = new JScrollPane(messagesPanel);
-    messagesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+    messagesScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
     messagesScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-    messagesScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    messagesScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     messagesScrollPane.setPreferredSize(new Dimension(400, 300));
 
     tabbedPane.addTab("Messages", messagesScrollPane);
@@ -266,11 +262,7 @@ public class UserProfileView extends JPanel {
 
       // Activer le bouton de suivi uniquement si on n'est pas sur son propre profil
       User connectedUser = (User) getClientProperty("connectedUser");
-      if (connectedUser != null && connectedUser.equals(user)) {
-        followButton.setEnabled(false);
-      } else {
-        followButton.setEnabled(true);
-      }
+      followButton.setEnabled(connectedUser == null || !connectedUser.equals(user));
     }
   }
 
@@ -285,7 +277,7 @@ public class UserProfileView extends JPanel {
     // Trier les messages par date (du plus récent au plus ancien)
     List<Message> sortedMessages = messages.stream()
       .sorted((m1, m2) -> Long.compare(m2.getEmissionDate(), m1.getEmissionDate()))
-      .collect(Collectors.toList());
+      .toList();
 
     // Ajouter les messages au panneau
     for (Message message : sortedMessages) {

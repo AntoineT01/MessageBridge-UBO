@@ -3,14 +3,12 @@ package com.ubo.tp.message.common.ui;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
 public class SearchBar extends JPanel {
   private final RoundedTextArea searchArea;
   private final JButton searchButton;
-  private Timer dynamicSearchTimer; // Timer pour le debounce
 
   /**
    * Constructeur de la SearchBar.

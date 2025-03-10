@@ -1,4 +1,4 @@
-package com.ubo.tp.message.ihm;
+package com.ubo.tp.message.components;
 
 import javax.swing.JComponent;
 

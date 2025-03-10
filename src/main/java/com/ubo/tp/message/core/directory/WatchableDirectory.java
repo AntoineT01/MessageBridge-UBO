@@ -2,10 +2,7 @@ package com.ubo.tp.message.core.directory;
 
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Classe responsable de la surveillance d'un répertoire (avec notification des
@@ -167,9 +164,7 @@ public class WatchableDirectory implements IWatchableDirectory {
 			Set<File> oldFiles = new HashSet<>(this.mPresentFiles);
 
 			// Récupération de fichiers actuellement présent
-			for (File file : mDirectory.listFiles()) {
-				presentFiles.add(file);
-			}
+			presentFiles.addAll(Arrays.asList(mDirectory.listFiles()));
 
 			// Récupération des nouveaux fichiers
 			for (File presentFile : presentFiles) {

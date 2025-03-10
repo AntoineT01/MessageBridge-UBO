@@ -55,7 +55,7 @@ public class LoginView extends JPanel {
     constraints.insets = new Insets(5, 5, 5, 5);
 
     // Titre du panneau
-    JLabel titleLabel = new JLabel("Connexion", JLabel.CENTER);
+    JLabel titleLabel = new JLabel("Connexion", SwingConstants.CENTER);
     titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
     titleLabel.setIcon(IconFactory.createUserIcon(IconFactory.ICON_MEDIUM));
     constraints.gridx = 0;

@@ -1,8 +1,5 @@
 package com.ubo.tp.message.core.session;
 
-import com.ubo.tp.message.core.session.ISession;
-import com.ubo.tp.message.core.session.ISessionObserver;
-import com.ubo.tp.message.core.session.Session;
 import com.ubo.tp.message.core.datamodel.User;
 
 import java.util.HashSet;

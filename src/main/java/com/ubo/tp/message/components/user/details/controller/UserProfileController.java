@@ -54,12 +54,7 @@ public class UserProfileController {
    */
   private void initEventListeners() {
     // Écouteur pour le bouton de suivi
-    view.setFollowButtonListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        toggleFollow();
-      }
-    });
+    view.setFollowButtonListener(e -> toggleFollow());
 
     // Écouteur pour le bouton de retour
     view.setBackButtonListener(new ActionListener() {

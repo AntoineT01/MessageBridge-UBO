@@ -10,6 +10,7 @@ import com.ubo.tp.message.core.session.ISession;
 import com.ubo.tp.message.core.session.Session;
 
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import java.awt.GridLayout;
 import java.util.HashSet;
 import java.util.UUID;
@@ -50,7 +51,7 @@ public class MessageMainTestStandalone {
 
     // Création d'une fenêtre principale affichant les deux panneaux côte à côte
     JFrame frame = new JFrame("Test Multi-User Messaging");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.setLayout(new GridLayout(1, 2));
     frame.add(integrationA.getMessagePanel());
     frame.add(integrationB.getMessagePanel());

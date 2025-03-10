@@ -63,7 +63,7 @@ public class UserDatabaseCleaner {
     }
 
     // Réécrire les utilisateurs uniques pour s'assurer qu'ils sont correctement synchronisés
-    if (usersToRemove.size() > 0) {
+    if (!usersToRemove.isEmpty()) {
       for (User user : uniqueUsersByTag.values()) {
         try {
           entityManager.writeUserFile(user);

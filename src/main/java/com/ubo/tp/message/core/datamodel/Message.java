@@ -70,7 +70,7 @@ public class Message {
 		mUserTags = new HashSet<>();
 
 		// Initialisation des mots-clés
-		this.initTags(new String(mText));
+		this.initTags(mText);
 	}
 
 	/**

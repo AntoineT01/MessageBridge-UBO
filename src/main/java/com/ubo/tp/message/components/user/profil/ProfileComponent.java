@@ -1,7 +1,6 @@
 package com.ubo.tp.message.components.user.profil;
 
 
-import com.ubo.tp.message.components.user.profil.IProfileComponent;
 import com.ubo.tp.message.components.user.profil.controller.ProfileController;
 import com.ubo.tp.message.components.user.profil.model.ProfileModel;
 import com.ubo.tp.message.components.user.profil.view.ProfileView;
@@ -9,8 +8,9 @@ import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 /**
  * Implémentation du composant de profil utilisateur.

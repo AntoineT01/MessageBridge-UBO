@@ -1,5 +1,6 @@
 package com.ubo.tp.message.components.user.details;
 
+import com.ubo.tp.message.components.IComponent;
 import com.ubo.tp.message.components.user.details.controller.UserProfileController;
 import com.ubo.tp.message.components.user.details.model.UserProfileModel;
 import com.ubo.tp.message.components.user.details.view.UserProfileView;
@@ -7,10 +8,10 @@ import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.SessionManager;
-import com.ubo.tp.message.ihm.IComponent;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 
 /**
@@ -37,11 +38,6 @@ public class UserProfileComponent implements IComponent {
    * Modèle du profil utilisateur.
    */
   private final UserProfileModel profileModel;
-
-  /**
-   * Écouteur pour l'action de retour à la liste des utilisateurs.
-   */
-  private ActionListener backToListListener;
 
   /**
    * Constructeur.
@@ -99,7 +95,6 @@ public class UserProfileComponent implements IComponent {
    * @param listener L'écouteur à définir.
    */
   public void setBackToListListener(ActionListener listener) {
-    this.backToListListener = listener;
     profileController.setBackToListListener(listener);
   }
 

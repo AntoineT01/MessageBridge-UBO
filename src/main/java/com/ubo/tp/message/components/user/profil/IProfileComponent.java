@@ -1,6 +1,5 @@
 package com.ubo.tp.message.components.user.profil;
-
-import com.ubo.tp.message.ihm.IComponent;
+import com.ubo.tp.message.components.IComponent;
 
 /**
  * Interface pour le composant de profil utilisateur.

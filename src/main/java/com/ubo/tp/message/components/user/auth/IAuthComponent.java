@@ -1,6 +1,7 @@
 package com.ubo.tp.message.components.user.auth;
 
-import com.ubo.tp.message.ihm.IComponent;
+
+import com.ubo.tp.message.components.IComponent;
 
 import java.awt.event.ActionListener;
 

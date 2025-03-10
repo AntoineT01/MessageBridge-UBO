@@ -5,9 +5,6 @@ import com.ubo.tp.message.components.user.profil.view.ProfileView;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 /**
  * Contrôleur pour la gestion du profil utilisateur.
  */
@@ -47,12 +44,7 @@ public class ProfileController {
    */
   private void initEventListeners() {
     // Écouteur pour le bouton de mise à jour
-    view.setUpdateButtonListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        updateProfile();
-      }
-    });
+    view.setUpdateButtonListener(e -> updateProfile());
   }
 
   /**

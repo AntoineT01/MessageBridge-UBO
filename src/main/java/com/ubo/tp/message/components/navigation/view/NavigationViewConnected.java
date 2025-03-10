@@ -20,27 +20,11 @@ public class NavigationViewConnected extends JPanel {
   private JMenuBar menuBar;
 
   /**
-   * Menu Fichier
-   */
-  private JMenu fileMenu;
-
-  /**
-   * Menu Utilisateur
-   */
-  private JMenu userMenu;
-
-  /**
-   * Menu Aide
-   */
-  private JMenu helpMenu;
-
-  /**
    * Items de menu
    */
   private JMenuItem profileMenuItem;
   private JMenuItem messagesMenuItem;
   private JMenuItem searchMenuItem;
-  private JMenuItem changeDirectoryMenuItem;
   private JMenuItem logoutMenuItem;
   private JMenuItem aboutMenuItem;
 
@@ -70,6 +54,10 @@ public class NavigationViewConnected extends JPanel {
    * Initialisation de l'interface graphique
    */
   private void initGUI() {
+    JMenuItem changeDirectoryMenuItem;
+    JMenu helpMenu;
+    JMenu userMenu;
+    JMenu fileMenu;
     // Utiliser un BorderLayout pour le panneau principal
     setLayout(new BorderLayout());
     setBorder(new EmptyBorder(5, 0, 5, 0));

@@ -1,15 +1,16 @@
 package com.ubo.tp.message.components.user.search;
 
+import com.ubo.tp.message.components.IComponent;
 import com.ubo.tp.message.components.user.search.controller.SearchController;
 import com.ubo.tp.message.components.user.search.model.SearchModel;
 import com.ubo.tp.message.components.user.search.view.SearchView;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.SessionManager;
-import com.ubo.tp.message.ihm.IComponent;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 
 /**

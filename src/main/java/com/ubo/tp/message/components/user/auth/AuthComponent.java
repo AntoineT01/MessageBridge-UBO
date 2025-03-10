@@ -10,9 +10,11 @@ import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionListener;
 
 /**
@@ -114,20 +116,10 @@ public class AuthComponent implements IAuthComponent {
    */
   private void setupSwitchListeners() {
     // Quand on clique sur "S'inscrire" dans l'écran de connexion, on bascule vers l'écran d'inscription
-    loginController.setRegisterScreenListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        showRegisterView();
-      }
-    });
+    loginController.setRegisterScreenListener(e -> showRegisterView());
 
     // Quand on clique sur "Se connecter" dans l'écran d'inscription, on bascule vers l'écran de connexion
-    registerController.setLoginScreenListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        showLoginView();
-      }
-    });
+    registerController.setLoginScreenListener(e -> showLoginView());
   }
 
   @Override

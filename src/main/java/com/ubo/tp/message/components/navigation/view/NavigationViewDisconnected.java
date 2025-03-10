@@ -20,26 +20,10 @@ public class NavigationViewDisconnected extends JPanel {
   private JMenuBar menuBar;
 
   /**
-   * Menu Fichier
-   */
-  private JMenu fileMenu;
-
-  /**
-   * Menu Connexion
-   */
-  private JMenu connectionMenu;
-
-  /**
-   * Menu Aide
-   */
-  private JMenu helpMenu;
-
-  /**
    * Items de menu
    */
   private JMenuItem loginMenuItem;
   private JMenuItem registerMenuItem;
-  private JMenuItem changeDirectoryMenuItem;
   private JMenuItem aboutMenuItem;
 
   /**
@@ -63,6 +47,10 @@ public class NavigationViewDisconnected extends JPanel {
    * Initialisation de l'interface graphique
    */
   private void initGUI() {
+    JMenuItem changeDirectoryMenuItem;
+    JMenu connectionMenu;
+    JMenu helpMenu;
+    JMenu fileMenu;
     // Utiliser un BorderLayout pour le panneau principal
     setLayout(new BorderLayout());
     setBorder(new EmptyBorder(5, 0, 5, 0));
@@ -116,7 +104,7 @@ public class NavigationViewDisconnected extends JPanel {
 
     // Ajouter un message de bienvenue
     JLabel welcomeLabel = new JLabel("Bienvenue dans MessageApp - Veuillez vous connecter ou vous inscrire");
-    welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
+    welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
     add(welcomeLabel, BorderLayout.EAST);
 
     // Action par défaut pour le changement de répertoire
