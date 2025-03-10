@@ -3,9 +3,16 @@ package com.ubo.tp.message.components.navigation.view;
 import com.ubo.tp.message.common.ui.IconFactory;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 
 /**
@@ -143,13 +150,6 @@ public class NavigationViewDisconnected extends JPanel {
    */
   public void setAboutButtonListener(ActionListener listener) {
     aboutMenuItem.addActionListener(listener);
-  }
-
-  /**
-   * Définit l'écouteur pour le bouton de changement de répertoire.
-   */
-  public void setChangeDirectoryButtonListener(ActionListener listener) {
-    // Nous gérons maintenant directement cette action
   }
 
   /**

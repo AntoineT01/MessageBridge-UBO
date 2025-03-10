@@ -5,7 +5,13 @@ import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.datamodel.User;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.ubo.tp.message.common.utils.PropertiesManager.loadProperties;
 import static com.ubo.tp.message.common.utils.PropertiesManager.writeProperties;

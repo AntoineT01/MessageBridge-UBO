@@ -7,7 +7,7 @@ import com.ubo.tp.message.core.directory.IWatchableDirectory;
 import com.ubo.tp.message.core.directory.WatchableDirectory;
 import com.ubo.tp.message.core.entity.EntityManager;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 import java.io.File;
 import java.util.Properties;
 

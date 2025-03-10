@@ -3,9 +3,16 @@ package com.ubo.tp.message.components.navigation.view;
 import com.ubo.tp.message.common.ui.IconFactory;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
 /**

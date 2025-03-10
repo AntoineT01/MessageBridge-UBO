@@ -1,7 +1,10 @@
 package com.ubo.tp.message.common.ui;
 
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Insets;
 
 /**
  * Simple bordure arrondie pour donner un aspect "bubble" aux champs/boutons.

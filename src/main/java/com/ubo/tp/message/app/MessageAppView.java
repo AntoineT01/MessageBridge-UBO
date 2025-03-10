@@ -3,8 +3,12 @@ package com.ubo.tp.message.app;
 import com.ubo.tp.message.common.utils.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;

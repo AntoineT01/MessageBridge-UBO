@@ -1,14 +1,26 @@
 package com.ubo.tp.message.mock;
 
 import com.ubo.tp.message.common.utils.ImageUtils;
+import com.ubo.tp.message.common.utils.RandomUtils;
 import com.ubo.tp.message.core.database.IDatabase;
-import com.ubo.tp.message.core.entity.EntityManager;
-import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.datamodel.Message;
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import com.ubo.tp.message.core.datamodel.User;
+import com.ubo.tp.message.core.entity.EntityManager;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import java.awt.Button;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 public class MessageAppMock {
 
@@ -55,13 +67,13 @@ public class MessageAppMock {
 
     Button addUserButton = new Button("Add User");
     addUserButton.setPreferredSize(new Dimension(100, 50));
-    addUserButton.addActionListener(e -> addUserInDatabase());
+    addUserButton.addActionListener(_ -> addUserInDatabase());
     gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1; gbc.anchor = GridBagConstraints.WEST;
     mFrame.add(addUserButton, gbc);
 
     Button addMessageButton = new Button("Add Message");
     addMessageButton.setPreferredSize(new Dimension(100, 50));
-    addMessageButton.addActionListener(e -> addMessageInDatabase());
+    addMessageButton.addActionListener(_ -> addMessageInDatabase());
     gbc.gridx = 1; gbc.gridy = 1; gbc.anchor = GridBagConstraints.EAST;
     mFrame.add(addMessageButton, gbc);
 
@@ -72,13 +84,13 @@ public class MessageAppMock {
 
     Button sendUserButton = new Button("Write User");
     sendUserButton.setPreferredSize(new Dimension(100, 50));
-    sendUserButton.addActionListener(e -> writeUser());
+    sendUserButton.addActionListener(_ -> writeUser());
     gbc.gridx = 0; gbc.gridy = 3; gbc.anchor = GridBagConstraints.WEST;
     mFrame.add(sendUserButton, gbc);
 
     Button sendMessageButton = new Button("Write Message");
     sendMessageButton.setPreferredSize(new Dimension(100, 50));
-    sendMessageButton.addActionListener(e -> writeMessage());
+    sendMessageButton.addActionListener(_ -> writeMessage());
     gbc.gridx = 1; gbc.gridy = 3; gbc.anchor = GridBagConstraints.EAST;
     mFrame.add(sendMessageButton, gbc);
   }
@@ -94,7 +106,7 @@ public class MessageAppMock {
   }
 
   protected User generateUser() {
-    int randomInt = new Random().nextInt(99999);
+    int randomInt = RandomUtils.randomInt();
     String userName = "MockUser" + randomInt;
     return new User(UUID.randomUUID(), userName, "This_Is_Not_A_Password", userName, new HashSet<>(), "");
   }
@@ -114,7 +126,7 @@ public class MessageAppMock {
       addUserInDatabase();
     }
     List<User> users = new ArrayList<>(mDatabase.getUsers());
-    int userIndex = new Random().nextInt(users.size());
+    int userIndex = RandomUtils.randomInt();
     User randomUser = users.get(userIndex);
     return new Message(randomUser, "Message fictif!! #Mock #test");
   }

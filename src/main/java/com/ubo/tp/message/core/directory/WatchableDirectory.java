@@ -2,7 +2,11 @@ package com.ubo.tp.message.core.directory;
 
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Classe responsable de la surveillance d'un répertoire (avec notification des

@@ -2,11 +2,19 @@ package com.ubo.tp.message.components.directory.view;
 
 import com.ubo.tp.message.common.utils.ImageUtils;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.HeadlessException;
+import java.awt.Image;
 import java.io.File;
 
 public class FileChooserWithLogo {
+  private FileChooserWithLogo() {
+  }
 
   public static File showDirectoryChooser(Component parent) {
 

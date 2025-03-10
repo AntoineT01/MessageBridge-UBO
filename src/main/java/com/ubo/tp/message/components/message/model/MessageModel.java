@@ -1,13 +1,15 @@
 package com.ubo.tp.message.components.message.model;
 
+import com.ubo.tp.message.core.datamodel.IUserObserver;
 import com.ubo.tp.message.core.datamodel.Message;
+import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.session.ISession;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MessageModel {
+public class MessageModel implements IUserObserver {
   private final List<Message> messages = new ArrayList<>();
   private final List<IMessageObserver> observers = new ArrayList<>();
   private final ISession session;
@@ -78,5 +80,11 @@ public class MessageModel {
     for (IMessageObserver observer : observers) {
       observer.notifyMessageAdded();
     }
+  }
+
+  @Override
+  public void followListChanged(User user) {
+    System.out.println("MessageModel.followListChanged");
+    refresh();
   }
 }
