@@ -114,11 +114,7 @@ public class SearchController {
   private void updateFollowersCounts(Set<User> users) {
     int rowIndex = 0;
     for (User user : users) {
-      // Pour chaque utilisateur, récupérer le nombre de followers
-      // et mettre à jour la vue
-      // Note: Dans une application réelle, cette opération pourrait être coûteuse
-      // et devrait être optimisée
-      int followersCount = user.getUserTag().equals("@unknown") ? 0 : 0; // À remplacer par la vraie valeur
+      int followersCount = model.getFollowersCount(user);
       view.updateFollowersCount(rowIndex++, followersCount);
     }
   }

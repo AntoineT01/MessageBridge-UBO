@@ -5,7 +5,6 @@ import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.session.SessionManager;
 
 import java.util.Set;
-import java.util.HashSet;
 import java.util.stream.Collectors;
 
 /**
@@ -101,5 +100,10 @@ public class SearchModel {
    */
   public User getConnectedUser() {
     return sessionManager.getConnectedUser();
+  }
+
+  public int getFollowersCount(User user) {
+    return database.getFollowersCount(user);
+
   }
 }
