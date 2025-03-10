@@ -13,20 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Bulle de message affichant en haut le nom (en petite police) et,
- * en dessous, le message dont le texte est automatiquement wrapé si
- * la largeur dépasse une valeur maximale.
+ * Bulle de message affichant en haut le nom (en petite police) et, à droite,
+ * l'heure d'envoi (HH:mm) et, en dessous, le texte du message avec un wrapping automatique.
  */
 public class MessageBubble extends JPanel {
   private final String senderName;    // ex: "Alice (@Alice)"
   private final String messageText;
   private final boolean isOutgoing;   // true si c’est l’utilisateur connecté
+  private final String timeString;    // Heure d'envoi formatée (ex: "14:35")
   private static final int MAX_WIDTH = 250; // largeur maximale pour le texte
 
-  public MessageBubble(String senderName, String messageText, boolean isOutgoing) {
+  public MessageBubble(String senderName, String messageText, boolean isOutgoing, String timeString) {
     this.senderName = senderName;
     this.messageText = messageText;
     this.isOutgoing = isOutgoing;
+    this.timeString = timeString;
     setOpaque(false);
     // Marges internes réduites
     setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -64,7 +65,7 @@ public class MessageBubble extends JPanel {
         }
       } else {
         // Pour un mot normal, essayer de l'ajouter à la ligne courante
-        if (currentLine.length() == 0) {
+        if (currentLine.isEmpty()) {
           currentLine.append(word);
         } else {
           String testLine = currentLine + " " + word;
@@ -111,7 +112,12 @@ public class MessageBubble extends JPanel {
     FontMetrics fmName = g2.getFontMetrics();
     g2.setColor(Color.DARK_GRAY);
     g2.drawString(senderName, x, y + fmName.getAscent());
-    y += fmName.getHeight() + 2; // Petit espace après le nom
+
+    // Dessiner l'heure à droite sur la même ligne que le nom
+    int timeWidth = fmName.stringWidth(timeString);
+    g2.drawString(timeString, width - timeWidth - 8, y + fmName.getAscent());
+
+    y += fmName.getHeight() + 2; // Petit espace après le header
 
     // Dessiner le texte du message avec wrapping
     Font messageFont = originalFont.deriveFont(Font.PLAIN, 13f);
@@ -135,12 +141,16 @@ public class MessageBubble extends JPanel {
     FontMetrics fmMessage = getFontMetrics(messageFont);
 
     int nameWidth = fmName.stringWidth(senderName);
+    int timeWidth = fmName.stringWidth(timeString);
+    // On souhaite que la largeur soit suffisante pour contenir nom + espace + heure
+    int headerWidth = nameWidth + 10 + timeWidth;
+
     List<String> lines = wrapText(messageText, fmMessage, MAX_WIDTH);
     int textWidth = 0;
     for (String line : lines) {
       textWidth = Math.max(textWidth, fmMessage.stringWidth(line));
     }
-    int contentWidth = Math.max(nameWidth, textWidth);
+    int contentWidth = Math.max(headerWidth, textWidth);
     int totalHeight = fmName.getHeight() + 2 + (lines.size() * fmMessage.getHeight()) + 10;
     return new Dimension(contentWidth + 20, totalHeight);
   }

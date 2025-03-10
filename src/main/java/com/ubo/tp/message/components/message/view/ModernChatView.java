@@ -19,7 +19,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionListener;
-import java.util.Comparator;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class ModernChatView extends JPanel implements IMessageObserver {
@@ -98,13 +99,15 @@ public class ModernChatView extends JPanel implements IMessageObserver {
     User connectedUser = session.getConnectedUser();
     boolean isOutgoing = (connectedUser != null && connectedUser.equals(message.getSender()));
     String senderDisplayName = message.getSender().getName() + " (" + message.getSender().getUserTag() + ")";
-    MessageBubble bubble = new MessageBubble(senderDisplayName, message.getText(), isOutgoing);
+    // Formater l'heure (HH:mm)
+    String timeString = new SimpleDateFormat("HH:mm").format(new Date(message.getEmissionDate()));
+    MessageBubble bubble = new MessageBubble(senderDisplayName, message.getText(), isOutgoing, timeString);
     chatPanel.addMessageBubble(bubble, isOutgoing);
   }
 
   public void updateSearchResults(List<Message> messages) {
     chatPanel.clearMessages();
-    messages.stream().sorted(Comparator.comparingLong(Message::getEmissionDate)).forEach(this::addMessageToFeed);
+//    messages.stream().sorted(Comparator.comparingLong(Message::getEmissionDate)).forEach(this::addMessageToFeed);
     for (Message m : messages) {
       addMessageToFeed(m);
     }

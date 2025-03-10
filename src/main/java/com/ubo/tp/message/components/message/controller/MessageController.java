@@ -13,8 +13,6 @@ import com.ubo.tp.message.core.session.ISession;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MessageController implements IMessageController, IDatabaseObserver {
 
@@ -59,9 +57,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
     }
   }
 
-  @Override
-  public void searchMessages(String query) {
-    List<Message> allMessages = model.getMessages();
+  public static List<Message> searchMessages(String query, List<Message> allMessages) {
     List<Message> results;
     if (query == null || query.trim().isEmpty()) {
       results = allMessages;
@@ -70,24 +66,24 @@ public class MessageController implements IMessageController, IDatabaseObserver 
       if (trimmedQuery.contains("@") && !trimmedQuery.contains("#")) {
         String userTag = trimmedQuery.replace("@", "");
         results = allMessages.stream()
-          .filter(m -> m.getSender().getUserTag().equalsIgnoreCase(userTag)
-                       || m.containsUserTag(userTag))
-          .collect(Collectors.toList());
+          .filter(m -> m.getSender().getUserTag().equalsIgnoreCase("@" + userTag)
+                       || m.containsUserTag("@" + userTag))
+          .toList();
       } else if (trimmedQuery.contains("#") && !trimmedQuery.contains("@")) {
         String tag = trimmedQuery.replace("#", "");
         results = allMessages.stream()
           .filter(m -> m.containsTag(tag))
-          .collect(Collectors.toList());
+          .toList();
       } else {
         String cleanedQuery = trimmedQuery.replace("@", "").replace("#", "");
         results = allMessages.stream()
-          .filter(m -> m.getSender().getUserTag().equalsIgnoreCase(cleanedQuery)
+          .filter(m -> m.getSender().getUserTag().equalsIgnoreCase("@" + cleanedQuery)
                        || m.containsUserTag(cleanedQuery)
                        || m.containsTag(cleanedQuery))
-          .collect(Collectors.toList());
+          .toList();
       }
     }
-    messageView.updateSearchResults(results);
+    return results;
   }
 
   // Cette méthode est appelée par la base via l'observer.

@@ -11,17 +11,20 @@ import com.ubo.tp.message.core.session.ISession;
 import com.ubo.tp.message.core.session.ISessionObserver;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.ubo.tp.message.components.message.controller.MessageController.searchMessages;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests visant à isoler le filtrage et la recherche dans le MessageModel et MessageController.
  */
-class MessageFilteringTest {
+public class MessageFilteringTest {
 
   // --- FAKE IMPLEMENTATIONS ---
 
@@ -47,7 +50,6 @@ class MessageFilteringTest {
       // On passe des ActionListener vides puisque nous n’utilisons pas ces actions dans le test
       super(session, _ -> { }, _ -> { });
     }
-    @Override
     public void updateSearchResults(Set<Message> messages) {
       lastSearchResults = messages;
     }
@@ -118,6 +120,7 @@ class MessageFilteringTest {
     // Ajout de messages de Alice et Bob
     Message msgFromAlice = new Message(userA, "Message d'Alice");
     Message msgFromBob = new Message(userB, "Message de Bob avec mention @Bob");
+    List<Message> messages = Arrays.asList(msgFromAlice, msgFromBob);
     model.addMessage(msgFromAlice);
     model.addMessage(msgFromBob);
 
@@ -130,13 +133,13 @@ class MessageFilteringTest {
     MessageController controller = new MessageController(session, fakeView, dummyDatabase, model, dummyEntityManager);
 
     // Rechercher par tag "@Bob" devrait retourner le message de Bob uniquement.
-    controller.searchMessages("@Bob");
+    controller.searchMessages("@Bob", messages);
     Set<Message> searchResult = fakeView.lastSearchResults;
     assertTrue(searchResult.contains(msgFromBob), "La recherche avec @Bob doit retourner le message de Bob");
     assertFalse(searchResult.contains(msgFromAlice), "La recherche avec @Bob ne doit pas retourner le message d'Alice");
 
     // Une recherche vide doit retourner l'ensemble des messages filtrés (Alice et Bob)
-    controller.searchMessages("");
+    controller.searchMessages("", messages);
     searchResult = fakeView.lastSearchResults;
     assertTrue(searchResult.contains(msgFromAlice), "La recherche vide doit retourner le message d'Alice");
     assertTrue(searchResult.contains(msgFromBob), "La recherche vide doit retourner le message de Bob");
