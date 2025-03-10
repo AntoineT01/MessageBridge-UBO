@@ -1,16 +1,14 @@
 package com.ubo.tp.message.components.user.auth;
 
-
 import com.ubo.tp.message.components.IComponent;
 
+import java.awt.Component;
 import java.awt.event.ActionListener;
 
 /**
  * Interface pour les composants d'authentification.
- * Cette interface étend l'interface de base IComponent avec des
- * fonctionnalités spécifiques à l'authentification.
  */
-public interface IAuthComponent extends IComponent {
+public interface IAuthComponent<T extends Component> extends IComponent<T> {
 
   /**
    * Affiche un message d'erreur dans le composant.

@@ -2,15 +2,16 @@ package com.ubo.tp.message.components.user.auth;
 
 import com.ubo.tp.message.components.user.auth.login.controller.LoginController;
 import com.ubo.tp.message.components.user.auth.login.model.LoginModel;
+import com.ubo.tp.message.components.user.auth.login.view.ILoginView;
 import com.ubo.tp.message.components.user.auth.login.view.LoginView;
 import com.ubo.tp.message.components.user.auth.register.controller.RegisterController;
 import com.ubo.tp.message.components.user.auth.register.model.RegisterModel;
+import com.ubo.tp.message.components.user.auth.register.view.IRegisterView;
 import com.ubo.tp.message.components.user.auth.register.view.RegisterView;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -21,7 +22,7 @@ import java.awt.event.ActionListener;
  * Cette classe utilise le pattern MVC pour gérer l'authentification, incluant
  * à la fois la connexion et l'inscription.
  */
-public class AuthComponent implements IAuthComponent {
+public class AuthComponent implements IAuthComponent<JPanel> {
 
   /**
    * Panneau principal.
@@ -41,7 +42,7 @@ public class AuthComponent implements IAuthComponent {
   /**
    * Vue de connexion.
    */
-  protected final LoginView loginView;
+  protected final ILoginView loginView;
 
   /**
    * Contrôleur de connexion.
@@ -56,7 +57,7 @@ public class AuthComponent implements IAuthComponent {
   /**
    * Vue d'inscription.
    */
-  protected final RegisterView registerView;
+  protected final IRegisterView registerView;
 
   /**
    * Contrôleur d'inscription.
@@ -85,21 +86,31 @@ public class AuthComponent implements IAuthComponent {
 
     // Création des composants MVC pour la connexion
     this.loginModel = new LoginModel(database, sessionManager);
-    this.loginView = new LoginView();
+
+    // Création de la vue concrète de connexion
+    LoginView concreteLoginView = new LoginView();
+    this.loginView = concreteLoginView;
+
+    // Création du contrôleur de connexion avec l'interface de vue
     this.loginController = new LoginController(loginView, loginModel);
 
     // Création du panel de connexion
     this.loginPanel = new JPanel(new BorderLayout());
-    this.loginPanel.add(loginView, BorderLayout.CENTER);
+    this.loginPanel.add(concreteLoginView, BorderLayout.CENTER);
 
     // Création des composants MVC pour l'inscription
     this.registerModel = new RegisterModel(database);
-    this.registerView = new RegisterView(database);
+
+    // Création de la vue concrète d'inscription
+    RegisterView concreteRegisterView = new RegisterView(database);
+    this.registerView = concreteRegisterView;
+
+    // Création du contrôleur d'inscription avec l'interface de vue
     this.registerController = new RegisterController(registerView, registerModel, entityManager, sessionManager);
 
     // Création du panel d'inscription
     this.registerPanel = new JPanel(new BorderLayout());
-    this.registerPanel.add(registerView, BorderLayout.CENTER);
+    this.registerPanel.add(concreteRegisterView, BorderLayout.CENTER);
 
     // Par défaut, on affiche la vue de connexion
     this.mainPanel.add(loginPanel, BorderLayout.CENTER);
@@ -122,7 +133,7 @@ public class AuthComponent implements IAuthComponent {
   }
 
   @Override
-  public JComponent getComponent() {
+  public JPanel getComponent() {
     return mainPanel;
   }
 
@@ -185,5 +196,4 @@ public class AuthComponent implements IAuthComponent {
     mainPanel.revalidate();
     mainPanel.repaint();
   }
-
 }

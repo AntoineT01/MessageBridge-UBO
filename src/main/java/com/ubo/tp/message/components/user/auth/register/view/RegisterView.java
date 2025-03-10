@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
 /**
  * Vue pour l'interface d'inscription
  */
-public class RegisterView extends JPanel {
+public class RegisterView extends JPanel implements IRegisterView {
   /**
    * Base de données (pour l'accès par le contrôleur)
    */
@@ -74,6 +74,7 @@ public class RegisterView extends JPanel {
    * Initialisation de l'interface graphique
    */
   private void initGUI() {
+    // Code existant inchangé
     this.setLayout(new GridBagLayout());
     this.setBorder(new EmptyBorder(20, 20, 20, 20));
 
@@ -160,58 +161,44 @@ public class RegisterView extends JPanel {
     this.add(buttonPanel, constraints);
   }
 
-  /**
-   * Définit l'écouteur d'événements pour le bouton d'inscription
-   */
+  // Implémentation des méthodes de l'interface IRegisterView
+
+  @Override
   public void setRegisterButtonListener(ActionListener listener) {
     registerButton.addActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur d'événements pour le bouton de connexion
-   */
+  @Override
   public void setLoginButtonListener(ActionListener listener) {
     loginButton.addActionListener(listener);
   }
 
-  /**
-   * Récupère le tag utilisateur saisi
-   */
+  @Override
   public String getUserTag() {
     return tagField.getText().trim();
   }
 
-  /**
-   * Récupère le nom d'utilisateur saisi
-   */
+  @Override
   public String getUserName() {
     return nameField.getText().trim();
   }
 
-  /**
-   * Récupère le mot de passe saisi
-   */
+  @Override
   public String getUserPassword() {
     return new String(passwordField.getPassword());
   }
 
-  /**
-   * Récupère la confirmation du mot de passe
-   */
+  @Override
   public String getConfirmPassword() {
     return new String(confirmPasswordField.getPassword());
   }
 
-  /**
-   * Affiche un message d'erreur
-   */
+  @Override
   public void setErrorMessage(String message) {
     errorLabel.setText(message);
   }
 
-  /**
-   * Réinitialise les champs de formulaire
-   */
+  @Override
   public void resetFields() {
     tagField.setText("");
     nameField.setText("");
@@ -220,9 +207,6 @@ public class RegisterView extends JPanel {
     errorLabel.setText("");
   }
 
-  /**
-   * Active ou désactive tous les composants de la vue
-   */
   @Override
   public void setEnabled(boolean enabled) {
     super.setEnabled(enabled);
@@ -234,9 +218,7 @@ public class RegisterView extends JPanel {
     loginButton.setEnabled(enabled);
   }
 
-  /**
-   * Récupère la base de données (pour le contrôleur)
-   */
+  @Override
   public IDatabase getDatabase() {
     return database;
   }

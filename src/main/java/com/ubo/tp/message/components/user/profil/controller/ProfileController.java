@@ -1,7 +1,7 @@
 package com.ubo.tp.message.components.user.profil.controller;
 
 import com.ubo.tp.message.components.user.profil.model.ProfileModel;
-import com.ubo.tp.message.components.user.profil.view.ProfileView;
+import com.ubo.tp.message.components.user.profil.view.IProfileView;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
 
@@ -12,7 +12,7 @@ public class ProfileController {
   /**
    * Vue associée.
    */
-  private final ProfileView view;
+  private final IProfileView view; // Utilisation de l'interface au lieu de la classe concrète
 
   /**
    * Modèle associé.
@@ -27,7 +27,7 @@ public class ProfileController {
   /**
    * Constructeur.
    */
-  public ProfileController(ProfileView view, ProfileModel model, EntityManager entityManager) {
+  public ProfileController(IProfileView view, ProfileModel model, EntityManager entityManager) {
     this.view = view;
     this.model = model;
     this.entityManager = entityManager;

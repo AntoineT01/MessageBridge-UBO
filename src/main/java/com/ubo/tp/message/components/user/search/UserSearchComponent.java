@@ -3,12 +3,12 @@ package com.ubo.tp.message.components.user.search;
 import com.ubo.tp.message.components.IComponent;
 import com.ubo.tp.message.components.user.search.controller.SearchController;
 import com.ubo.tp.message.components.user.search.model.SearchModel;
+import com.ubo.tp.message.components.user.search.view.ISearchView;
 import com.ubo.tp.message.components.user.search.view.SearchView;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
@@ -17,7 +17,7 @@ import java.awt.event.ActionListener;
  * Composant de recherche d'utilisateurs.
  * Implémente l'interface IComponent pour s'intégrer dans l'application.
  */
-public class UserSearchComponent implements IComponent {
+public class UserSearchComponent implements IComponent<JPanel> {
 
   /**
    * Panneau principal du composant.
@@ -27,7 +27,7 @@ public class UserSearchComponent implements IComponent {
   /**
    * Vue de recherche d'utilisateurs.
    */
-  private final SearchView searchView;
+  private final ISearchView searchView;
 
   /**
    * Contrôleur de recherche.
@@ -56,18 +56,23 @@ public class UserSearchComponent implements IComponent {
 
     // Création des composants MVC pour la recherche
     this.searchModel = new SearchModel(database, sessionManager);
-    this.searchView = new SearchView();
+
+    // Création de la vue concrète
+    SearchView concreteView = new SearchView();
+    this.searchView = concreteView;
+
+    // Création du contrôleur avec l'interface de vue
     this.searchController = new SearchController(searchView, searchModel, entityManager);
 
     // Ajout de la vue au panneau principal
-    this.mainPanel.add(searchView, BorderLayout.CENTER);
+    this.mainPanel.add(concreteView, BorderLayout.CENTER);
 
     // Initialisation
     initialize();
   }
 
   @Override
-  public JComponent getComponent() {
+  public JPanel getComponent() {
     return mainPanel;
   }
 
@@ -104,5 +109,4 @@ public class UserSearchComponent implements IComponent {
   public void showError(String message) {
     searchController.showError(message);
   }
-
 }

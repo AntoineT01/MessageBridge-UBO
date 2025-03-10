@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * Vue pour l'interface de recherche d'utilisateurs.
  */
-public class SearchView extends JPanel {
+public class SearchView extends JPanel implements ISearchView {
   /**
    * Barre de recherche.
    */

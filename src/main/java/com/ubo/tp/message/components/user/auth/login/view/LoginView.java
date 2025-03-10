@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
 /**
  * Vue pour l'interface de connexion
  */
-public class LoginView extends JPanel {
+public class LoginView extends JPanel implements ILoginView {
   /**
    * Champ pour le tag utilisateur
    */
@@ -57,6 +57,7 @@ public class LoginView extends JPanel {
    * Initialisation de l'interface graphique
    */
   private void initGUI() {
+    // Code existant inchangé
     this.setLayout(new GridBagLayout());
     this.setBorder(new EmptyBorder(20, 20, 20, 20));
 
@@ -121,53 +122,40 @@ public class LoginView extends JPanel {
     this.add(buttonPanel, constraints);
   }
 
-  /**
-   * Définit l'écouteur d'événements pour le bouton de connexion
-   */
+  // Implémentation des méthodes de l'interface ILoginView
+
+  @Override
   public void setLoginButtonListener(ActionListener listener) {
     loginButton.addActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur d'événements pour le bouton d'inscription
-   */
+  @Override
   public void setRegisterButtonListener(ActionListener listener) {
     registerButton.addActionListener(listener);
   }
 
-  /**
-   * Récupère le tag utilisateur saisi
-   */
+  @Override
   public String getUserTag() {
     return tagField.getText().trim();
   }
 
-  /**
-   * Récupère le mot de passe saisi
-   */
+  @Override
   public String getUserPassword() {
     return new String(passwordField.getPassword());
   }
 
-  /**
-   * Affiche un message d'erreur
-   */
+  @Override
   public void setErrorMessage(String message) {
     errorLabel.setText(message);
   }
 
-  /**
-   * Réinitialise les champs de formulaire
-   */
+  @Override
   public void resetFields() {
     tagField.setText("");
     passwordField.setText("");
     errorLabel.setText("");
   }
 
-  /**
-   * Active ou désactive tous les composants de la vue
-   */
   @Override
   public void setEnabled(boolean enabled) {
     super.setEnabled(enabled);
@@ -176,5 +164,4 @@ public class LoginView extends JPanel {
     loginButton.setEnabled(enabled);
     registerButton.setEnabled(enabled);
   }
-
 }

@@ -1,9 +1,8 @@
 package com.ubo.tp.message.components.navigation.controller;
 
 import com.ubo.tp.message.components.navigation.model.NavigationModel;
-
-import com.ubo.tp.message.components.navigation.view.NavigationViewConnected;
-import com.ubo.tp.message.components.navigation.view.NavigationViewDisconnected;
+import com.ubo.tp.message.components.navigation.view.INavigationViewConnected;
+import com.ubo.tp.message.components.navigation.view.INavigationViewDisconnected;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.session.ISessionObserver;
 
@@ -23,12 +22,12 @@ public class NavigationController implements ISessionObserver {
   /**
    * La vue pour un utilisateur connecté.
    */
-  private final NavigationViewConnected connectedView;
+  private final INavigationViewConnected connectedView;
 
   /**
    * La vue pour un utilisateur déconnecté.
    */
-  private final NavigationViewDisconnected disconnectedView;
+  private final INavigationViewDisconnected disconnectedView;
 
   /**
    * La vue actuellement affichée.
@@ -54,8 +53,8 @@ public class NavigationController implements ISessionObserver {
    * @param disconnectedView La vue pour un utilisateur déconnecté
    */
   public NavigationController(NavigationModel model,
-                              NavigationViewConnected connectedView,
-                              NavigationViewDisconnected disconnectedView) {
+                              INavigationViewConnected connectedView,
+                              INavigationViewDisconnected disconnectedView) {
     this.model = model;
     this.connectedView = connectedView;
     this.disconnectedView = disconnectedView;
@@ -139,7 +138,7 @@ public class NavigationController implements ISessionObserver {
       showDisconnectedView();
     }
   }
-  // Ajouter cette nouvelle méthode:
+
   /**
    * Définit l'écouteur pour l'action de quitter.
    * @param listener L'écouteur à définir
@@ -168,92 +167,39 @@ public class NavigationController implements ISessionObserver {
     }
   }
 
-  /**
-   * Définit l'écouteur pour l'action de profil.
-   * @param listener L'écouteur à définir
-   */
   public void setProfileActionListener(ActionListener listener) {
     this.profileActionListener = listener;
   }
 
-  /**
-   * Définit l'écouteur pour l'action de messages.
-   * @param listener L'écouteur à définir
-   */
   public void setMessagesActionListener(ActionListener listener) {
     this.messagesActionListener = listener;
   }
 
-  /**
-   * Définit l'écouteur pour l'action de recherche.
-   * @param listener L'écouteur à définir
-   */
   public void setSearchActionListener(ActionListener listener) {
     this.searchActionListener = listener;
   }
 
-  /**
-   * Définit l'écouteur pour l'action de déconnexion.
-   * @param listener L'écouteur à définir
-   */
   public void setLogoutActionListener(ActionListener listener) {
     this.logoutActionListener = listener;
   }
 
-  /**
-   * Définit l'écouteur pour l'action de connexion.
-   * @param listener L'écouteur à définir
-   */
   public void setLoginActionListener(ActionListener listener) {
     this.loginActionListener = listener;
   }
 
-  /**
-   * Définit l'écouteur pour l'action d'inscription.
-   * @param listener L'écouteur à définir
-   */
   public void setRegisterActionListener(ActionListener listener) {
     this.registerActionListener = listener;
   }
 
-  /**
-   * Définit l'écouteur pour l'action "À propos".
-   * @param listener L'écouteur à définir
-   */
   public void setAboutActionListener(ActionListener listener) {
     this.aboutActionListener = listener;
   }
-
-  /**
-   * Définit l'écouteur pour l'action de changement de répertoire.
-   * @param listener L'écouteur à définir
-   */
-  public void setChangeDirectoryActionListener(ActionListener listener) {
-    this.changeDirectoryActionListener = listener;
-  }
-
   /**
    * Indique si la vue connectée est affichée.
    * @return true si la vue connectée est affichée, false sinon
    */
   public boolean isShowingConnectedView() {
     return showingConnectedView;
-  }
-
-  /**
-   * Récupère la vue connectée.
-   * @return La vue connectée
-   */
-  public NavigationViewConnected getConnectedView() {
-    return connectedView;
-  }
-
-  /**
-   * Récupère la vue déconnectée.
-   * @return La vue déconnectée
-   */
-  public NavigationViewDisconnected getDisconnectedView() {
-    return disconnectedView;
   }
 
   @Override

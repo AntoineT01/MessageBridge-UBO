@@ -39,7 +39,7 @@ import java.util.Set;
 /**
  * Vue pour l'affichage du profil d'un utilisateur.
  */
-public class UserProfileView extends JPanel {
+public class UserProfileView extends JPanel implements IUserProfileView {
 
   /**
    * Tag de l'utilisateur.
@@ -112,7 +112,6 @@ public class UserProfileView extends JPanel {
    * Initialisation de l'interface graphique.
    */
   private void initGUI() {
-    JLabel userIconLabel;
     this.setLayout(new BorderLayout(10, 10));
     this.setBorder(new EmptyBorder(20, 20, 20, 20));
 
@@ -132,7 +131,7 @@ public class UserProfileView extends JPanel {
     gbc.insets = new Insets(5, 5, 5, 5);
 
     // Icône utilisateur
-    userIconLabel = new JLabel(IconFactory.createUserIcon(IconFactory.ICON_LARGE));
+    JLabel userIconLabel = new JLabel(IconFactory.createUserIcon(IconFactory.ICON_LARGE));
     gbc.gridx = 0;
     gbc.gridy = 0;
     gbc.gridheight = 2;
@@ -271,6 +270,7 @@ public class UserProfileView extends JPanel {
    * @param followingCount Le nombre d'utilisateurs suivis.
    * @param isFollowed Indique si l'utilisateur est suivi par l'utilisateur connecté.
    */
+  @Override
   public void updateUserInfo(User user, int followersCount, int followingCount, boolean isFollowed) {
     if (user != null) {
       userTagLabel.setText(user.getUserTag());
@@ -291,6 +291,7 @@ public class UserProfileView extends JPanel {
    * Met à jour la liste des messages de l'utilisateur.
    * @param messages La liste des messages à afficher.
    */
+  @Override
   public void updateMessages(Set<Message> messages) {
     // Vider le panneau des messages
     messagesPanel.removeAll();
@@ -336,6 +337,7 @@ public class UserProfileView extends JPanel {
    * Met à jour la liste des followers.
    * @param followers La liste des followers à afficher.
    */
+  @Override
   public void updateFollowers(Set<User> followers) {
     DefaultListModel<String> model = new DefaultListModel<>();
 
@@ -355,6 +357,7 @@ public class UserProfileView extends JPanel {
    * Met à jour la liste des utilisateurs suivis.
    * @param following La liste des utilisateurs suivis à afficher.
    */
+  @Override
   public void updateFollowing(Set<User> following) {
     DefaultListModel<String> model = new DefaultListModel<>();
 
@@ -369,10 +372,12 @@ public class UserProfileView extends JPanel {
 
     followingList.setModel(model);
   }
+
   /**
    * Définit l'écouteur pour le bouton de retour.
    * @param listener L'écouteur à définir.
    */
+  @Override
   public void setBackButtonListener(ActionListener listener) {
     backButton.addActionListener(listener);
   }
@@ -381,6 +386,7 @@ public class UserProfileView extends JPanel {
    * Définit l'écouteur pour le bouton de suivi.
    * @param listener L'écouteur à définir.
    */
+  @Override
   public void setFollowButtonListener(ActionListener listener) {
     followButton.addActionListener(listener);
   }
@@ -389,6 +395,7 @@ public class UserProfileView extends JPanel {
    * Affiche un message d'erreur.
    * @param message Le message d'erreur à afficher.
    */
+  @Override
   public void setErrorMessage(String message) {
     errorLabel.setText(message);
     successLabel.setText(" ");
@@ -398,6 +405,7 @@ public class UserProfileView extends JPanel {
    * Affiche un message de succès.
    * @param message Le message de succès à afficher.
    */
+  @Override
   public void setSuccessMessage(String message) {
     successLabel.setText(message);
     errorLabel.setText(" ");
@@ -406,6 +414,7 @@ public class UserProfileView extends JPanel {
   /**
    * Réinitialise la vue.
    */
+  @Override
   public void reset() {
     userTagLabel.setText("");
     userNameLabel.setText("");
@@ -422,5 +431,17 @@ public class UserProfileView extends JPanel {
 
     errorLabel.setText(" ");
     successLabel.setText(" ");
+  }
+
+  /**
+   * Active ou désactive tous les composants de la vue.
+   */
+  @Override
+  public void setEnabled(boolean enabled) {
+    super.setEnabled(enabled);
+    backButton.setEnabled(enabled);
+    followButton.setEnabled(enabled);
+    followersList.setEnabled(enabled);
+    followingList.setEnabled(enabled);
   }
 }

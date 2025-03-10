@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * Vue pour l'interface du profil utilisateur.
  */
-public class ProfileView extends JPanel {
+public class ProfileView extends JPanel implements IProfileView {
   /**
    * Affichage des informations de l'utilisateur.
    */
@@ -69,6 +69,7 @@ public class ProfileView extends JPanel {
    * Initialisation de l'interface graphique.
    */
   private void initGUI() {
+    // Code existant inchangé
     this.setLayout(new BorderLayout(10, 10));
     this.setBorder(new EmptyBorder(20, 20, 20, 20));
 
@@ -171,25 +172,21 @@ public class ProfileView extends JPanel {
     this.add(messagesPanel, BorderLayout.CENTER);
   }
 
-  /**
-   * Définit l'écouteur d'événements pour le bouton de mise à jour.
-   */
+  // Implémentation des méthodes de l'interface IProfileView
+
+  @Override
   public void setUpdateButtonListener(ActionListener listener) {
     updateButton.addActionListener(listener);
   }
 
-  /**
-   * Met à jour les informations affichées de l'utilisateur.
-   */
+  @Override
   public void updateUserInfo(String tag, String name, int followersCount) {
     tagLabel.setText(tag);
     nameLabel.setText(name);
     followersCountLabel.setText(String.valueOf(followersCount));
   }
 
-  /**
-   * Met à jour la liste des messages de l'utilisateur.
-   */
+  @Override
   public void updateUserMessages(Set<Message> messages) {
     messagesListModel.clear();
     for (Message message : messages) {
@@ -205,46 +202,34 @@ public class ProfileView extends JPanel {
     return "[" + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date(message.getEmissionDate())) + "] " + message.getText();
   }
 
-  /**
-   * Affiche un message d'erreur.
-   */
+  @Override
   public void setErrorMessage(String message) {
     errorLabel.setText(message);
     successLabel.setText(" ");
   }
 
-  /**
-   * Affiche un message de succès.
-   */
+  @Override
   public void setSuccessMessage(String message) {
     successLabel.setText(message);
     errorLabel.setText(" ");
   }
 
-  /**
-   * Récupère le nouveau nom saisi.
-   */
+  @Override
   public String getNewName() {
     return nameField.getText().trim();
   }
 
-  /**
-   * Récupère le nouveau mot de passe saisi.
-   */
+  @Override
   public String getNewPassword() {
     return new String(passwordField.getPassword());
   }
 
-  /**
-   * Récupère la confirmation du mot de passe saisi.
-   */
+  @Override
   public String getConfirmPassword() {
     return new String(confirmPasswordField.getPassword());
   }
 
-  /**
-   * Réinitialise les champs de formulaire.
-   */
+  @Override
   public void resetFields() {
     nameField.setText("");
     passwordField.setText("");
@@ -253,9 +238,6 @@ public class ProfileView extends JPanel {
     successLabel.setText(" ");
   }
 
-  /**
-   * Active ou désactive tous les composants de la vue.
-   */
   @Override
   public void setEnabled(boolean enabled) {
     super.setEnabled(enabled);

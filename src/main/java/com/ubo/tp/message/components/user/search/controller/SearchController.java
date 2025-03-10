@@ -1,7 +1,7 @@
 package com.ubo.tp.message.components.user.search.controller;
 
 import com.ubo.tp.message.components.user.search.model.SearchModel;
-import com.ubo.tp.message.components.user.search.view.SearchView;
+import com.ubo.tp.message.components.user.search.view.ISearchView;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
 
@@ -16,7 +16,7 @@ public class SearchController {
   /**
    * Vue associée.
    */
-  private final SearchView view;
+  private final ISearchView view;
 
   /**
    * Modèle associé.
@@ -39,7 +39,7 @@ public class SearchController {
    * @param model Le modèle à utiliser.
    * @param entityManager Le gestionnaire d'entités.
    */
-  public SearchController(SearchView view, SearchModel model, EntityManager entityManager) {
+  public SearchController(ISearchView view, SearchModel model, EntityManager entityManager) {
     this.view = view;
     this.model = model;
     this.entityManager = entityManager;

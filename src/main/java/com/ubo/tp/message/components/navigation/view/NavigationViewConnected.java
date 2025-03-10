@@ -19,7 +19,7 @@ import java.awt.event.ActionListener;
  * Vue de la barre de navigation pour un utilisateur connecté.
  * Version modifiée pour utiliser les JMenus.
  */
-public class NavigationViewConnected extends JPanel {
+public class NavigationViewConnected extends JPanel implements INavigationViewConnected {
 
   /**
    * Barre de menu
