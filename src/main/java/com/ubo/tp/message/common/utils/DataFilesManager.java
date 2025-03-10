@@ -5,12 +5,7 @@ import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.datamodel.User;
 
 import java.io.File;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.ubo.tp.message.common.utils.PropertiesManager.loadProperties;
 import static com.ubo.tp.message.common.utils.PropertiesManager.writeProperties;
@@ -100,9 +95,7 @@ public class DataFilesManager {
 
 			String[] followsArray = follows.split(PROPERTY_FOLLOW_SEPARATOR);
 			Set<String> followsAsSet = new HashSet<>();
-			for (String follow : followsArray) {
-				followsAsSet.add(follow);
-			}
+			followsAsSet.addAll(Arrays.asList(followsArray));
 
 			user = new User(UUID.fromString(uuid), tag, password, name, followsAsSet, avatar);
 		}
@@ -123,12 +116,12 @@ public class DataFilesManager {
 		properties.setProperty(PROPERTY_KEY_USER_TAG, user.getUserTag());
 		properties.setProperty(PROPERTY_KEY_USER_PASSWORD, encrypt(user.getUserPassword()));
 		properties.setProperty(PROPERTY_KEY_USER_NAME, user.getName());
-		String follows = "";
+		StringBuilder follows = new StringBuilder();
 		Set<String> followsAsSet = user.getFollows();
 		for (String follow : followsAsSet) {
-			follows += follow + PROPERTY_FOLLOW_SEPARATOR;
+			follows.append(follow).append(PROPERTY_FOLLOW_SEPARATOR);
 		}
-		properties.setProperty(PROPERTY_KEY_USER_FOLLOWS, follows);
+		properties.setProperty(PROPERTY_KEY_USER_FOLLOWS, follows.toString());
 		properties.setProperty(PROPERTY_KEY_USER_AVATAR, user.getAvatarPath());
 
 		writeProperties(properties, destFileName);

@@ -110,7 +110,7 @@ public class IconFactory {
         // Tête
         g2.setColor(Color.WHITE);
         int headSize = size / 3;
-        g2.fill(new Ellipse2D.Float(x + (size - headSize) / 2, y + size / 5, headSize, headSize));
+        g2.fill(new Ellipse2D.Float(x + (float) (size - headSize) / 2, y + (float) size / 5, headSize, headSize));
 
         // Corps
         g2.fillOval(x + size / 4, y + size / 2, size / 2, size / 2);
