@@ -210,6 +210,14 @@ public class ComponentsController implements ISessionObserver {
 
     // Action pour "À propos"
     navigationComponent.setAboutActionListener(_ -> mainView.showAboutDialog());
+
+    // Action pour quitter
+    navigationComponent.setExitActionListener(_ -> {
+      // Utiliser le même comportement que pour la croix de la fenêtre
+      if (mainView.getExitListener() != null) {
+        mainView.getExitListener().actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "exit"));
+      }
+    });
   }
 
   /**

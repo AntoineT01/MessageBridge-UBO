@@ -232,4 +232,14 @@ public class NavigationComponent {
   public void setChangeDirectoryActionListener(ActionListener listener) {
     // Ne rien faire - géré directement dans les vues
   }
+
+  /**
+   * Définit l'écouteur pour l'action de quitter.
+   */
+  public void setExitActionListener(ActionListener listener) {
+    controller.setExitActionListener(listener);
+  }
+
+
+
 }

@@ -34,6 +34,7 @@ public class NavigationViewConnected extends JPanel {
   private JMenuItem searchMenuItem;
   private JMenuItem logoutMenuItem;
   private JMenuItem aboutMenuItem;
+  private JMenuItem exitMenuItem;
 
   /**
    * Zone d'information utilisateur
@@ -81,7 +82,7 @@ public class NavigationViewConnected extends JPanel {
     fileMenu.add(changeDirectoryMenuItem);
     fileMenu.addSeparator();
 
-    JMenuItem exitMenuItem = new JMenuItem("Quitter");
+    exitMenuItem = new JMenuItem("Quitter");
     exitMenuItem.setIcon(IconFactory.createCloseIcon(IconFactory.ICON_SMALL));
     exitMenuItem.setToolTipText("Fermer l'application");
     fileMenu.add(exitMenuItem);
@@ -205,6 +206,13 @@ public class NavigationViewConnected extends JPanel {
    */
   public void setDirectoryController(DirectoryController directoryController) {
     this.directoryController = directoryController;
+  }
+
+  /**
+   * Définit l'écouteur pour le bouton de quitter.
+   */
+  public void setExitButtonListener(ActionListener listener) {
+    exitMenuItem.addActionListener(listener);
   }
 
   /**

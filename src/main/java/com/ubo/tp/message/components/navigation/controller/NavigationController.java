@@ -139,6 +139,15 @@ public class NavigationController implements ISessionObserver {
       showDisconnectedView();
     }
   }
+  // Ajouter cette nouvelle méthode:
+  /**
+   * Définit l'écouteur pour l'action de quitter.
+   * @param listener L'écouteur à définir
+   */
+  public void setExitActionListener(ActionListener listener) {
+    connectedView.setExitButtonListener(listener);
+    disconnectedView.setExitButtonListener(listener);
+  }
 
   /**
    * Affiche la vue pour un utilisateur connecté.

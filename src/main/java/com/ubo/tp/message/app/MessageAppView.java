@@ -122,4 +122,11 @@ public class MessageAppView extends JFrame {
   public void updateMenuForConnectedUser(boolean isConnected) {
     // Ne rien faire - la mise à jour est gérée par NavigationComponent
   }
+
+  /**
+   * Récupère l'écouteur pour l'action de sortie
+   */
+  public ActionListener getExitListener() {
+    return exitListener;
+  }
 }
