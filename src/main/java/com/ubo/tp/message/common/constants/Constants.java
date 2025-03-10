@@ -53,13 +53,5 @@ public class Constants {
 	 */
 	public static final String CONFIGURATION_KEY_EXCHANGE_DIRECTORY = "EXCHANGE_DIRECTORY";
 
-	/**
-	 * Clé de configuration pour l'UI
-	 */
-	public static final String CONFIGURATION_KEY_UI_CLASS_NAME = "UI_CLASS_NAME";
-
-	/**
-	 * Clé de configuration pour le mode bouchoné
-	 */
-	public static final String CONFIGURATION_KEY_MOCK_ENABLED = "MOCK_ENABLED";
+	public static final String MESSAGES = "messages";
 }

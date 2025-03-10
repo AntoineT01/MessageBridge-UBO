@@ -19,13 +19,13 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionListener;
-import java.util.Set;
+import java.util.Comparator;
+import java.util.List;
 
 public class ModernChatView extends JPanel implements IMessageObserver {
 
   private final ChatPanel chatPanel;
   private final RoundedTextArea messageInputArea;
-  private final JButton sendButton;
   private final SearchBar searchBar;
   private final ISession session;
 
@@ -57,21 +57,20 @@ public class ModernChatView extends JPanel implements IMessageObserver {
     messageInputArea.setWrapStyleWord(true);
 
     Border textAreaRounded = new RoundedBorder(15);
-    Border textAreaEmpty   = new EmptyBorder(10, 10, 10, 10);
+    Border textAreaEmpty = new EmptyBorder(10, 10, 10, 10);
     messageInputArea.setBorder(new CompoundBorder(textAreaRounded, textAreaEmpty));
 
     JScrollPane scrollPane = new JScrollPane(messageInputArea);
     scrollPane.setBorder(null);
     inputPanel.add(scrollPane, BorderLayout.CENTER);
 
-    sendButton = new JButton("Envoyer");
+    JButton sendButton = new JButton("Envoyer");
     sendButton.setBackground(new Color(30, 144, 255));
-    sendButton.setForeground(Color.WHITE);
     sendButton.setFocusPainted(false);
     sendButton.setOpaque(true);
 
     Border buttonRounded = new RoundedBorder(15);
-    Border buttonEmpty   = new EmptyBorder(10, 20, 10, 20);
+    Border buttonEmpty = new EmptyBorder(10, 20, 10, 20);
     sendButton.setBorder(new CompoundBorder(buttonRounded, buttonEmpty));
 
     bottomPanel.add(inputPanel, BorderLayout.CENTER);
@@ -91,16 +90,8 @@ public class ModernChatView extends JPanel implements IMessageObserver {
     messageInputArea.setText("");
   }
 
-  public JButton getSendButton() {
-    return sendButton;
-  }
-
   public String getSearchQuery() {
     return searchBar.getSearchQuery();
-  }
-
-  public void clearSearchQuery() {
-    searchBar.clearSearch();
   }
 
   public void addMessageToFeed(Message message) {
@@ -111,8 +102,9 @@ public class ModernChatView extends JPanel implements IMessageObserver {
     chatPanel.addMessageBubble(bubble, isOutgoing);
   }
 
-  public void updateSearchResults(Set<Message> messages) {
+  public void updateSearchResults(List<Message> messages) {
     chatPanel.clearMessages();
+    messages.stream().sorted(Comparator.comparingLong(Message::getEmissionDate)).forEach(this::addMessageToFeed);
     for (Message m : messages) {
       addMessageToFeed(m);
     }

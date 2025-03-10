@@ -6,9 +6,7 @@ import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.session.ISession;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MessageModel implements IUserObserver {
@@ -18,10 +16,6 @@ public class MessageModel implements IUserObserver {
 
   public MessageModel(ISession session) {
     this.session = session;
-  }
-
-  public MessageModel() {
-    this.session = null;
   }
 
   public void addObserver(IMessageObserver observer) {
@@ -37,9 +31,9 @@ public class MessageModel implements IUserObserver {
    * On affiche uniquement les messages envoyés par l’utilisateur lui-même
    * ou par des utilisateurs que celui-ci suit.
    */
-  public Set<Message> getMessages() {
+  public List<Message> getMessages() {
     if (session == null || session.getConnectedUser() == null) {
-      return new HashSet<>();
+      return new ArrayList<>();
     }
     var connectedUser = session.getConnectedUser();
     connectedUser.addObserver(this);
@@ -49,7 +43,7 @@ public class MessageModel implements IUserObserver {
         message.getSender().getUuid().equals(connectedUser.getUuid()) ||
         connectedUser.getFollows().contains(message.getSender().getUserTag())
       )
-      .collect(Collectors.toSet());
+      .collect(Collectors.toList());
   }
 
   public void addMessage(Message message) {
@@ -88,7 +82,6 @@ public class MessageModel implements IUserObserver {
 
   @Override
   public void followListChanged(User user) {
-    System.out.println("MessageModel.followListChanged");
     refresh();
   }
 }

@@ -1,5 +1,6 @@
 package com.ubo.tp.message.components.message.controller;
 
+import com.ubo.tp.message.common.ui.ToastNotification;
 import com.ubo.tp.message.components.message.model.MessageModel;
 import com.ubo.tp.message.components.message.view.ModernChatView;
 import com.ubo.tp.message.core.database.IDatabase;
@@ -8,10 +9,10 @@ import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.ISession;
-import com.ubo.tp.message.common.ui.ToastNotification;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,6 @@ public class MessageController implements IMessageController, IDatabaseObserver 
 
   private final ISession session;
   private final ModernChatView messageView;
-  private final IDatabase database;
   private final MessageModel model;
   protected EntityManager mEntityManager;
 
@@ -29,10 +29,10 @@ public class MessageController implements IMessageController, IDatabaseObserver 
                            EntityManager mEntityManager) {
     this.session = session;
     this.messageView = messageView;
-    this.database = database;
     this.model = model;
+
     // S'inscrire comme observateur de la base de données
-    this.database.addObserver(this);
+    database.addObserver(this);
     this.mEntityManager = mEntityManager;
   }
 
@@ -61,8 +61,8 @@ public class MessageController implements IMessageController, IDatabaseObserver 
 
   @Override
   public void searchMessages(String query) {
-    Set<Message> allMessages = model.getMessages();
-    Set<Message> results;
+    List<Message> allMessages = model.getMessages();
+    List<Message> results;
     if (query == null || query.trim().isEmpty()) {
       results = allMessages;
     } else {
@@ -72,19 +72,19 @@ public class MessageController implements IMessageController, IDatabaseObserver 
         results = allMessages.stream()
           .filter(m -> m.getSender().getUserTag().equalsIgnoreCase(userTag)
                        || m.containsUserTag(userTag))
-          .collect(Collectors.toSet());
+          .collect(Collectors.toList());
       } else if (trimmedQuery.contains("#") && !trimmedQuery.contains("@")) {
         String tag = trimmedQuery.replace("#", "");
         results = allMessages.stream()
           .filter(m -> m.containsTag(tag))
-          .collect(Collectors.toSet());
+          .collect(Collectors.toList());
       } else {
         String cleanedQuery = trimmedQuery.replace("@", "").replace("#", "");
         results = allMessages.stream()
           .filter(m -> m.getSender().getUserTag().equalsIgnoreCase(cleanedQuery)
                        || m.containsUserTag(cleanedQuery)
                        || m.containsTag(cleanedQuery))
-          .collect(Collectors.toSet());
+          .collect(Collectors.toList());
       }
     }
     messageView.updateSearchResults(results);

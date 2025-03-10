@@ -21,7 +21,8 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import static com.ubo.tp.message.common.constants.Constants.MESSAGES;
 
 /**
  * Contrôleur principal de l'application
@@ -93,6 +94,7 @@ public class ComponentsController implements ISessionObserver {
    * Contrôleur de répertoire
    */
   protected DirectoryController directoryController;
+
 
   /**
    * Constructeur
@@ -174,8 +176,8 @@ public class ComponentsController implements ISessionObserver {
     // Panneau pour afficher les messages
     JPanel messagesContainer = new JPanel(new BorderLayout());
     messagesContainer.add(messageComponent.getMessagePanel(), BorderLayout.CENTER);
-    centerPanel.add(messagesContainer, "messages");
-    centerPanel.add(messageComponent.getMessagePanel(), "messages");
+    centerPanel.add(messagesContainer, MESSAGES);
+    centerPanel.add(messageComponent.getMessagePanel(), MESSAGES);
     centerPanel.add(userSearchComponent.getComponent(), "user_search");
     centerPanel.add(userProfileComponent.getComponent(), "user_profile");
 
@@ -197,7 +199,7 @@ public class ComponentsController implements ISessionObserver {
     navigationComponent.setMessagesActionListener(_ -> showMessagesView());
 
     // Action pour la recherche
-    navigationComponent.setSearchActionListener(_ -> showSearchUserView());
+    navigationComponent.setSearchActionListener(_ -> { showSearchUserView(); userSearchComponent.initialize(); });
 
     // Action pour la déconnexion
     navigationComponent.setLogoutActionListener(_ -> sessionManager.logout());
@@ -227,14 +229,13 @@ public class ComponentsController implements ISessionObserver {
     // Action pour afficher le profil d'un utilisateur
     userSearchComponent.setViewProfileListener(e -> {
       // L'événement contient l'utilisateur à afficher
-      if (e.getSource() instanceof User) {
-        User userToDisplay = (User) e.getSource();
+      if (e.getSource() instanceof User userToDisplay) {
         showUserProfileView(userToDisplay);
       }
     });
 
     // Action pour revenir à la liste des utilisateurs
-    userProfileComponent.setBackToListListener(e -> showSearchUserView());
+    userProfileComponent.setBackToListListener(_ -> showSearchUserView());
   }
 
   /**
@@ -344,7 +345,7 @@ public class ComponentsController implements ISessionObserver {
 
     // Afficher les messages dans le panneau central
     CardLayout centerCl = (CardLayout) centerPanel.getLayout();
-    centerCl.show(centerPanel, "messages");
+    centerCl.show(centerPanel, MESSAGES);
   }
 
   /**
@@ -404,10 +405,4 @@ public class ComponentsController implements ISessionObserver {
     return sessionManager;
   }
 
-  /**
-   * Récupère le composant de navigation
-   */
-  public NavigationComponent getNavigationComponent() {
-    return navigationComponent;
-  }
 }
