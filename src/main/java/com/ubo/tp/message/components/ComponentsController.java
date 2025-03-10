@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 
 import static com.ubo.tp.message.common.constants.Constants.MESSAGES;
 
+
 /**
  * Contrôleur principal de l'application
  * Gère les transitions entre les différentes vues et les composants
