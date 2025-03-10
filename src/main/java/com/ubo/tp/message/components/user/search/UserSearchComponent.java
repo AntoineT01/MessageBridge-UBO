@@ -1,0 +1,114 @@
+package com.ubo.tp.message.components.user.search;
+
+import com.ubo.tp.message.components.user.search.controller.SearchController;
+import com.ubo.tp.message.components.user.search.model.SearchModel;
+import com.ubo.tp.message.components.user.search.view.SearchView;
+import com.ubo.tp.message.core.database.IDatabase;
+import com.ubo.tp.message.core.entity.EntityManager;
+import com.ubo.tp.message.core.session.SessionManager;
+import com.ubo.tp.message.ihm.IComponent;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+
+/**
+ * Composant de recherche d'utilisateurs.
+ * Implémente l'interface IComponent pour s'intégrer dans l'application.
+ */
+public class UserSearchComponent implements IComponent {
+
+  /**
+   * Panneau principal du composant.
+   */
+  private final JPanel mainPanel;
+
+  /**
+   * Vue de recherche d'utilisateurs.
+   */
+  private final SearchView searchView;
+
+  /**
+   * Contrôleur de recherche.
+   */
+  private final SearchController searchController;
+
+  /**
+   * Modèle de recherche.
+   */
+  private final SearchModel searchModel;
+
+  /**
+   * Écouteur pour l'action de visualisation du profil.
+   */
+  private ActionListener viewProfileListener;
+
+  /**
+   * Constructeur.
+   * @param database La base de données.
+   * @param sessionManager Le gestionnaire de session.
+   * @param entityManager Le gestionnaire d'entités.
+   */
+  public UserSearchComponent(IDatabase database, SessionManager sessionManager, EntityManager entityManager) {
+    // Initialisation du panneau principal
+    this.mainPanel = new JPanel(new BorderLayout());
+
+    // Création des composants MVC pour la recherche
+    this.searchModel = new SearchModel(database, sessionManager);
+    this.searchView = new SearchView();
+    this.searchController = new SearchController(searchView, searchModel, entityManager);
+
+    // Ajout de la vue au panneau principal
+    this.mainPanel.add(searchView, BorderLayout.CENTER);
+
+    // Initialisation
+    initialize();
+  }
+
+  @Override
+  public JComponent getComponent() {
+    return mainPanel;
+  }
+
+  @Override
+  public void initialize() {
+    // Charger tous les utilisateurs au démarrage
+    searchController.searchUsers("");
+  }
+
+  @Override
+  public void reset() {
+    searchController.reset();
+  }
+
+  @Override
+  public void setEnabled(boolean enabled) {
+    searchController.setEnabled(enabled);
+    mainPanel.setEnabled(enabled);
+  }
+
+  /**
+   * Définit l'écouteur pour l'action de visualisation du profil.
+   * @param listener L'écouteur à définir.
+   */
+  public void setViewProfileListener(ActionListener listener) {
+    this.viewProfileListener = listener;
+    searchController.setViewProfileListener(listener);
+  }
+
+  /**
+   * Affiche un message d'erreur.
+   * @param message Le message d'erreur à afficher.
+   */
+  public void showError(String message) {
+    searchController.showError(message);
+  }
+
+  /**
+   * Affiche un message de succès.
+   * @param message Le message de succès à afficher.
+   */
+  public void showSuccess(String message) {
+    searchController.showSuccess(message);
+  }
+}

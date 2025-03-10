@@ -1,7 +1,6 @@
 package com.ubo.tp.message.components.navigation.model;
 
 import com.ubo.tp.message.core.datamodel.User;
-import com.ubo.tp.message.core.session.ISession;
 import com.ubo.tp.message.core.session.ISessionObserver;
 import com.ubo.tp.message.core.session.SessionManager;
 

@@ -3,27 +3,30 @@ package com.ubo.tp.message.components;
 import com.ubo.tp.message.app.MessageAppView;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
 import com.ubo.tp.message.components.message.MessageComponent;
-import com.ubo.tp.message.components.message.controller.MessageController;
 import com.ubo.tp.message.components.navigation.NavigationComponent;
 import com.ubo.tp.message.components.user.auth.AuthComponent;
 import com.ubo.tp.message.components.user.auth.IAuthComponent;
+import com.ubo.tp.message.components.user.details.UserProfileComponent;
 import com.ubo.tp.message.components.user.profil.IProfileComponent;
 import com.ubo.tp.message.components.user.profil.ProfileComponent;
+import com.ubo.tp.message.components.user.search.UserSearchComponent;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.ISessionObserver;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
  * Contrôleur principal de l'application
  * Gère les transitions entre les différentes vues et les composants
- * Version simplifiée pour intégrer la navigation par menus avec correction du layout
+ * Version mise à jour pour intégrer la recherche et les profils utilisateurs
  */
 public class ComponentsController implements ISessionObserver {
   /**
@@ -72,14 +75,19 @@ public class ComponentsController implements ISessionObserver {
   protected NavigationComponent navigationComponent;
 
   /**
-   * Panel de messages
+   * Composant de recherche d'utilisateurs
    */
-//  protected MessagePanel messagePanel;
+  protected UserSearchComponent userSearchComponent;
 
   /**
-   * Contrôleur de messages
+   * Composant de profil utilisateur détaillé
    */
-  protected MessageController messageController;
+  protected UserProfileComponent userProfileComponent;
+
+  /**
+   * Panel de messages
+   */
+  protected MessageComponent messageComponent;
 
   /**
    * Contrôleur de répertoire
@@ -140,8 +148,14 @@ public class ComponentsController implements ISessionObserver {
     navigationComponent = new NavigationComponent(sessionManager);
     navigationComponent.setMainFrame(mainView);
 
+    // Créer le composant de recherche d'utilisateurs
+    userSearchComponent = new UserSearchComponent(database, sessionManager, entityManager);
+
+    // Créer le composant de profil utilisateur détaillé
+    userProfileComponent = new UserProfileComponent(database, sessionManager, entityManager);
+
     // Créer le service et le panneau de messages
-    MessageComponent messageComponent = new MessageComponent(database, sessionManager.getSession(), entityManager);
+    messageComponent = new MessageComponent(database, sessionManager.getSession(), entityManager);
 
     // Configurer les actions pour le composant d'authentification
     authComponent.setAuthSuccessListener(new ActionListener() {
@@ -155,17 +169,18 @@ public class ComponentsController implements ISessionObserver {
     // Configurer les actions pour le composant de navigation
     setupNavigationActions();
 
+    // Configurer les actions pour le composant de recherche d'utilisateurs
+    setupUserSearchActions();
+
     // Créer un panneau pour le contenu principal
     JPanel mainContentPanel = new JPanel(new BorderLayout());
 
     // Panneau central avec CardLayout pour les différentes vues
     centerPanel = new JPanel(new CardLayout());
     centerPanel.add(profileComponent.getComponent(), "profile");
-
-    // Créer un panneau pour afficher les messages
-    JPanel messagesContainer = new JPanel(new BorderLayout());
-    messagesContainer.add(messageComponent.getMessagePanel(), BorderLayout.CENTER);
-    centerPanel.add(messagesContainer, "messages");
+    centerPanel.add(messageComponent.getMessagePanel(), "messages");
+    centerPanel.add(userSearchComponent.getComponent(), "user_search");
+    centerPanel.add(userProfileComponent.getComponent(), "user_profile");
 
     mainContentPanel.add(centerPanel, BorderLayout.CENTER);
 
@@ -198,6 +213,23 @@ public class ComponentsController implements ISessionObserver {
 
     // Action pour "À propos"
     navigationComponent.setAboutActionListener(e -> mainView.showAboutDialog());
+  }
+
+  /**
+   * Configure les actions pour le composant de recherche d'utilisateurs
+   */
+  private void setupUserSearchActions() {
+    // Action pour afficher le profil d'un utilisateur
+    userSearchComponent.setViewProfileListener(e -> {
+      // L'événement contient l'utilisateur à afficher
+      if (e.getSource() instanceof User) {
+        User userToDisplay = (User) e.getSource();
+        showUserProfileView(userToDisplay);
+      }
+    });
+
+    // Action pour revenir à la liste des utilisateurs
+    userProfileComponent.setBackToListListener(e -> showSearchUserView());
   }
 
   /**
@@ -271,6 +303,28 @@ public class ComponentsController implements ISessionObserver {
   }
 
   /**
+   * Affiche le profil d'un utilisateur spécifique
+   * @param user L'utilisateur dont le profil doit être affiché
+   */
+  public void showUserProfileView(User user) {
+    // Vérifier si l'utilisateur est connecté
+    if (!sessionManager.isUserConnected()) {
+      return;
+    }
+
+    // Définir l'utilisateur à afficher
+    userProfileComponent.setUserToDisplay(user);
+
+    // Afficher la vue principale
+    CardLayout mainCl = (CardLayout) contentPanel.getLayout();
+    mainCl.show(contentPanel, "main");
+
+    // Afficher le profil utilisateur détaillé dans le panneau central
+    CardLayout centerCl = (CardLayout) centerPanel.getLayout();
+    centerCl.show(centerPanel, "user_profile");
+  }
+
+  /**
    * Affiche la vue de messages
    */
   public void showMessagesView() {
@@ -297,9 +351,13 @@ public class ComponentsController implements ISessionObserver {
       return;
     }
 
-    // Pour l'instant, montrons la vue des messages
-    // puisque la recherche d'utilisateurs n'est pas encore implémentée
-    showMessagesView();
+    // Afficher la vue principale
+    CardLayout mainCl = (CardLayout) contentPanel.getLayout();
+    mainCl.show(contentPanel, "main");
+
+    // Afficher la recherche d'utilisateurs dans le panneau central
+    CardLayout centerCl = (CardLayout) centerPanel.getLayout();
+    centerCl.show(centerPanel, "user_search");
   }
 
   /**

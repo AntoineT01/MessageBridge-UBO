@@ -3,14 +3,16 @@ package com.ubo.tp.message.app;
 import com.ubo.tp.message.common.utils.UserDatabaseCleaner;
 import com.ubo.tp.message.components.ComponentsController;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
-import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.database.Database;
 import com.ubo.tp.message.core.database.IDatabase;
+import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.mock.MessageAppMock;
 import com.ubo.tp.message.test.ConsoleDatabaseObserver;
 
-import javax.swing.*;
-import java.nio.charset.Charset;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 
 /**
  * Classe de lancement de l'application.

@@ -49,15 +49,7 @@ public class NavigationComponent {
    */
   private JFrame mainFrame;
 
-  /**
-   * Contrôleur de répertoire
-   */
-  private DirectoryController directoryController;
 
-  /**
-   * Constructeur.
-   * @param sessionManager Le gestionnaire de session
-   */
   public NavigationComponent(SessionManager sessionManager) {
     // Initialisation du modèle
     model = new NavigationModel(sessionManager);
@@ -102,7 +94,9 @@ public class NavigationComponent {
    * Définit le contrôleur de répertoire
    */
   public void setDirectoryController(DirectoryController directoryController) {
-    this.directoryController = directoryController;
+    /**
+     * Contrôleur de répertoire
+     */
 
     // Mettre à jour les vues avec le contrôleur
     connectedView.setDirectoryController(directoryController);
