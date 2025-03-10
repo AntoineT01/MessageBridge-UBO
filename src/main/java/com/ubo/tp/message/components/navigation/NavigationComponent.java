@@ -7,7 +7,6 @@ import com.ubo.tp.message.components.navigation.view.NavigationViewConnected;
 import com.ubo.tp.message.components.navigation.view.NavigationViewDisconnected;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -118,27 +117,6 @@ public class NavigationComponent {
   }
 
   /**
-   * Récupère le composant Swing principal.
-   */
-  public JComponent getComponent() {
-    return mainPanel;
-  }
-
-  /**
-   * Initialise le composant.
-   */
-  public void initialize() {
-    // Déjà fait dans le constructeur
-  }
-
-  /**
-   * Réinitialise l'état du composant.
-   */
-  public void reset() {
-    // Rien à réinitialiser
-  }
-
-  /**
    * Active ou désactive le composant.
    */
   public void setEnabled(boolean enabled) {
@@ -222,15 +200,6 @@ public class NavigationComponent {
    */
   public void setAboutActionListener(ActionListener listener) {
     controller.setAboutActionListener(listener);
-  }
-
-  /**
-   * Définit l'écouteur pour l'action de changement de répertoire.
-   * Cette méthode est maintenant une no-op car nous utilisons directement
-   * le DirectoryController dans les vues.
-   */
-  public void setChangeDirectoryActionListener(ActionListener listener) {
-    // Ne rien faire - géré directement dans les vues
   }
 
   /**

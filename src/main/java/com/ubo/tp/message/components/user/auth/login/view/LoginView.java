@@ -177,10 +177,4 @@ public class LoginView extends JPanel {
     registerButton.setEnabled(enabled);
   }
 
-  /**
-   * Récupère le bouton d'inscription (pour la compatibilité)
-   */
-  public JButton getRegisterButton() {
-    return registerButton;
-  }
 }

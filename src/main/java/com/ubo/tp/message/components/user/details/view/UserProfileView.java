@@ -369,31 +369,6 @@ public class UserProfileView extends JPanel {
 
     followingList.setModel(model);
   }
-
-  /**
-   * Récupère l'utilisateur follower sélectionné dans la liste.
-   * @return L'utilisateur sélectionné ou null si aucun utilisateur n'est sélectionné.
-   */
-  public User getSelectedFollower() {
-    int selectedIndex = followersList.getSelectedIndex();
-    if (selectedIndex != -1) {
-      return (User) followersList.getClientProperty("follower_" + selectedIndex);
-    }
-    return null;
-  }
-
-  /**
-   * Récupère l'utilisateur suivi sélectionné dans la liste.
-   * @return L'utilisateur sélectionné ou null si aucun utilisateur n'est sélectionné.
-   */
-  public User getSelectedFollowing() {
-    int selectedIndex = followingList.getSelectedIndex();
-    if (selectedIndex != -1) {
-      return (User) followingList.getClientProperty("following_" + selectedIndex);
-    }
-    return null;
-  }
-
   /**
    * Définit l'écouteur pour le bouton de retour.
    * @param listener L'écouteur à définir.

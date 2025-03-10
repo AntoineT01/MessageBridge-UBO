@@ -105,11 +105,4 @@ public class UserSearchComponent implements IComponent {
     searchController.showError(message);
   }
 
-  /**
-   * Affiche un message de succès.
-   * @param message Le message de succès à afficher.
-   */
-  public void showSuccess(String message) {
-    searchController.showSuccess(message);
-  }
 }

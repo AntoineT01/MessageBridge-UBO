@@ -18,9 +18,4 @@ public interface IProfileComponent extends IComponent {
    */
   void showError(String message);
 
-  /**
-   * Affiche un message de succès dans le composant.
-   * @param message Le message de succès à afficher.
-   */
-  void showSuccess(String message);
 }

@@ -197,7 +197,6 @@ public class SearchView extends JPanel {
   /**
    * Met à jour la liste des utilisateurs affichés.
    * @param users La liste des utilisateurs à afficher.
-   * @param followedUsers La liste des utilisateurs suivis par l'utilisateur connecté.
    */
   public void updateUsersList(Set<User> users, Set<String> followedTags) {
     // Vider la table

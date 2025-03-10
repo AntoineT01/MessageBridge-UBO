@@ -74,8 +74,6 @@ public class LoginController {
    * Définit l'écouteur pour le changement vers l'écran d'inscription
    */
   public void setRegisterScreenListener(ActionListener listener) {
-    ActionListener registerScreenListener;
-    registerScreenListener = listener;
     view.setRegisterButtonListener(listener);
   }
 

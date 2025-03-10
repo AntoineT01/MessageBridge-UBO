@@ -112,10 +112,4 @@ public class DirectoryController {
     }
   }
 
-  /**
-   * Récupère le chemin du répertoire d'échange
-   */
-  public String getExchangeDirectoryPath() {
-    return exchangeDirectoryPath;
-  }
 }

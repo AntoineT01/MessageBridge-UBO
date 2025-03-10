@@ -235,13 +235,6 @@ public class RegisterView extends JPanel {
   }
 
   /**
-   * Récupère le bouton de connexion (pour la compatibilité)
-   */
-  public JButton getLoginButton() {
-    return loginButton;
-  }
-
-  /**
    * Récupère la base de données (pour le contrôleur)
    */
   public IDatabase getDatabase() {

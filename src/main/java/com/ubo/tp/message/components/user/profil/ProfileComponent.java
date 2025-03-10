@@ -91,8 +91,4 @@ public class ProfileComponent implements IProfileComponent {
     profileController.showError(message);
   }
 
-  @Override
-  public void showSuccess(String message) {
-    profileController.showSuccess(message);
-  }
 }

@@ -6,7 +6,6 @@ import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.session.SessionManager;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Modèle gérant les données du profil utilisateur.
@@ -60,63 +59,6 @@ public class ProfileModel {
       return database.getFollowersCount(connectedUser);
     }
     return 0;
-  }
-
-  /**
-   * Récupère les utilisateurs qui suivent l'utilisateur connecté.
-   * @return L'ensemble des followers.
-   */
-  public Set<User> getFollowers() {
-    User connectedUser = getConnectedUser();
-    if (connectedUser != null) {
-      return database.getFollowers(connectedUser);
-    }
-    return Set.of(); // Ensemble vide si aucun utilisateur n'est connecté
-  }
-
-  /**
-   * Récupère les utilisateurs que suit l'utilisateur connecté.
-   * @return L'ensemble des utilisateurs suivis.
-   */
-  public Set<User> getFollowed() {
-    User connectedUser = getConnectedUser();
-    if (connectedUser != null) {
-      Set<String> followedTags = connectedUser.getFollows();
-      return database.getUsers().stream()
-        .filter(user -> followedTags.contains(user.getUserTag()))
-        .collect(Collectors.toSet());
-    }
-    return Set.of(); // Ensemble vide si aucun utilisateur n'est connecté
-  }
-
-  /**
-   * Commence à suivre un utilisateur.
-   * @param userTag Le tag de l'utilisateur à suivre.
-   * @return true si l'opération a réussi, false sinon.
-   */
-  public boolean followUser(String userTag) {
-    User connectedUser = getConnectedUser();
-    if (connectedUser != null) {
-      connectedUser.addFollowing(userTag);
-      database.modifiyUser(connectedUser);
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Cesse de suivre un utilisateur.
-   * @param userTag Le tag de l'utilisateur à ne plus suivre.
-   * @return true si l'opération a réussi, false sinon.
-   */
-  public boolean unfollowUser(String userTag) {
-    User connectedUser = getConnectedUser();
-    if (connectedUser != null) {
-      connectedUser.removeFollowing(userTag);
-      database.modifiyUser(connectedUser);
-      return true;
-    }
-    return false;
   }
 
   /**

@@ -106,11 +106,5 @@ public class UserProfileComponent implements IComponent {
     profileController.showError(message);
   }
 
-  /**
-   * Affiche un message de succès.
-   * @param message Le message de succès à afficher.
-   */
-  public void showSuccess(String message) {
-    profileController.showSuccess(message);
-  }
+
 }
