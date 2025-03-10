@@ -10,7 +10,6 @@ import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -172,12 +171,6 @@ public class AuthComponent implements IAuthComponent {
   }
 
   @Override
-  public void setAuthSwitchListener(ActionListener listener) {
-    // Cette méthode n'est pas utilisée car nous gérons le basculement en interne,
-    // mais nous la conservons pour la compatibilité avec l'interface
-  }
-
-  @Override
   public void showLoginView() {
     mainPanel.removeAll();
     mainPanel.add(loginPanel, BorderLayout.CENTER);
@@ -193,17 +186,4 @@ public class AuthComponent implements IAuthComponent {
     mainPanel.repaint();
   }
 
-  /**
-   * Récupère le bouton d'inscription de la vue de connexion (pour la compatibilité avec le code existant).
-   */
-  public JButton getRegisterButton() {
-    return loginView.getRegisterButton();
-  }
-
-  /**
-   * Récupère le bouton de connexion de la vue d'inscription (pour la compatibilité avec le code existant).
-   */
-  public JButton getLoginButton() {
-    return registerView.getLoginButton();
-  }
 }

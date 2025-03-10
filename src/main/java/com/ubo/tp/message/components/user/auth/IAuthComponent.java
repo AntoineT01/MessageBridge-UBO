@@ -25,12 +25,6 @@ public interface IAuthComponent extends IComponent {
   void setAuthSuccessListener(ActionListener listener);
 
   /**
-   * Définit un écouteur pour les événements de changement d'écran d'authentification.
-   * @param listener L'écouteur à définir.
-   */
-  void setAuthSwitchListener(ActionListener listener);
-
-  /**
    * Affiche la vue de connexion.
    */
   void showLoginView();
