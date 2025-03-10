@@ -34,10 +34,6 @@ public class MessageController implements IMessageController, IDatabaseObserver 
     // S'inscrire comme observateur de la base de données
     this.database.addObserver(this);
     this.mEntityManager = mEntityManager;
-    // Charger les messages existants dans le modèle
-    for (Message m : database.getMessages()) {
-      model.addMessage(m);
-    }
   }
 
   @Override

@@ -46,12 +46,7 @@ public class LoginController {
    */
   private void initEventListeners() {
     // Écouteur pour le bouton de connexion
-    view.setLoginButtonListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        attemptLogin();
-      }
-    });
+    view.setLoginButtonListener(_ -> attemptLogin());
   }
 
   /**

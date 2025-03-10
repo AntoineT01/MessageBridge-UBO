@@ -1,14 +1,24 @@
 package com.ubo.tp.message.components.message.model;
 
 import com.ubo.tp.message.core.datamodel.Message;
+import com.ubo.tp.message.core.session.ISession;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-// TODO: FAire en sorte qu'il soit instancié et rempli avec les messages filtrés par ceux qui follow l'utilisateur connecté
-//  Attention : quand les follow changent, les messages aussi mais USER n'est pas observable DONC rendre User observable
 public class MessageModel {
   private final List<Message> messages = new ArrayList<>();
   private final List<IMessageObserver> observers = new ArrayList<>();
+  private final ISession session;
+
+  public MessageModel(ISession session) {
+    this.session = session;
+  }
+
+  public MessageModel() {
+    this.session = null;
+  }
 
   public void addObserver(IMessageObserver observer) {
     observers.add(observer);
@@ -18,8 +28,22 @@ public class MessageModel {
     observers.remove(observer);
   }
 
+  /**
+   * Retourne la liste des messages filtrés pour l’utilisateur connecté.
+   * On affiche uniquement les messages envoyés par l’utilisateur lui-même
+   * ou par des utilisateurs que celui-ci suit.
+   */
   public List<Message> getMessages() {
-    return new ArrayList<>(messages);
+    if (session == null || session.getConnectedUser() == null) {
+      return new ArrayList<>();
+    }
+    var connectedUser = session.getConnectedUser();
+    return messages.stream()
+      .filter(message ->
+        message.getSender().getUuid().equals(connectedUser.getUuid()) ||
+        connectedUser.getFollows().contains(message.getSender().getUserTag())
+      )
+      .collect(Collectors.toList());
   }
 
   public void addMessage(Message message) {
@@ -40,9 +64,19 @@ public class MessageModel {
 
   public void clearMessages() {
     messages.clear();
-    // Pour simplifier, on notifie que la liste a changé
+    // Pour simplifier, notifier que la liste a changé
     for (IMessageObserver observer : observers) {
       observer.notifyMessageRemoved();
+    }
+  }
+
+  /**
+   * Force le rafraîchissement des messages filtrés en notifiant les observateurs.
+   * À appeler lors d’un changement d’état (par exemple, après la connexion).
+   */
+  public void refresh() {
+    for (IMessageObserver observer : observers) {
+      observer.notifyMessageAdded();
     }
   }
 }

@@ -3,7 +3,7 @@ package com.ubo.tp.message.components;
 import com.ubo.tp.message.app.MessageAppView;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
 import com.ubo.tp.message.components.message.MessageComponent;
-import com.ubo.tp.message.components.message.controller.MessageController;
+import com.ubo.tp.message.components.message.view.ModernChatView;
 import com.ubo.tp.message.components.navigation.NavigationComponent;
 import com.ubo.tp.message.components.user.auth.AuthComponent;
 import com.ubo.tp.message.components.user.auth.IAuthComponent;
@@ -15,10 +15,10 @@ import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.ISessionObserver;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 
 /**
  * Contrôleur principal de l'application
@@ -71,16 +71,7 @@ public class ComponentsController implements ISessionObserver {
    */
   protected NavigationComponent navigationComponent;
 
-  /**
-   * Panel de messages
-   */
-//  protected MessagePanel messagePanel;
-
-  /**
-   * Contrôleur de messages
-   */
-  protected MessageController messageController;
-
+  private MessageComponent messageComponent;
   /**
    * Contrôleur de répertoire
    */
@@ -126,31 +117,24 @@ public class ComponentsController implements ISessionObserver {
    * Initialisation de l'interface graphique
    */
   protected void initGUI() {
-    // Initialiser le panneau de contenu principal avec CardLayout
+    // Initialisation du panneau de contenu principal avec CardLayout
     contentPanel = new JPanel(new CardLayout());
     mainView.setContentPanel(contentPanel);
 
-    // Créer le composant d'authentification
+    // Création des composants d'authentification et de profil
     authComponent = new AuthComponent(database, entityManager, sessionManager);
-
-    // Créer le composant de profil
     profileComponent = new ProfileComponent(database, entityManager, sessionManager);
 
-    // Créer le composant de navigation
+    // Création du composant de navigation
     navigationComponent = new NavigationComponent(sessionManager);
     navigationComponent.setMainFrame(mainView);
 
-    // Créer le service et le panneau de messages
-    MessageComponent messageComponent = new MessageComponent(database, sessionManager.getSession(), entityManager);
+    // ***** Modification ici : on stocke le MessageComponent dans un champ *****
+    messageComponent = new MessageComponent(database, sessionManager.getSession(), entityManager);
 
+    // Création du panneau principal pour le contenu (profil et messages)
     // Configurer les actions pour le composant d'authentification
-    authComponent.setAuthSuccessListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // Cette méthode est appelée quand l'authentification réussit
-        showUserProfileView();
-      }
-    });
+    authComponent.setAuthSuccessListener(_ -> showUserProfileView());
 
     // Configurer les actions pour le composant de navigation
     setupNavigationActions();
@@ -162,14 +146,14 @@ public class ComponentsController implements ISessionObserver {
     centerPanel = new JPanel(new CardLayout());
     centerPanel.add(profileComponent.getComponent(), "profile");
 
-    // Créer un panneau pour afficher les messages
+    // Panneau pour afficher les messages
     JPanel messagesContainer = new JPanel(new BorderLayout());
     messagesContainer.add(messageComponent.getMessagePanel(), BorderLayout.CENTER);
     centerPanel.add(messagesContainer, "messages");
 
     mainContentPanel.add(centerPanel, BorderLayout.CENTER);
 
-    // Ajouter les vues au panneau de contenu
+    // Ajout des vues au panneau de contenu
     contentPanel.add(authComponent.getComponent(), "auth");
     contentPanel.add(mainContentPanel, "main");
   }
@@ -179,25 +163,25 @@ public class ComponentsController implements ISessionObserver {
    */
   private void setupNavigationActions() {
     // Action pour afficher le profil
-    navigationComponent.setProfileActionListener(e -> showUserProfileView());
+    navigationComponent.setProfileActionListener(_ -> showUserProfileView());
 
     // Action pour afficher les messages
-    navigationComponent.setMessagesActionListener(e -> showMessagesView());
+    navigationComponent.setMessagesActionListener(_ -> showMessagesView());
 
     // Action pour la recherche
-    navigationComponent.setSearchActionListener(e -> showSearchUserView());
+    navigationComponent.setSearchActionListener(_ -> showSearchUserView());
 
     // Action pour la déconnexion
-    navigationComponent.setLogoutActionListener(e -> sessionManager.logout());
+    navigationComponent.setLogoutActionListener(_ -> sessionManager.logout());
 
     // Action pour la connexion
-    navigationComponent.setLoginActionListener(e -> showLoginView());
+    navigationComponent.setLoginActionListener(_ -> showLoginView());
 
     // Action pour l'inscription
-    navigationComponent.setRegisterActionListener(e -> showRegisterView());
+    navigationComponent.setRegisterActionListener(_ -> showRegisterView());
 
     // Action pour "À propos"
-    navigationComponent.setAboutActionListener(e -> mainView.showAboutDialog());
+    navigationComponent.setAboutActionListener(_ -> mainView.showAboutDialog());
   }
 
   /**
@@ -205,7 +189,7 @@ public class ComponentsController implements ISessionObserver {
    */
   public void setupViewEvents() {
     // Configurer l'action de sortie
-    mainView.setExitListener(e -> {
+    mainView.setExitListener(_ -> {
       // Demander confirmation à l'utilisateur
       int response = JOptionPane.showConfirmDialog(
         mainView,
@@ -307,11 +291,19 @@ public class ComponentsController implements ISessionObserver {
    */
   @Override
   public void notifyLogin(User connectedUser) {
-    // Afficher la vue de navigation connectée
+    // Afficher la vue de navigation connectée et le profil
     navigationComponent.showConnectedView();
-
-    // Afficher le profil
     showUserProfileView();
+
+    // Forcer le rafraîchissement des messages filtrés
+    // Ici, on suppose que le MessageComponent détient une référence vers le MessageModel
+    if (messageComponent != null) {
+      // Dans votre MessageComponent, vous pouvez exposer le modèle pour rafraîchir :
+      messageComponent.getMessageModel().refresh();
+      // Ou, si vous avez une méthode refreshMessages() qui recrée l'affichage à partir de getMessages(),
+      // vous l'appelez ici.
+      messageComponent.refreshMessages();
+    }
   }
 
   /**

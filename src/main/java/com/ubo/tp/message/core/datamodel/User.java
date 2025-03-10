@@ -1,6 +1,8 @@
 package com.ubo.tp.message.core.datamodel;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,15 +43,9 @@ public class User {
 	 */
 	protected String mAvatarPath;
 
-	/**
-	 * Constructeur.
-	 *
-	 * @param uuid       , Identifiant unique de l'utilisateur.
-	 * @param userTag    , Tag correspondant à l'utilisateur.
-	 * @param name       , Nom de l'utilisateur.
-	 * @param follows    , Liste des tags suivis.
-	 * @param avatarPath , Chemin d'accès à l'image de l'avatar.
-	 */
+	// Nouvelle liste d’observateurs
+	private final List<IUserObserver> observers = new ArrayList<>();
+
 	public User(UUID uuid, String userTag, String userPassword, String name, Set<String> follows, String avatarPath) {
 		mUuid = uuid;
 		mUserTag = userTag;
@@ -119,16 +115,15 @@ public class User {
 	 * @param tagToRemove , tag à retirer.
 	 */
 	public void removeFollowing(String tagToRemove) {
-		this.mFollows.remove(tagToRemove);
+		if(this.mFollows.remove(tagToRemove)) {
+			notifyFollowChanged();
+		}
 	}
 
-	/**
-	 * Ajout un tag de la liste des tags suivis.
-	 *
-	 * @param tagToFollow , tag à ajouter.
-	 */
 	public void addFollowing(String tagToFollow) {
-		this.mFollows.add(tagToFollow);
+		if(this.mFollows.add(tagToFollow)) {
+			notifyFollowChanged();
+		}
 	}
 
 	/**
@@ -154,48 +149,43 @@ public class User {
 		return this.getFollows().contains(userToCheck.getUserTag());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-//	-> A activer... pourquoi ?
-//	public int hashCode() {
-//		int hashCode = 0;
-//
-//		if (this.mUuid != null) {
-//			hashCode = this.mUuid.hashCode();
-//		}
-//
-//		return hashCode;
-//	}
+	// Gestion des observateurs
+	public void addObserver(IUserObserver observer) {
+		if(!observers.contains(observer)) {
+			observers.add(observer);
+		}
+	}
+
+	public void removeObserver(IUserObserver observer) {
+		observers.remove(observer);
+	}
+
+	private void notifyFollowChanged() {
+		for(IUserObserver observer : observers) {
+			observer.followListChanged(this);
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		int hashCode = 0;
+		if (this.mUuid != null) {
+			hashCode = this.mUuid.hashCode();
+		}
+		return hashCode;
+	}
 
 	@Override
 	public boolean equals(Object other) {
 		boolean equals = false;
-
-		if (other != null) {
-			if (other instanceof User) {
-				User otherUser = (User) other;
-				equals = (this.getUuid().equals(otherUser.getUuid()));
-			}
+		if (other instanceof User otherUser) {
+			equals = this.getUuid().equals(otherUser.getUuid());
 		}
-
 		return equals;
 	}
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("[");
-		sb.append(this.getClass().getName());
-		sb.append("] : ");
-		sb.append(this.getUuid());
-		sb.append(" {@");
-		sb.append(this.getUserTag());
-		sb.append(" / ");
-		sb.append(this.getName());
-		sb.append("}");
-
-		return sb.toString();
+		return "[" + this.getClass().getName() + "] : " + this.getUuid() + " {@" + this.getUserTag() + " / " + this.getName() + "}";
 	}
 }
