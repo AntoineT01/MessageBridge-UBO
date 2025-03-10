@@ -3,11 +3,11 @@ package com.ubo.tp.message.components.message.view;
 import com.ubo.tp.message.common.ui.RoundedBorder;
 import com.ubo.tp.message.common.ui.RoundedTextArea;
 import com.ubo.tp.message.common.ui.SearchBar;
+import com.ubo.tp.message.components.message.model.IMessageObserver;
+import com.ubo.tp.message.components.message.model.MessageModel;
 import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.session.ISession;
-import com.ubo.tp.message.components.message.model.IMessageObserver;
-import com.ubo.tp.message.components.message.model.MessageModel;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -144,5 +144,9 @@ public class ModernChatView extends JPanel implements IMessageObserver {
   public void setModel(MessageModel model) {
     this.model = model;
     model.addObserver(this);
+  }
+
+  public void clearMessages() {
+    this.chatPanel.clearMessages();
   }
 }

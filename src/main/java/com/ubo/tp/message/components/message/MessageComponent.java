@@ -4,15 +4,17 @@ import com.ubo.tp.message.components.message.controller.MessageController;
 import com.ubo.tp.message.components.message.model.MessageModel;
 import com.ubo.tp.message.components.message.view.ModernChatView;
 import com.ubo.tp.message.core.database.IDatabase;
+import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.ISession;
+
 import javax.swing.JPanel;
 import java.awt.event.ActionListener;
 
 public class MessageComponent {
-
-  private ModernChatView messagePanel = null;
-  private MessageController messageController = null;
+  private ModernChatView messagePanel;
+  private MessageController messageController;
+  private MessageModel messageModel; // stocker le modèle
 
   public MessageComponent(IDatabase database, ISession session, EntityManager entityManager) {
     ActionListener sendAction = _ -> {
@@ -26,14 +28,26 @@ public class MessageComponent {
     };
 
     messagePanel = new ModernChatView(session, sendAction, searchAction);
-    MessageModel messageModel = new MessageModel();
-    // La vue s'inscrit sur le modèle
+    messageModel = new MessageModel(session);
     messagePanel.setModel(messageModel);
-    // Le contrôleur travaille désormais via le modèle
     messageController = new MessageController(session, messagePanel, database, messageModel, entityManager);
   }
 
   public JPanel getMessagePanel() {
     return messagePanel;
+  }
+
+  public MessageModel getMessageModel() {
+    return messageModel;
+  }
+
+  /**
+   * Rafraîchit l'affichage en réaffichant tous les messages filtrés.
+   */
+  public void refreshMessages() {
+    messagePanel.clearMessages();
+    for (Message m : messageModel.getMessages()) {
+      messagePanel.addMessageToFeed(m);
+    }
   }
 }

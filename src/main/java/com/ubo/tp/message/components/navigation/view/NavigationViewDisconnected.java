@@ -108,7 +108,7 @@ public class NavigationViewDisconnected extends JPanel {
     add(welcomeLabel, BorderLayout.EAST);
 
     // Action par défaut pour le changement de répertoire
-    changeDirectoryMenuItem.addActionListener(e -> {
+    changeDirectoryMenuItem.addActionListener(_ -> {
       if (directoryController != null && parentFrame != null) {
         boolean success = directoryController.selectAndChangeExchangeDirectory(parentFrame);
         if (success) {
