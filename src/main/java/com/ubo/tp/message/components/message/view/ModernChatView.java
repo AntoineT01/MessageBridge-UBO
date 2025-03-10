@@ -20,7 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -108,7 +107,7 @@ public class ModernChatView extends JPanel implements IMessageObserver {
 
   public void updateSearchResults(List<Message> messages) {
     chatPanel.clearMessages();
-    messages.stream().sorted(Comparator.comparingLong(Message::getEmissionDate)).forEach(this::addMessageToFeed);
+//    messages.stream().sorted(Comparator.comparingLong(Message::getEmissionDate)).forEach(this::addMessageToFeed);
     for (Message m : messages) {
       addMessageToFeed(m);
     }

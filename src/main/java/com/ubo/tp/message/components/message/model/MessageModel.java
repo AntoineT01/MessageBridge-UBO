@@ -6,11 +6,19 @@ import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.session.ISession;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class MessageModel implements IUserObserver {
-  private final List<Message> messages = new ArrayList<>();
+
+  // Utilisation d'un TreeSet pour garantir l'unicité et le tri par date puis par UUID
+  private final TreeSet<Message> messages = new TreeSet<>(
+    Comparator.comparingLong(Message::getEmissionDate)
+      .thenComparing(Message::getUuid)
+  );
+
   private final List<IMessageObserver> observers = new ArrayList<>();
   private final ISession session;
 
@@ -35,7 +43,7 @@ public class MessageModel implements IUserObserver {
     if (session == null || session.getConnectedUser() == null) {
       return new ArrayList<>();
     }
-    var connectedUser = session.getConnectedUser();
+    User connectedUser = session.getConnectedUser();
     connectedUser.addObserver(this);
 
     return messages.stream()
@@ -64,7 +72,7 @@ public class MessageModel implements IUserObserver {
 
   public void clearMessages() {
     messages.clear();
-    // Pour simplifier, notifier que la liste a changé
+    // Notifier les observateurs que la liste a été vidée
     for (IMessageObserver observer : observers) {
       observer.notifyMessageRemoved();
     }

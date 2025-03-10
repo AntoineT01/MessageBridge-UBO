@@ -35,10 +35,6 @@ public class MessageComponent {
     messageController = new MessageController(session, messagePanel, database, messageModel, entityManager);
   }
 
-  public JPanel getMessagePanel() {
-    return messagePanel;
-  }
-
   public MessageModel getMessageModel() {
     return messageModel;
   }
@@ -51,5 +47,9 @@ public class MessageComponent {
     for (Message m : messageModel.getMessages()) {
       messagePanel.addMessageToFeed(m);
     }
+  }
+
+  public JPanel getMessagePanel() {
+    return messagePanel;
   }
 }

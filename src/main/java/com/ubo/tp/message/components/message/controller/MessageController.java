@@ -66,8 +66,8 @@ public class MessageController implements IMessageController, IDatabaseObserver 
       if (trimmedQuery.contains("@") && !trimmedQuery.contains("#")) {
         String userTag = trimmedQuery.replace("@", "");
         results = allMessages.stream()
-          .filter(m -> m.getSender().getUserTag().equalsIgnoreCase(userTag)
-                       || m.containsUserTag(userTag))
+          .filter(m -> m.getSender().getUserTag().equalsIgnoreCase("@" + userTag)
+                       || m.containsUserTag("@" + userTag))
           .toList();
       } else if (trimmedQuery.contains("#") && !trimmedQuery.contains("@")) {
         String tag = trimmedQuery.replace("#", "");
