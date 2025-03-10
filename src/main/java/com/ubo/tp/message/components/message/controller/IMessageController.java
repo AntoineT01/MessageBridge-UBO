@@ -33,5 +33,5 @@ public interface IMessageController {
    *
    * @param query la requête de recherche
    */
-  void searchMessages(String query);
+//  List<Message> searchMessages(String query, List<Message> allMessages);
 }

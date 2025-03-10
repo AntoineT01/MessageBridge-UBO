@@ -33,6 +33,8 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -303,7 +305,8 @@ public class UserProfileView extends JPanel {
     // Ajouter les messages au panneau
     for (Message message : sortedMessages) {
       String senderDisplayName = message.getSender().getName() + " (" + message.getSender().getUserTag() + ")";
-      MessageBubble bubble = new MessageBubble(senderDisplayName, message.getText(), false);
+      String timeString = new SimpleDateFormat("HH:mm").format(new Date(message.getEmissionDate()));
+      MessageBubble bubble = new MessageBubble(senderDisplayName, message.getText(), false, timeString);
 
       // Créer un panneau wrapper pour aligner le message à gauche
       JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));

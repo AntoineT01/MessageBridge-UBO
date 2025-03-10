@@ -11,6 +11,8 @@ import com.ubo.tp.message.core.session.ISession;
 import javax.swing.JPanel;
 import java.awt.event.ActionListener;
 
+import static com.ubo.tp.message.components.message.controller.MessageController.searchMessages;
+
 public class MessageComponent {
   private ModernChatView messagePanel;
   private MessageController messageController;
@@ -24,7 +26,7 @@ public class MessageComponent {
 
     ActionListener searchAction = _ -> {
       String query = messagePanel.getSearchQuery();
-      messageController.searchMessages(query);
+      messagePanel.updateSearchResults(searchMessages(query, messageModel.getMessages()));
     };
 
     messagePanel = new ModernChatView(session, sendAction, searchAction);

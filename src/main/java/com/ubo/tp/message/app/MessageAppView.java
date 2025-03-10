@@ -42,7 +42,6 @@ public class MessageAppView extends JFrame {
     this.database = database;
     initGUI();
   }
-
   /**
    * Initialisation de l'interface graphique
    */

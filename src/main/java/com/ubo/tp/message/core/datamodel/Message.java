@@ -5,6 +5,8 @@ import com.ubo.tp.message.common.constants.Constants;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -95,32 +97,13 @@ public class Message {
 	 */
 	protected Set<String> extractTags(String text, String tagDelimiter) {
 		Set<String> tags = new HashSet<>();
-
-		// Ajout d'un caractère spécial pour reconnaitre les éléments
-		// réellement
-		// taggé
-		String specialChar = "~";
-		String replacedText = text.replace(tagDelimiter, tagDelimiter + specialChar);
-
-		// Découpage en foncion du délimiteur.
-		String[] taggedStrings = replacedText.split(tagDelimiter);
-
-		// Parcours de tous les groupes récupérés
-		for (String taggedString : taggedStrings) {
-			// Si la chaine courante commencait bien par le délimiteur
-			if (taggedString.startsWith(specialChar)) {
-				// Récupération du tag (du délimiteur jusqu'au premier
-				// espace)
-				String newTag = taggedString.split(" ")[0];
-
-				// Suppression du caractère sp�cial
-				newTag = newTag.substring(1, newTag.length());
-
-				// Ajout du tag à la liste
-				tags.add(newTag);
-			}
+		// Regex qui recherche le délimiteur suivi d'une séquence de lettres, chiffres ou underscores.
+		String regex = Pattern.quote(tagDelimiter) + "(\\w+)";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(text);
+		while (matcher.find()) {
+			tags.add(matcher.group(1));
 		}
-
 		return tags;
 	}
 
