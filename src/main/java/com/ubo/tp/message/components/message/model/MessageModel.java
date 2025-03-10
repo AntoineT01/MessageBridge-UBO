@@ -6,7 +6,9 @@ import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.session.ISession;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MessageModel implements IUserObserver {
@@ -35,17 +37,19 @@ public class MessageModel implements IUserObserver {
    * On affiche uniquement les messages envoyés par l’utilisateur lui-même
    * ou par des utilisateurs que celui-ci suit.
    */
-  public List<Message> getMessages() {
+  public Set<Message> getMessages() {
     if (session == null || session.getConnectedUser() == null) {
-      return new ArrayList<>();
+      return new HashSet<>();
     }
     var connectedUser = session.getConnectedUser();
+    connectedUser.addObserver(this);
+
     return messages.stream()
       .filter(message ->
         message.getSender().getUuid().equals(connectedUser.getUuid()) ||
         connectedUser.getFollows().contains(message.getSender().getUserTag())
       )
-      .collect(Collectors.toList());
+      .collect(Collectors.toSet());
   }
 
   public void addMessage(Message message) {

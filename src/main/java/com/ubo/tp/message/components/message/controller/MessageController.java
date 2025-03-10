@@ -61,7 +61,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
 
   @Override
   public void searchMessages(String query) {
-    Set<Message> allMessages = database.getMessages();
+    Set<Message> allMessages = model.getMessages();
     Set<Message> results;
     if (query == null || query.trim().isEmpty()) {
       results = allMessages;
