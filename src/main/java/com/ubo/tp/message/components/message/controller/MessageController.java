@@ -32,7 +32,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
 
     // S'inscrire comme observateur de la base de données
     database.addObserver(this);
-    this.mEntityManager = mEntityManager;
+    this.mEntityManager = entityManager;
   }
 
   @Override
