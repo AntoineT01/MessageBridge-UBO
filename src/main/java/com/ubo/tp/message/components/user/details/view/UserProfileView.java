@@ -281,7 +281,7 @@ public class UserProfileView extends JPanel {
 
     // Ajouter les messages au panneau
     for (Message message : sortedMessages) {
-      String senderDisplayName = message.getSender().getName() + " (@" + message.getSender().getUserTag() + ")";
+      String senderDisplayName = message.getSender().getName() + " (" + message.getSender().getUserTag() + ")";
       MessageBubble bubble = new MessageBubble(senderDisplayName, message.getText(), false);
 
       // Créer un panneau wrapper pour aligner le message à gauche

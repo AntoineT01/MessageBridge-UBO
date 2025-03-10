@@ -200,6 +200,6 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "[" + this.getClass().getName() + "] : " + this.getUuid() + " {@" + this.getUserTag() + " / " + this.getName() + "}";
+		return "[" + this.getClass().getName() + "] : " + this.getUuid() + " {" + this.getUserTag() + " / " + this.getName() + "}";
 	}
 }

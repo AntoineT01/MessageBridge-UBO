@@ -106,7 +106,7 @@ public class ModernChatView extends JPanel implements IMessageObserver {
   public void addMessageToFeed(Message message) {
     User connectedUser = session.getConnectedUser();
     boolean isOutgoing = (connectedUser != null && connectedUser.equals(message.getSender()));
-    String senderDisplayName = message.getSender().getName() + " (@" + message.getSender().getUserTag() + ")";
+    String senderDisplayName = message.getSender().getName() + " (" + message.getSender().getUserTag() + ")";
     MessageBubble bubble = new MessageBubble(senderDisplayName, message.getText(), isOutgoing);
     chatPanel.addMessageBubble(bubble, isOutgoing);
   }
