@@ -32,3 +32,25 @@ tasks.findByName("run")?.let {
     it as JavaExec
     it.systemProperty("file.encoding", "UTF-8")
 }
+
+// Configuration du JAR exécutable
+tasks.jar {
+    manifest {
+        attributes(
+                mapOf(
+                        "Main-Class" to "com.ubo.tp.message.app.MessageAppLauncher",
+                        "Implementation-Title" to project.name,
+                        "Implementation-Version" to project.version
+                )
+        )
+    }
+
+    // Inclure toutes les dépendances dans le JAR (fat JAR)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(sourceSets.main.get().output)
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+}
