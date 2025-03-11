@@ -1,232 +1,259 @@
 package com.ubo.tp.message.components.user.auth.register.view;
 
-import com.ubo.tp.message.common.ui.EnvUI;
-import com.ubo.tp.message.common.ui.SwingTheme;
+import com.ubo.tp.message.common.ui.ShadowBorder;
 import com.ubo.tp.message.common.utils.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
-/**
- * Vue pour l'interface d'inscription
- */
 public class RegisterView extends JPanel implements IRegisterView {
-  /**
-   * Base de données (pour l'accès par le contrôleur)
-   */
+
   private final IDatabase database;
-
-  /**
-   * Champ pour le tag utilisateur
-   */
   private JTextField tagField;
-
-  /**
-   * Champ pour le nom d'utilisateur
-   */
   private JTextField nameField;
-
-  /**
-   * Champ pour le mot de passe
-   */
   private JPasswordField passwordField;
-
-  /**
-   * Champ pour la confirmation du mot de passe
-   */
   private JPasswordField confirmPasswordField;
-
-  /**
-   * Bouton pour l'inscription
-   */
   private JButton registerButton;
-
-  /**
-   * Bouton pour basculer vers la connexion
-   */
   private JButton loginButton;
-
-  /**
-   * Étiquette pour afficher les messages d'erreur
-   */
   private JLabel errorLabel;
 
-  /**
-   * Constructeur
-   * @param database Base de données pour les vérifications
-   */
   public RegisterView(IDatabase database) {
     this.database = database;
     this.initGUI();
   }
 
-  /**
-   * Initialisation de l'interface graphique
-   */
   private void initGUI() {
     // Configuration du panneau principal
-    this.setBackground(SwingTheme.BACKGROUND);
+    this.setBackground(new Color(245, 248, 250));
     this.setLayout(new GridBagLayout());
-    this.setBorder(new EmptyBorder(30, 40, 30, 40));
+    this.setBorder(new EmptyBorder(40, 40, 40, 40));
 
     GridBagConstraints constraints = new GridBagConstraints();
     constraints.fill = GridBagConstraints.HORIZONTAL;
-    constraints.insets = new Insets(EnvUI.SPACING_SMALL, EnvUI.SPACING_STANDARD,
-                                    EnvUI.SPACING_SMALL, EnvUI.SPACING_STANDARD);
+    constraints.insets = new Insets(10, 10, 10, 10);
 
-    // Logo et titre
+    // Panneau central avec effet d'ombre
+    JPanel centerPanel = new JPanel(new GridBagLayout());
+    centerPanel.setBackground(Color.WHITE);
+    centerPanel.setBorder(BorderFactory.createCompoundBorder(
+      new ShadowBorder(5, Color.BLACK, 0.1f),
+      BorderFactory.createEmptyBorder(25, 30, 25, 30)
+    ));
+
+    GridBagConstraints centerConstraints = new GridBagConstraints();
+    centerConstraints.fill = GridBagConstraints.HORIZONTAL;
+    centerConstraints.insets = new Insets(8, 8, 8, 8);
+
+    // Logo
     JLabel logoLabel = new JLabel();
-    ImageIcon logo = ImageUtils.loadScaledIcon("/tux_logo.png", 70, 70);
+    ImageIcon logo = ImageUtils.loadScaledIcon("/tux_logo.png", 100, 100);
     logoLabel.setIcon(logo);
     logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    constraints.gridx = 0;
-    constraints.gridy = 0;
-    constraints.gridwidth = 2;
-    this.add(logoLabel, constraints);
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 0;
+    centerConstraints.gridwidth = 2;
+    centerPanel.add(logoLabel, centerConstraints);
 
-    // Titre stylisé - utilisation de la couleur secondaire pour différencier de la connexion
+    // Titre
     JLabel titleLabel = new JLabel("Créer un compte", SwingConstants.CENTER);
-    titleLabel.setFont(SwingTheme.TITLE_FONT);
-    titleLabel.setForeground(SwingTheme.SECONDARY);
-    constraints.gridx = 0;
-    constraints.gridy = 1;
-    constraints.gridwidth = 2;
-    this.add(titleLabel, constraints);
+    titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+    titleLabel.setForeground(new Color(46, 204, 113)); // Couleur verte pour l'inscription
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 1;
+    centerConstraints.gridwidth = 2;
+    centerPanel.add(titleLabel, centerConstraints);
 
     // Sous-titre
     JLabel subtitleLabel = new JLabel("Rejoignez la communauté MessageApp", SwingConstants.CENTER);
-    subtitleLabel.setFont(SwingTheme.TEXT_REGULAR);
-    subtitleLabel.setForeground(SwingTheme.TEXT);
-    constraints.gridx = 0;
-    constraints.gridy = 2;
-    constraints.gridwidth = 2;
-    this.add(subtitleLabel, constraints);
+    subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+    subtitleLabel.setForeground(new Color(100, 100, 100));
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 2;
+    centerConstraints.gridwidth = 2;
+    centerPanel.add(subtitleLabel, centerConstraints);
 
-    // Espaceur
-    constraints.gridy = 3;
-    this.add(Box.createVerticalStrut(15), constraints);
+    // Espacement
+    centerConstraints.gridy = 3;
+    centerPanel.add(Box.createVerticalStrut(15), centerConstraints);
 
-    // Champ de tag utilisateur
-    JLabel tagLabel = new JLabel("Tag utilisateur:");
-    tagLabel.setFont(SwingTheme.TEXT_BOLD);
-    constraints.gridx = 0;
-    constraints.gridy = 4;
-    constraints.gridwidth = 1;
-    this.add(tagLabel, constraints);
+    // Champ de tag
+    JPanel tagPanel = new JPanel(new BorderLayout(5, 5));
+    tagPanel.setOpaque(false);
+    JLabel tagLabel = new JLabel("Tag utilisateur");
+    tagLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    tagPanel.add(tagLabel, BorderLayout.NORTH);
 
-    tagField = new JTextField(15);
-    SwingTheme.styleTextComponent(tagField);
-    constraints.gridx = 1;
-    constraints.gridy = 4;
-    this.add(tagField, constraints);
+    tagField = new JTextField(20);
+    tagField.setFont(new Font("Arial", Font.PLAIN, 14));
+    tagField.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+      BorderFactory.createEmptyBorder(10, 15, 10, 15)
+    ));
+    tagField.addFocusListener(createFocusListener(tagField));
+    tagPanel.add(tagField, BorderLayout.CENTER);
 
-    // Info bulle pour le tag
     JLabel tagInfoLabel = new JLabel("Votre identifiant unique (ex: @pseudo)");
-    tagInfoLabel.setFont(SwingTheme.TOOLTIP_FONT);
-    tagInfoLabel.setForeground(SwingTheme.TEXT_SECONDARY);
-    constraints.gridx = 1;
-    constraints.gridy = 5;
-    this.add(tagInfoLabel, constraints);
+    tagInfoLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+    tagInfoLabel.setForeground(new Color(127, 140, 141));
+    tagPanel.add(tagInfoLabel, BorderLayout.SOUTH);
 
-    // Champ de nom d'utilisateur
-    JLabel nameLabel = new JLabel("Nom d'utilisateur:");
-    nameLabel.setFont(SwingTheme.TEXT_BOLD);
-    constraints.gridx = 0;
-    constraints.gridy = 6;
-    this.add(nameLabel, constraints);
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 4;
+    centerConstraints.gridwidth = 2;
+    centerPanel.add(tagPanel, centerConstraints);
 
-    nameField = new JTextField(15);
-    SwingTheme.styleTextComponent(nameField);
-    constraints.gridx = 1;
-    constraints.gridy = 6;
-    this.add(nameField, constraints);
+    // Champ de nom
+    JPanel namePanel = new JPanel(new BorderLayout(5, 5));
+    namePanel.setOpaque(false);
+    JLabel nameLabel = new JLabel("Nom d'utilisateur");
+    nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    namePanel.add(nameLabel, BorderLayout.NORTH);
+
+    nameField = new JTextField(20);
+    nameField.setFont(new Font("Arial", Font.PLAIN, 14));
+    nameField.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+      BorderFactory.createEmptyBorder(10, 15, 10, 15)
+    ));
+    nameField.addFocusListener(createFocusListener(nameField));
+    namePanel.add(nameField, BorderLayout.CENTER);
+
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 5;
+    centerConstraints.gridwidth = 2;
+    centerPanel.add(namePanel, centerConstraints);
 
     // Champ de mot de passe
-    JLabel passwordLabel = new JLabel("Mot de passe:");
-    passwordLabel.setFont(SwingTheme.TEXT_BOLD);
-    constraints.gridx = 0;
-    constraints.gridy = 7;
-    this.add(passwordLabel, constraints);
+    JPanel passwordPanel = new JPanel(new BorderLayout(5, 5));
+    passwordPanel.setOpaque(false);
+    JLabel passwordLabel = new JLabel("Mot de passe");
+    passwordLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    passwordPanel.add(passwordLabel, BorderLayout.NORTH);
 
-    passwordField = new JPasswordField(15);
-    SwingTheme.styleTextComponent(passwordField);
-    constraints.gridx = 1;
-    constraints.gridy = 7;
-    this.add(passwordField, constraints);
+    passwordField = new JPasswordField(20);
+    passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
+    passwordField.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+      BorderFactory.createEmptyBorder(10, 15, 10, 15)
+    ));
+    passwordField.addFocusListener(createFocusListener(passwordField));
+    passwordPanel.add(passwordField, BorderLayout.CENTER);
 
-    // Info bulle pour le mot de passe
     JLabel passwordInfoLabel = new JLabel("Choisissez un mot de passe sécurisé");
-    passwordInfoLabel.setFont(SwingTheme.TOOLTIP_FONT);
-    passwordInfoLabel.setForeground(SwingTheme.TEXT_SECONDARY);
-    constraints.gridx = 1;
-    constraints.gridy = 8;
-    this.add(passwordInfoLabel, constraints);
+    passwordInfoLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+    passwordInfoLabel.setForeground(new Color(127, 140, 141));
+    passwordPanel.add(passwordInfoLabel, BorderLayout.SOUTH);
 
-    // Champ de confirmation du mot de passe
-    JLabel confirmPasswordLabel = new JLabel("Confirmer mot de passe:");
-    confirmPasswordLabel.setFont(SwingTheme.TEXT_BOLD);
-    constraints.gridx = 0;
-    constraints.gridy = 9;
-    this.add(confirmPasswordLabel, constraints);
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 6;
+    centerConstraints.gridwidth = 2;
+    centerPanel.add(passwordPanel, centerConstraints);
 
-    confirmPasswordField = new JPasswordField(15);
-    SwingTheme.styleTextComponent(confirmPasswordField);
-    constraints.gridx = 1;
-    constraints.gridy = 9;
-    this.add(confirmPasswordField, constraints);
+    // Champ de confirmation de mot de passe
+    JPanel confirmPasswordPanel = new JPanel(new BorderLayout(5, 5));
+    confirmPasswordPanel.setOpaque(false);
+    JLabel confirmPasswordLabel = new JLabel("Confirmer mot de passe");
+    confirmPasswordLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    confirmPasswordPanel.add(confirmPasswordLabel, BorderLayout.NORTH);
 
-    // Message d'erreur stylisé
+    confirmPasswordField = new JPasswordField(20);
+    confirmPasswordField.setFont(new Font("Arial", Font.PLAIN, 14));
+    confirmPasswordField.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+      BorderFactory.createEmptyBorder(10, 15, 10, 15)
+    ));
+    confirmPasswordField.addFocusListener(createFocusListener(confirmPasswordField));
+    confirmPasswordPanel.add(confirmPasswordField, BorderLayout.CENTER);
+
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 7;
+    centerConstraints.gridwidth = 2;
+    centerPanel.add(confirmPasswordPanel, centerConstraints);
+
+    // Message d'erreur
     errorLabel = new JLabel(" ");
-    errorLabel.setForeground(SwingTheme.DANGER);
-    errorLabel.setFont(SwingTheme.TOOLTIP_FONT);
-    constraints.gridx = 0;
-    constraints.gridy = 10;
-    constraints.gridwidth = 2;
-    this.add(errorLabel, constraints);
+    errorLabel.setForeground(new Color(231, 76, 60));
+    errorLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+    errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 8;
+    centerConstraints.gridwidth = 2;
+    centerPanel.add(errorLabel, centerConstraints);
 
-    // Panneau pour les boutons
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+    // Panneau de boutons
+    JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 15, 0));
     buttonPanel.setOpaque(false);
 
-    // Bouton d'inscription principal - utilise la couleur secondaire (verte)
+    // Bouton d'inscription
     registerButton = new JButton("S'inscrire");
-    registerButton.setFont(SwingTheme.TEXT_BOLD);
-    registerButton.setBackground(SwingTheme.SECONDARY);
-    registerButton.setForeground(SwingTheme.TEXT_ON_COLOR);
+    registerButton.setFont(new Font("Arial", Font.BOLD, 14));
+    registerButton.setBackground(new Color(46, 204, 113)); // Vert pour l'inscription
+    registerButton.setForeground(Color.WHITE);
     registerButton.setFocusPainted(false);
-    registerButton.setBorder(SwingTheme.createRoundedBorder());
-    registerButton.setPreferredSize(SwingTheme.BUTTON_SIZE);
+    registerButton.setBorderPainted(false);
+    registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    registerButton.setPreferredSize(new Dimension(150, 45));
     buttonPanel.add(registerButton);
 
-    // Bouton de connexion secondaire
+    // Bouton de connexion
     loginButton = new JButton("Se connecter");
-    SwingTheme.styleButton(loginButton, false);
+    loginButton.setFont(new Font("Arial", Font.PLAIN, 14));
+    loginButton.setBackground(new Color(236, 240, 241));
+    loginButton.setForeground(new Color(44, 62, 80));
+    loginButton.setFocusPainted(false);
+    loginButton.setBorderPainted(false);
+    loginButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    loginButton.setPreferredSize(new Dimension(150, 45));
     buttonPanel.add(loginButton);
 
-    constraints.gridx = 0;
-    constraints.gridy = 11;
-    constraints.gridwidth = 2;
-    constraints.insets = new Insets(20, 10, 10, 10);
-    this.add(buttonPanel, constraints);
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 9;
+    centerConstraints.gridwidth = 2;
+    centerConstraints.insets = new Insets(20, 8, 8, 8);
+    centerPanel.add(buttonPanel, centerConstraints);
 
-    // Note de confidentialité
+    // Ajouter mention de confidentialité
     JLabel privacyLabel = new JLabel("En vous inscrivant, vous acceptez nos conditions d'utilisation", SwingConstants.CENTER);
-    privacyLabel.setFont(SwingTheme.TOOLTIP_FONT);
-    privacyLabel.setForeground(SwingTheme.TEXT_SECONDARY);
+    privacyLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+    privacyLabel.setForeground(new Color(127, 140, 141));
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 10;
+    centerConstraints.insets = new Insets(8, 8, 8, 8);
+    centerPanel.add(privacyLabel, centerConstraints);
+
+    // Ajouter le panneau central au panneau principal
     constraints.gridx = 0;
-    constraints.gridy = 12;
-    constraints.gridwidth = 2;
-    constraints.insets = new Insets(5, 10, 10, 10);
-    this.add(privacyLabel, constraints);
+    constraints.gridy = 0;
+    constraints.weightx = 1.0;
+    constraints.weighty = 1.0;
+    this.add(centerPanel, constraints);
   }
 
-  // Implémentation des méthodes de l'interface IRegisterView
+  // Créer un écouteur de focus pour les champs de texte
+  private FocusAdapter createFocusListener(JComponent component) {
+    return new FocusAdapter() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        component.setBorder(BorderFactory.createCompoundBorder(
+          BorderFactory.createLineBorder(new Color(46, 204, 113), 2, true), // Vert pour l'inscription
+          BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+      }
+
+      @Override
+      public void focusLost(FocusEvent e) {
+        component.setBorder(BorderFactory.createCompoundBorder(
+          BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+          BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+      }
+    };
+  }
 
   @Override
   public void setRegisterButtonListener(ActionListener listener) {

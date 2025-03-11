@@ -1,156 +1,198 @@
 package com.ubo.tp.message.components.user.auth.login.view;
 
-import com.ubo.tp.message.common.ui.EnvUI;
-import com.ubo.tp.message.common.ui.SwingTheme;
+import com.ubo.tp.message.common.ui.ShadowBorder;
 import com.ubo.tp.message.common.utils.ImageUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
-/**
- * Vue pour l'interface de connexion
- */
 public class LoginView extends JPanel implements ILoginView {
-  /**
-   * Champ pour le tag utilisateur
-   */
+
   private JTextField tagField;
-
-  /**
-   * Champ pour le mot de passe
-   */
   private JPasswordField passwordField;
-
-  /**
-   * Bouton pour la connexion
-   */
   private JButton loginButton;
-
-  /**
-   * Bouton pour basculer vers l'inscription
-   */
   private JButton registerButton;
-
-  /**
-   * Étiquette pour afficher les messages d'erreur
-   */
   private JLabel errorLabel;
 
-  /**
-   * Constructeur
-   */
   public LoginView() {
     this.initGUI();
   }
 
-  /**
-   * Initialisation de l'interface graphique
-   */
   private void initGUI() {
     // Configuration du panneau principal
-    this.setBackground(SwingTheme.BACKGROUND);
+    this.setBackground(new Color(245, 248, 250));
     this.setLayout(new GridBagLayout());
     this.setBorder(new EmptyBorder(40, 40, 40, 40));
 
     GridBagConstraints constraints = new GridBagConstraints();
     constraints.fill = GridBagConstraints.HORIZONTAL;
-    constraints.insets = new Insets(EnvUI.SPACING_STANDARD, EnvUI.SPACING_STANDARD,
-                                    EnvUI.SPACING_STANDARD, EnvUI.SPACING_STANDARD);
+    constraints.insets = new Insets(10, 10, 10, 10);
 
-    // Logo plus visible
+    // Panneau central avec effet d'ombre
+    JPanel centerPanel = new JPanel(new GridBagLayout());
+    centerPanel.setBackground(Color.WHITE);
+    centerPanel.setBorder(BorderFactory.createCompoundBorder(
+      new ShadowBorder(5, Color.BLACK, 0.1f),
+      BorderFactory.createEmptyBorder(25, 30, 25, 30)
+    ));
+
+    GridBagConstraints centerConstraints = new GridBagConstraints();
+    centerConstraints.fill = GridBagConstraints.HORIZONTAL;
+    centerConstraints.insets = new Insets(8, 8, 8, 8);
+
+    // Logo
     JLabel logoLabel = new JLabel();
-    ImageIcon logo = ImageUtils.loadScaledIcon("/tux_logo.png", 80, 80);
+    ImageIcon logo = ImageUtils.loadScaledIcon("/tux_logo.png", 100, 100);
     logoLabel.setIcon(logo);
     logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    constraints.gridx = 0;
-    constraints.gridy = 0;
-    constraints.gridwidth = 2;
-    this.add(logoLabel, constraints);
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 0;
+    centerConstraints.gridwidth = 1;
+    centerPanel.add(logoLabel, centerConstraints);
 
-    // Titre stylisé
+    // Titre
     JLabel titleLabel = new JLabel("Bienvenue sur MessageApp", SwingConstants.CENTER);
-    SwingTheme.setTitleStyle(titleLabel);
-    constraints.gridx = 0;
-    constraints.gridy = 1;
-    constraints.gridwidth = 2;
-    this.add(titleLabel, constraints);
+    titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+    titleLabel.setForeground(new Color(52, 152, 219));
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 1;
+    centerPanel.add(titleLabel, centerConstraints);
 
     // Sous-titre
     JLabel subtitleLabel = new JLabel("Connectez-vous pour continuer", SwingConstants.CENTER);
-    subtitleLabel.setFont(SwingTheme.TEXT_REGULAR);
-    subtitleLabel.setForeground(SwingTheme.TEXT);
-    constraints.gridx = 0;
-    constraints.gridy = 2;
-    constraints.gridwidth = 2;
-    this.add(subtitleLabel, constraints);
+    subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+    subtitleLabel.setForeground(new Color(100, 100, 100));
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 2;
+    centerPanel.add(subtitleLabel, centerConstraints);
 
-    // Espaceur
-    constraints.gridy = 3;
-    this.add(Box.createVerticalStrut(20), constraints);
+    // Espacement
+    centerConstraints.gridy = 3;
+    centerPanel.add(Box.createVerticalStrut(20), centerConstraints);
 
-    // Champ de tag utilisateur
-    JLabel tagLabel = new JLabel("Tag utilisateur:");
-    tagLabel.setFont(SwingTheme.TEXT_BOLD);
-    constraints.gridx = 0;
-    constraints.gridy = 4;
-    constraints.gridwidth = 2;
-    this.add(tagLabel, constraints);
+    // Champ de tag
+    JPanel tagPanel = new JPanel(new BorderLayout(5, 5));
+    tagPanel.setOpaque(false);
+    JLabel tagLabel = new JLabel("Tag utilisateur");
+    tagLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    tagPanel.add(tagLabel, BorderLayout.NORTH);
 
     tagField = new JTextField(20);
-    SwingTheme.styleTextComponent(tagField);
-    constraints.gridx = 0;
-    constraints.gridy = 5;
-    this.add(tagField, constraints);
+    tagField.setFont(new Font("Arial", Font.PLAIN, 14));
+    tagField.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+      BorderFactory.createEmptyBorder(10, 15, 10, 15)
+    ));
+    tagField.addFocusListener(new FocusAdapter() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        tagField.setBorder(BorderFactory.createCompoundBorder(
+          BorderFactory.createLineBorder(new Color(52, 152, 219), 2, true),
+          BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+      }
+
+      @Override
+      public void focusLost(FocusEvent e) {
+        tagField.setBorder(BorderFactory.createCompoundBorder(
+          BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+          BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+      }
+    });
+    tagPanel.add(tagField, BorderLayout.CENTER);
+
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 4;
+    centerPanel.add(tagPanel, centerConstraints);
 
     // Champ de mot de passe
-    JLabel passwordLabel = new JLabel("Mot de passe:");
-    passwordLabel.setFont(SwingTheme.TEXT_BOLD);
-    constraints.gridx = 0;
-    constraints.gridy = 6;
-    this.add(passwordLabel, constraints);
+    JPanel passwordPanel = new JPanel(new BorderLayout(5, 5));
+    passwordPanel.setOpaque(false);
+    JLabel passwordLabel = new JLabel("Mot de passe");
+    passwordLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    passwordPanel.add(passwordLabel, BorderLayout.NORTH);
 
     passwordField = new JPasswordField(20);
-    SwingTheme.styleTextComponent(passwordField);
-    constraints.gridx = 0;
-    constraints.gridy = 7;
-    this.add(passwordField, constraints);
+    passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
+    passwordField.setBorder(BorderFactory.createCompoundBorder(
+      BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+      BorderFactory.createEmptyBorder(10, 15, 10, 15)
+    ));
+    passwordField.addFocusListener(new FocusAdapter() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        passwordField.setBorder(BorderFactory.createCompoundBorder(
+          BorderFactory.createLineBorder(new Color(52, 152, 219), 2, true),
+          BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+      }
 
-    // Message d'erreur stylisé
+      @Override
+      public void focusLost(FocusEvent e) {
+        passwordField.setBorder(BorderFactory.createCompoundBorder(
+          BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+          BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+      }
+    });
+    passwordPanel.add(passwordField, BorderLayout.CENTER);
+
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 5;
+    centerPanel.add(passwordPanel, centerConstraints);
+
+    // Message d'erreur
     errorLabel = new JLabel(" ");
-    errorLabel.setForeground(SwingTheme.DANGER);
-    errorLabel.setFont(SwingTheme.TOOLTIP_FONT);
-    constraints.gridx = 0;
-    constraints.gridy = 8;
-    constraints.gridwidth = 2;
-    this.add(errorLabel, constraints);
+    errorLabel.setForeground(new Color(231, 76, 60));
+    errorLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+    errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 6;
+    centerPanel.add(errorLabel, centerConstraints);
 
-    // Panneau pour les boutons
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+    // Panneau de boutons
+    JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 15, 0));
     buttonPanel.setOpaque(false);
 
-    // Bouton de connexion attractif
+    // Bouton de connexion
     loginButton = new JButton("Connexion");
-    SwingTheme.styleButton(loginButton, true);
+    loginButton.setFont(new Font("Arial", Font.BOLD, 14));
+    loginButton.setBackground(new Color(52, 152, 219));
+    loginButton.setForeground(Color.WHITE);
+    loginButton.setFocusPainted(false);
+    loginButton.setBorderPainted(false);
+    loginButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    loginButton.setPreferredSize(new Dimension(150, 45));
     buttonPanel.add(loginButton);
 
-    // Bouton d'inscription secondaire
+    // Bouton d'inscription
     registerButton = new JButton("S'inscrire");
-    SwingTheme.styleButton(registerButton, false);
+    registerButton.setFont(new Font("Arial", Font.PLAIN, 14));
+    registerButton.setBackground(new Color(236, 240, 241));
+    registerButton.setForeground(new Color(44, 62, 80));
+    registerButton.setFocusPainted(false);
+    registerButton.setBorderPainted(false);
+    registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    registerButton.setPreferredSize(new Dimension(150, 45));
     buttonPanel.add(registerButton);
 
-    constraints.gridx = 0;
-    constraints.gridy = 9;
-    constraints.gridwidth = 2;
-    constraints.insets = new Insets(20, 10, 10, 10);
-    this.add(buttonPanel, constraints);
-  }
+    centerConstraints.gridx = 0;
+    centerConstraints.gridy = 7;
+    centerConstraints.insets = new Insets(20, 8, 8, 8);
+    centerPanel.add(buttonPanel, centerConstraints);
 
-  // Implémentation des méthodes de l'interface ILoginView
+    // Ajouter le panneau central au panneau principal
+    constraints.gridx = 0;
+    constraints.gridy = 0;
+    constraints.weightx = 1.0;
+    constraints.weighty = 1.0;
+    this.add(centerPanel, constraints);
+  }
 
   @Override
   public void setLoginButtonListener(ActionListener listener) {
@@ -192,4 +234,6 @@ public class LoginView extends JPanel implements ILoginView {
     loginButton.setEnabled(enabled);
     registerButton.setEnabled(enabled);
   }
+
+
 }
