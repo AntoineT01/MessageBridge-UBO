@@ -14,6 +14,7 @@ import java.util.Properties;
 /**
  * Contrôleur gérant le répertoire d'échange de l'application.
  * Gère la sélection, la surveillance et la configuration du répertoire d'échange.
+ * Modifié pour améliorer la compatibilité avec JavaFX.
  */
 public class DirectoryController {
   /**
@@ -36,6 +37,24 @@ public class DirectoryController {
    */
   public DirectoryController(EntityManager entityManager) {
     this.entityManager = entityManager;
+
+    // Chargement du chemin du répertoire depuis la configuration
+    loadDirectoryPathFromConfig();
+  }
+
+  /**
+   * Charge le chemin du répertoire depuis le fichier de configuration
+   */
+  private void loadDirectoryPathFromConfig() {
+    Properties props = PropertiesManager.loadProperties(Constants.CONFIGURATION_FILE);
+    String savedPath = props.getProperty(Constants.CONFIGURATION_KEY_EXCHANGE_DIRECTORY);
+
+    if (savedPath != null && !savedPath.isEmpty()) {
+      File directory = new File(savedPath);
+      if (isValidExchangeDirectory(directory)) {
+        initDirectory(savedPath);
+      }
+    }
   }
 
   /**
@@ -88,7 +107,7 @@ public class DirectoryController {
   }
 
   /**
-   * Demande à l'utilisateur de sélectionner un répertoire d'échange
+   * Demande à l'utilisateur de sélectionner un répertoire d'échange en utilisant Swing
    */
   public boolean selectAndChangeExchangeDirectory(JFrame parent) {
     // Utilisation du sélecteur de dossier
@@ -112,4 +131,11 @@ public class DirectoryController {
     }
   }
 
+  /**
+   * Récupère le chemin du répertoire d'échange actuel.
+   * Ajouté pour faciliter le partage d'état entre les interfaces.
+   */
+  public String getExchangeDirectoryPath() {
+    return exchangeDirectoryPath;
+  }
 }

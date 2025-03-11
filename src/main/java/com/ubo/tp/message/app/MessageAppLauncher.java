@@ -9,14 +9,12 @@ import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.mock.MessageAppMock;
 import com.ubo.tp.message.test.ConsoleDatabaseObserver;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Classe de lancement de l'application.
- * Version modifiée pour intégrer la navigation par menus.
+ * Version modifiée pour partager les composants avec JavaFX.
  */
 public class MessageAppLauncher {
 
@@ -26,7 +24,7 @@ public class MessageAppLauncher {
 	protected static boolean IS_MOCK_ENABLED = false;
 
 	/**
-	 * Launcher.
+	 * Launcher principal.
 	 */
 	public static void main(String[] args) {
 		IDatabase database = new Database();
@@ -44,19 +42,27 @@ public class MessageAppLauncher {
 
 		// Lancement de l'application en Swing
 		SwingUtilities.invokeLater(() -> {
-			// Création de la vue principale
-			MessageAppView mainView = new MessageAppView(database);
-
-			// Création du contrôleur principal des composants
-			ComponentsController controller = new ComponentsController(mainView, database, entityManager);
-
-			// Création du contrôleur de répertoire
 			DirectoryController directoryController = new DirectoryController(entityManager);
+			startSwingApp(database, entityManager, directoryController);
+		});
+	}
 
-			// Connecter le contrôleur de répertoire au contrôleur principal
-			controller.setDirectoryController(directoryController);
+	/**
+	 * Méthode factoriséee pour démarrer l'application Swing
+	 * Permet d'être appelée depuis le lanceur dual.
+	 */
+	public static void startSwingApp(IDatabase database, EntityManager entityManager, DirectoryController directoryController) {
+		// Création de la vue principale
+		MessageAppView mainView = new MessageAppView(database);
 
-			// Demander à l'utilisateur de sélectionner un répertoire d'échange
+		// Création du contrôleur principal des composants
+		ComponentsController controller = new ComponentsController(mainView, database, entityManager);
+
+		// Connecter le contrôleur de répertoire au contrôleur principal
+		controller.setDirectoryController(directoryController);
+
+		// Demander à l'utilisateur de sélectionner un répertoire d'échange si ce n'est pas déjà fait
+		if (directoryController.getExchangeDirectoryPath() == null) {
 			boolean directorySelected = directoryController.selectAndChangeExchangeDirectory(mainView);
 
 			// Si aucun répertoire n'a été sélectionné
@@ -72,20 +78,20 @@ public class MessageAppLauncher {
 				}
 				// Sinon, on continue avec un répertoire par défaut (tmp system)
 			}
+		}
 
-			// Nettoyer les utilisateurs en double
-			int removedUsers = UserDatabaseCleaner.cleanDuplicateUsers(
-				database,
-				entityManager
-			);
+		// Nettoyer les utilisateurs en double
+		int removedUsers = UserDatabaseCleaner.cleanDuplicateUsers(
+			database,
+			entityManager
+		);
 
-			if (removedUsers > 0) {
-				System.out.println("Nettoyage de la base de données : " + removedUsers + " utilisateurs en double supprimés.");
-			}
+		if (removedUsers > 0) {
+			System.out.println("Nettoyage de la base de données : " + removedUsers + " utilisateurs en double supprimés.");
+		}
 
-			// Afficher la fenêtre principale
-			mainView.setVisible(true);
-		});
+		// Afficher la fenêtre principale
+		mainView.setVisible(true);
 	}
 
 	/**
