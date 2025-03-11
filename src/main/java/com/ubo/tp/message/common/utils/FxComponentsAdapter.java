@@ -3,6 +3,9 @@ package com.ubo.tp.message.common.utils;
 
 import com.ubo.tp.message.app.MessageAppFxView;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
+import com.ubo.tp.message.components.message.FxMessageView;
+import com.ubo.tp.message.components.user.auth.FxAuthView;
+import com.ubo.tp.message.components.user.profil.view.FxProfileView;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
@@ -46,9 +49,9 @@ public class FxComponentsAdapter implements ISessionObserver {
   /**
    * Vues JavaFX.
    */
-  private final com.ubo.tp.message.fx.components.FxAuthView authView;
-  private final com.ubo.tp.message.fx.components.FxProfileView profileView;
-  private final com.ubo.tp.message.fx.components.FxMessageView messageView;
+  private final FxAuthView authView;
+  private final FxProfileView profileView;
+  private final FxMessageView messageView;
 
   /**
    * Constructeur.
@@ -65,9 +68,9 @@ public class FxComponentsAdapter implements ISessionObserver {
     this.sessionManager.addSessionObserver(this);
 
     // Création des vues JavaFX
-    this.authView = new com.ubo.tp.message.fx.components.FxAuthView(database, entityManager, sessionManager);
-    this.profileView = new com.ubo.tp.message.fx.components.FxProfileView(database, entityManager, sessionManager);
-    this.messageView = new com.ubo.tp.message.fx.components.FxMessageView(database, sessionManager.getSession(), entityManager);
+    this.authView = new FxAuthView(database, entityManager, sessionManager);
+    this.profileView = new FxProfileView(database, entityManager, sessionManager);
+    this.messageView = new FxMessageView(database, sessionManager.getSession(), entityManager);
 
     // Configuration des actions
     setupEventHandlers();

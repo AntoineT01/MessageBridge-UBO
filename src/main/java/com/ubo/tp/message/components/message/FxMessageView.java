@@ -1,4 +1,4 @@
-package com.ubo.tp.message.fx.components;
+package com.ubo.tp.message.components.message;
 
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.database.IDatabaseObserver;
