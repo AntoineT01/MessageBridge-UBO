@@ -1,7 +1,7 @@
 package com.ubo.tp.message.components.user.auth.register.controller;
 
 import com.ubo.tp.message.components.user.auth.register.model.RegisterModel;
-import com.ubo.tp.message.components.user.auth.register.view.RegisterView;
+import com.ubo.tp.message.components.user.auth.register.view.IRegisterView;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.SessionManager;
@@ -18,7 +18,7 @@ public class RegisterController {
   /**
    * Vue associée
    */
-  private final RegisterView view;
+  private final IRegisterView view; // Utilisation de l'interface au lieu de la classe concrète
 
   /**
    * Modèle associé
@@ -48,7 +48,7 @@ public class RegisterController {
   /**
    * Constructeur
    */
-  public RegisterController(RegisterView view, RegisterModel model,
+  public RegisterController(IRegisterView view, RegisterModel model,
                             EntityManager entityManager, SessionManager sessionManager) {
     this.view = view;
     this.model = model;

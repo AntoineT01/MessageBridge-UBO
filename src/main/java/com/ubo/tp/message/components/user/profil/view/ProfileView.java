@@ -1,32 +1,19 @@
 package com.ubo.tp.message.components.user.profil.view;
 
 import com.ubo.tp.message.common.ui.IconFactory;
+import com.ubo.tp.message.common.ui.RoundedBorder;
 import com.ubo.tp.message.core.datamodel.Message;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Set;
 
 /**
  * Vue pour l'interface du profil utilisateur.
  */
-public class ProfileView extends JPanel {
+public class ProfileView extends JPanel implements IProfileView {
   /**
    * Affichage des informations de l'utilisateur.
    */
@@ -69,127 +56,269 @@ public class ProfileView extends JPanel {
    * Initialisation de l'interface graphique.
    */
   private void initGUI() {
-    this.setLayout(new BorderLayout(10, 10));
+    // Configuration du panneau principal
+    this.setBackground(new Color(245, 248, 250));
+    this.setLayout(new BorderLayout(15, 15));
     this.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-    // Panneau d'informations
-    JPanel infoPanel = new JPanel(new BorderLayout(10, 10));
-    infoPanel.setBorder(new TitledBorder("Informations utilisateur"));
+    // Panneau d'en-tête avec les informations de profil
+    JPanel headerPanel = new JPanel(new BorderLayout(10, 10));
+    headerPanel.setBorder(BorderFactory.createCompoundBorder(
+      new RoundedBorder(15),
+      BorderFactory.createEmptyBorder(15, 20, 15, 20)
+    ));
+    headerPanel.setBackground(new Color(255, 255, 255));
 
-    // Sous-panneau pour les données utilisateur
-    JPanel userDataPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+    // Panneau gauche pour l'avatar et les boutons
+    JPanel leftPanel = new JPanel(new BorderLayout(10, 10));
+    leftPanel.setOpaque(false);
 
-    userDataPanel.add(new JLabel("Tag:"));
+    // Avatar utilisateur
+    JLabel avatarLabel = new JLabel();
+    avatarLabel.setIcon(IconFactory.createUserIcon(IconFactory.ICON_LARGE));
+    avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    avatarLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+    leftPanel.add(avatarLabel, BorderLayout.NORTH);
+
+    headerPanel.add(leftPanel, BorderLayout.WEST);
+
+    // Panneau central pour les informations
+    JPanel infoPanel = new JPanel(new GridBagLayout());
+    infoPanel.setOpaque(false);
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.insets = new Insets(3, 5, 3, 5);
+
+    // Titre du profil
+    JLabel profileTitleLabel = new JLabel("Mon Profil");
+    profileTitleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+    profileTitleLabel.setForeground(new Color(52, 152, 219));
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.gridwidth = 2;
+    infoPanel.add(profileTitleLabel, gbc);
+
+    // Tag utilisateur
+    JLabel tagTitleLabel = new JLabel("Tag:");
+    tagTitleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.gridwidth = 1;
+    infoPanel.add(tagTitleLabel, gbc);
+
     tagLabel = new JLabel();
-    tagLabel.setIcon(IconFactory.createUserIcon(IconFactory.ICON_SMALL));
-    userDataPanel.add(tagLabel);
+    tagLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    gbc.gridx = 1;
+    gbc.gridy = 1;
+    infoPanel.add(tagLabel, gbc);
 
-    userDataPanel.add(new JLabel("Nom:"));
+    // Nom d'utilisateur
+    JLabel nameTitleLabel = new JLabel("Nom:");
+    nameTitleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    infoPanel.add(nameTitleLabel, gbc);
+
     nameLabel = new JLabel();
-    userDataPanel.add(nameLabel);
+    nameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    gbc.gridx = 1;
+    gbc.gridy = 2;
+    infoPanel.add(nameLabel, gbc);
 
-    userDataPanel.add(new JLabel("Followers:"));
+    // Followers
+    JLabel followersTitleLabel = new JLabel("Followers:");
+    followersTitleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    gbc.gridx = 0;
+    gbc.gridy = 3;
+    infoPanel.add(followersTitleLabel, gbc);
+
     followersCountLabel = new JLabel();
-    userDataPanel.add(followersCountLabel);
+    followersCountLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    gbc.gridx = 1;
+    gbc.gridy = 3;
+    infoPanel.add(followersCountLabel, gbc);
 
-    infoPanel.add(userDataPanel, BorderLayout.NORTH);
+    headerPanel.add(infoPanel, BorderLayout.CENTER);
 
-    // Panneau d'édition
+    // Ajout du panneau d'en-tête au panneau principal
+    this.add(headerPanel, BorderLayout.NORTH);
+
+    // Section de modification du profil
     JPanel editPanel = new JPanel(new GridBagLayout());
-    editPanel.setBorder(new TitledBorder("Modifier votre profil"));
+    editPanel.setBorder(BorderFactory.createCompoundBorder(
+      new RoundedBorder(15),
+      BorderFactory.createEmptyBorder(20, 20, 20, 20)
+    ));
+    editPanel.setBackground(new Color(255, 255, 255));
 
-    GridBagConstraints constraints = new GridBagConstraints();
-    constraints.fill = GridBagConstraints.HORIZONTAL;
-    constraints.insets = new Insets(5, 5, 5, 5);
+    GridBagConstraints editGbc = new GridBagConstraints();
+    editGbc.fill = GridBagConstraints.HORIZONTAL;
+    editGbc.anchor = GridBagConstraints.WEST;
+    editGbc.insets = new Insets(5, 5, 5, 5);
 
-    // Champ nom
-    constraints.gridx = 0;
-    constraints.gridy = 0;
-    editPanel.add(new JLabel("Nouveau nom:"), constraints);
+    // Titre de la section
+    JLabel editTitleLabel = new JLabel("Modifier votre profil");
+    editTitleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+    editTitleLabel.setForeground(new Color(52, 73, 94));
+    editGbc.gridx = 0;
+    editGbc.gridy = 0;
+    editGbc.gridwidth = 2;
+    editPanel.add(editTitleLabel, editGbc);
 
-    constraints.gridx = 1;
-    constraints.gridy = 0;
-    nameField = new JTextField(15);
-    editPanel.add(nameField, constraints);
+    // Nouveau nom
+    JLabel newNameLabel = new JLabel("Nouveau nom:");
+    newNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    editGbc.gridx = 0;
+    editGbc.gridy = 1;
+    editGbc.gridwidth = 1;
+    editPanel.add(newNameLabel, editGbc);
 
-    // Champ mot de passe
-    constraints.gridx = 0;
-    constraints.gridy = 1;
-    editPanel.add(new JLabel("Nouveau mot de passe:"), constraints);
+    nameField = new JTextField(20);
+    nameField.setBorder(BorderFactory.createCompoundBorder(
+      new RoundedBorder(15),
+      BorderFactory.createEmptyBorder(8, 15, 8, 15)
+    ));
+    nameField.setFont(new Font("Arial", Font.PLAIN, 14));
+    editGbc.gridx = 1;
+    editGbc.gridy = 1;
+    editPanel.add(nameField, editGbc);
 
-    constraints.gridx = 1;
-    constraints.gridy = 1;
-    passwordField = new JPasswordField(15);
-    editPanel.add(passwordField, constraints);
+    // Nouveau mot de passe
+    JLabel newPasswordLabel = new JLabel("Nouveau mot de passe:");
+    newPasswordLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    editGbc.gridx = 0;
+    editGbc.gridy = 2;
+    editPanel.add(newPasswordLabel, editGbc);
 
-    // Confirmation mot de passe
-    constraints.gridx = 0;
-    constraints.gridy = 2;
-    editPanel.add(new JLabel("Confirmer mot de passe:"), constraints);
+    passwordField = new JPasswordField(20);
+    passwordField.setBorder(BorderFactory.createCompoundBorder(
+      new RoundedBorder(15),
+      BorderFactory.createEmptyBorder(8, 15, 8, 15)
+    ));
+    passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
+    editGbc.gridx = 1;
+    editGbc.gridy = 2;
+    editPanel.add(passwordField, editGbc);
 
-    constraints.gridx = 1;
-    constraints.gridy = 2;
-    confirmPasswordField = new JPasswordField(15);
-    editPanel.add(confirmPasswordField, constraints);
+    // Confirmation du mot de passe
+    JLabel confirmPasswordLabel = new JLabel("Confirmer mot de passe:");
+    confirmPasswordLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    editGbc.gridx = 0;
+    editGbc.gridy = 3;
+    editPanel.add(confirmPasswordLabel, editGbc);
+
+    confirmPasswordField = new JPasswordField(20);
+    confirmPasswordField.setBorder(BorderFactory.createCompoundBorder(
+      new RoundedBorder(15),
+      BorderFactory.createEmptyBorder(8, 15, 8, 15)
+    ));
+    confirmPasswordField.setFont(new Font("Arial", Font.PLAIN, 14));
+    editGbc.gridx = 1;
+    editGbc.gridy = 3;
+    editPanel.add(confirmPasswordField, editGbc);
 
     // Messages d'état
-    constraints.gridx = 0;
-    constraints.gridy = 3;
-    constraints.gridwidth = 2;
-    errorLabel = new JLabel(" ");
-    errorLabel.setForeground(Color.RED);
-    editPanel.add(errorLabel, constraints);
+    JPanel statusPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+    statusPanel.setOpaque(false);
 
-    constraints.gridx = 0;
-    constraints.gridy = 4;
+    errorLabel = new JLabel(" ");
+    errorLabel.setForeground(new Color(231, 76, 60));
+    errorLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+    statusPanel.add(errorLabel);
+
     successLabel = new JLabel(" ");
-    successLabel.setForeground(new Color(0, 128, 0)); // Vert
-    editPanel.add(successLabel, constraints);
+    successLabel.setForeground(new Color(46, 204, 113));
+    successLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+    statusPanel.add(successLabel);
+
+    editGbc.gridx = 0;
+    editGbc.gridy = 4;
+    editGbc.gridwidth = 2;
+    editPanel.add(statusPanel, editGbc);
 
     // Bouton de mise à jour
-    constraints.gridx = 0;
-    constraints.gridy = 5;
-    constraints.gridwidth = 2;
-    constraints.anchor = GridBagConstraints.CENTER;
     updateButton = new JButton("Mettre à jour");
-    editPanel.add(updateButton, constraints);
+    updateButton.setFont(new Font("Arial", Font.BOLD, 14));
+    updateButton.setBackground(new Color(52, 152, 219));
+    updateButton.setForeground(Color.WHITE);
+    updateButton.setFocusPainted(false);
+    updateButton.setBorder(new RoundedBorder(15));
+    updateButton.setPreferredSize(new Dimension(150, 40));
 
-    infoPanel.add(editPanel, BorderLayout.CENTER);
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    buttonPanel.setOpaque(false);
+    buttonPanel.add(updateButton);
 
-    // Panneau des messages de l'utilisateur
-    JPanel messagesPanel = new JPanel(new BorderLayout(5, 5));
-    messagesPanel.setBorder(new TitledBorder("Mes messages"));
+    editGbc.gridx = 0;
+    editGbc.gridy = 5;
+    editGbc.gridwidth = 2;
+    editPanel.add(buttonPanel, editGbc);
+
+    // Section centrale du profil
+    JPanel centralPanel = new JPanel(new BorderLayout(0, 15));
+    centralPanel.setOpaque(false);
+    centralPanel.add(editPanel, BorderLayout.NORTH);
+
+    // Section des messages de l'utilisateur
+    JPanel messagesPanel = new JPanel(new BorderLayout(10, 10));
+    messagesPanel.setBorder(BorderFactory.createCompoundBorder(
+      new RoundedBorder(15),
+      BorderFactory.createEmptyBorder(15, 15, 15, 15)
+    ));
+    messagesPanel.setBackground(new Color(255, 255, 255));
+
+    JLabel messagesTitle = new JLabel("Mes messages");
+    messagesTitle.setFont(new Font("Arial", Font.BOLD, 18));
+    messagesTitle.setForeground(new Color(52, 73, 94));
+    messagesPanel.add(messagesTitle, BorderLayout.NORTH);
 
     messagesListModel = new DefaultListModel<>();
     messagesList = new JList<>(messagesListModel);
+    messagesList.setFont(new Font("Arial", Font.PLAIN, 14));
+    messagesList.setCellRenderer(new MessageCellRenderer());
+
     JScrollPane scrollPane = new JScrollPane(messagesList);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder());
     scrollPane.setPreferredSize(new Dimension(400, 200));
     messagesPanel.add(scrollPane, BorderLayout.CENTER);
 
-    // Ajout des panneaux au panneau principal
-    this.add(infoPanel, BorderLayout.NORTH);
-    this.add(messagesPanel, BorderLayout.CENTER);
+    centralPanel.add(messagesPanel, BorderLayout.CENTER);
+
+    // Ajout du panneau central au panneau principal
+    this.add(centralPanel, BorderLayout.CENTER);
   }
 
-  /**
-   * Définit l'écouteur d'événements pour le bouton de mise à jour.
-   */
+  // Classe personnalisée pour le rendu des messages dans la liste
+  private class MessageCellRenderer extends DefaultListCellRenderer {
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+      if (!isSelected) {
+        label.setBackground(index % 2 == 0 ? new Color(245, 248, 250) : Color.WHITE);
+      }
+
+      label.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+      return label;
+    }
+  }
+
+  // Implémentation des méthodes de l'interface IProfileView
+
+  @Override
   public void setUpdateButtonListener(ActionListener listener) {
     updateButton.addActionListener(listener);
   }
 
-  /**
-   * Met à jour les informations affichées de l'utilisateur.
-   */
+  @Override
   public void updateUserInfo(String tag, String name, int followersCount) {
     tagLabel.setText(tag);
     nameLabel.setText(name);
     followersCountLabel.setText(String.valueOf(followersCount));
   }
 
-  /**
-   * Met à jour la liste des messages de l'utilisateur.
-   */
+  @Override
   public void updateUserMessages(Set<Message> messages) {
     messagesListModel.clear();
     for (Message message : messages) {
@@ -205,46 +334,34 @@ public class ProfileView extends JPanel {
     return "[" + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date(message.getEmissionDate())) + "] " + message.getText();
   }
 
-  /**
-   * Affiche un message d'erreur.
-   */
+  @Override
   public void setErrorMessage(String message) {
     errorLabel.setText(message);
     successLabel.setText(" ");
   }
 
-  /**
-   * Affiche un message de succès.
-   */
+  @Override
   public void setSuccessMessage(String message) {
     successLabel.setText(message);
     errorLabel.setText(" ");
   }
 
-  /**
-   * Récupère le nouveau nom saisi.
-   */
+  @Override
   public String getNewName() {
     return nameField.getText().trim();
   }
 
-  /**
-   * Récupère le nouveau mot de passe saisi.
-   */
+  @Override
   public String getNewPassword() {
     return new String(passwordField.getPassword());
   }
 
-  /**
-   * Récupère la confirmation du mot de passe saisi.
-   */
+  @Override
   public String getConfirmPassword() {
     return new String(confirmPasswordField.getPassword());
   }
 
-  /**
-   * Réinitialise les champs de formulaire.
-   */
+  @Override
   public void resetFields() {
     nameField.setText("");
     passwordField.setText("");
@@ -253,9 +370,6 @@ public class ProfileView extends JPanel {
     successLabel.setText(" ");
   }
 
-  /**
-   * Active ou désactive tous les composants de la vue.
-   */
   @Override
   public void setEnabled(boolean enabled) {
     super.setEnabled(enabled);

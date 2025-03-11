@@ -1,7 +1,7 @@
 package com.ubo.tp.message.components.user.auth.login.controller;
 
 import com.ubo.tp.message.components.user.auth.login.model.LoginModel;
-import com.ubo.tp.message.components.user.auth.login.view.LoginView;
+import com.ubo.tp.message.components.user.auth.login.view.ILoginView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +13,7 @@ public class LoginController {
   /**
    * Vue associée
    */
-  private final LoginView view;
+  private final ILoginView view; // Utilisation de l'interface au lieu de la classe concrète
 
   /**
    * Modèle associé
@@ -28,7 +28,7 @@ public class LoginController {
   /**
    * Constructeur
    */
-  public LoginController(LoginView view, LoginModel model) {
+  public LoginController(ILoginView view, LoginModel model) {
     this.view = view;
     this.model = model;
 

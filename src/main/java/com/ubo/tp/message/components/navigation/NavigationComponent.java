@@ -1,8 +1,11 @@
 package com.ubo.tp.message.components.navigation;
 
+import com.ubo.tp.message.components.IComponent;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
 import com.ubo.tp.message.components.navigation.controller.NavigationController;
 import com.ubo.tp.message.components.navigation.model.NavigationModel;
+import com.ubo.tp.message.components.navigation.view.INavigationViewConnected;
+import com.ubo.tp.message.components.navigation.view.INavigationViewDisconnected;
 import com.ubo.tp.message.components.navigation.view.NavigationViewConnected;
 import com.ubo.tp.message.components.navigation.view.NavigationViewDisconnected;
 import com.ubo.tp.message.core.session.SessionManager;
@@ -10,13 +13,14 @@ import com.ubo.tp.message.core.session.SessionManager;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionListener;
 
 /**
  * Composant de navigation principal utilisant des JMenus.
  * Intègre le modèle, les vues et le contrôleur de navigation.
  */
-public class NavigationComponent {
+public class NavigationComponent implements IComponent<JPanel> {
 
   /**
    * Panneau principal.
@@ -31,12 +35,12 @@ public class NavigationComponent {
   /**
    * Vue pour utilisateur connecté.
    */
-  private final NavigationViewConnected connectedView;
+  private final INavigationViewConnected connectedView;
 
   /**
    * Vue pour utilisateur déconnecté.
    */
-  private final NavigationViewDisconnected disconnectedView;
+  private final INavigationViewDisconnected disconnectedView;
 
   /**
    * Contrôleur de navigation.
@@ -53,11 +57,15 @@ public class NavigationComponent {
     // Initialisation du modèle
     model = new NavigationModel(sessionManager);
 
-    // Initialisation des vues
-    connectedView = new NavigationViewConnected();
-    disconnectedView = new NavigationViewDisconnected();
+    // Initialisation des vues concrètes
+    NavigationViewConnected concreteConnectedView = new NavigationViewConnected();
+    NavigationViewDisconnected concreteDisconnectedView = new NavigationViewDisconnected();
 
-    // Initialisation du contrôleur
+    // Affectation aux interfaces
+    this.connectedView = concreteConnectedView;
+    this.disconnectedView = concreteDisconnectedView;
+
+    // Initialisation du contrôleur avec les interfaces
     controller = new NavigationController(model, connectedView, disconnectedView);
 
     // S'abonner aux événements de session
@@ -65,7 +73,7 @@ public class NavigationComponent {
 
     // Initialisation du panneau principal
     mainPanel = new JPanel(new BorderLayout());
-    mainPanel.add(disconnectedView, BorderLayout.CENTER);
+    mainPanel.add(concreteDisconnectedView, BorderLayout.CENTER);
 
     // Affichage de la vue appropriée
     if (model.isUserConnected()) {
@@ -73,6 +81,28 @@ public class NavigationComponent {
     } else {
       showDisconnectedView();
     }
+  }
+
+  @Override
+  public JPanel getComponent() {
+    return mainPanel;
+  }
+
+  @Override
+  public void initialize() {
+    // Rien à faire ici
+  }
+
+  @Override
+  public void reset() {
+    // Rien à faire ici
+  }
+
+  @Override
+  public void setEnabled(boolean enabled) {
+    connectedView.setEnabled(enabled);
+    disconnectedView.setEnabled(enabled);
+    mainPanel.setEnabled(enabled);
   }
 
   /**
@@ -93,10 +123,6 @@ public class NavigationComponent {
    * Définit le contrôleur de répertoire
    */
   public void setDirectoryController(DirectoryController directoryController) {
-    /**
-     * Contrôleur de répertoire
-     */
-
     // Mettre à jour les vues avec le contrôleur
     connectedView.setDirectoryController(directoryController);
     disconnectedView.setDirectoryController(directoryController);
@@ -116,22 +142,11 @@ public class NavigationComponent {
     }
   }
 
-  /**
-   * Active ou désactive le composant.
-   */
-  public void setEnabled(boolean enabled) {
-    connectedView.setEnabled(enabled);
-    disconnectedView.setEnabled(enabled);
-    mainPanel.setEnabled(enabled);
-  }
-
-  /**
-   * Affiche la vue pour un utilisateur connecté.
-   */
   public void showConnectedView() {
     controller.showConnectedView();
     mainPanel.removeAll();
-    mainPanel.add(connectedView, BorderLayout.CENTER);
+    // Utilisez un cast explicite
+    mainPanel.add((Component) connectedView, BorderLayout.CENTER);
     mainPanel.revalidate();
     mainPanel.repaint();
 
@@ -139,13 +154,11 @@ public class NavigationComponent {
     updateMenu();
   }
 
-  /**
-   * Affiche la vue pour un utilisateur déconnecté.
-   */
   public void showDisconnectedView() {
     controller.showDisconnectedView();
     mainPanel.removeAll();
-    mainPanel.add(disconnectedView, BorderLayout.CENTER);
+    // Utilisez un cast explicite
+    mainPanel.add((Component) disconnectedView, BorderLayout.CENTER);
     mainPanel.revalidate();
     mainPanel.repaint();
 
@@ -208,7 +221,4 @@ public class NavigationComponent {
   public void setExitActionListener(ActionListener listener) {
     controller.setExitActionListener(listener);
   }
-
-
-
 }

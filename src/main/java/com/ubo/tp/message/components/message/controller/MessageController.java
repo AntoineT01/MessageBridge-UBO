@@ -2,7 +2,7 @@ package com.ubo.tp.message.components.message.controller;
 
 import com.ubo.tp.message.common.ui.ToastNotification;
 import com.ubo.tp.message.components.message.model.MessageModel;
-import com.ubo.tp.message.components.message.view.ModernChatView;
+import com.ubo.tp.message.components.message.view.IChatView;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.database.IDatabaseObserver;
 import com.ubo.tp.message.core.datamodel.Message;
@@ -13,32 +13,34 @@ import com.ubo.tp.message.core.session.ISession;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MessageController implements IMessageController, IDatabaseObserver {
 
   private final ISession session;
-  private final ModernChatView messageView;
+  private final IChatView messageView;
   private final MessageModel model;
   protected EntityManager mEntityManager;
 
   private static final int MAX_MESSAGE_LENGTH = 200;
 
-  public MessageController(ISession session, ModernChatView messageView, IDatabase database, MessageModel model,
-                           EntityManager mEntityManager) {
+  public MessageController(ISession session, IChatView messageView, IDatabase database, MessageModel model,
+                           EntityManager entityManager) {
     this.session = session;
     this.messageView = messageView;
     this.model = model;
 
     // S'inscrire comme observateur de la base de données
     database.addObserver(this);
-    this.mEntityManager = mEntityManager;
+    this.mEntityManager = entityManager;
   }
 
   @Override
   public void sendMessage(String text) {
     User connectedUser = session.getConnectedUser();
     if (connectedUser == null) {
-      JOptionPane.showMessageDialog(messageView, "Aucun utilisateur connecté.", "Erreur", JOptionPane.ERROR_MESSAGE);
+      // Utiliser null au lieu de messageView comme parent
+      JOptionPane.showMessageDialog(null, "Aucun utilisateur connecté.", "Erreur", JOptionPane.ERROR_MESSAGE);
       return;
     }
     try {
@@ -53,7 +55,8 @@ public class MessageController implements IMessageController, IDatabaseObserver 
       mEntityManager.writeMessageFile(newMessage);
       messageView.clearMessageInput();
     } catch (MessageValidationException e) {
-      JOptionPane.showMessageDialog(messageView, e.getMessage(), "Erreur de validation", JOptionPane.ERROR_MESSAGE);
+      // Utiliser null au lieu de messageView comme parent
+      JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur de validation", JOptionPane.ERROR_MESSAGE);
     }
   }
 

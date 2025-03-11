@@ -2,13 +2,16 @@ package com.ubo.tp.message.components.user.search.view;
 
 import com.ubo.tp.message.common.ui.IconFactory;
 import com.ubo.tp.message.common.ui.SearchBar;
+import com.ubo.tp.message.common.ui.SwingTheme;
 import com.ubo.tp.message.core.datamodel.User;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,7 +20,7 @@ import java.util.Set;
 /**
  * Vue pour l'interface de recherche d'utilisateurs.
  */
-public class SearchView extends JPanel {
+public class SearchView extends JPanel implements ISearchView {
   /**
    * Barre de recherche.
    */
@@ -64,44 +67,54 @@ public class SearchView extends JPanel {
    * Initialisation de l'interface graphique.
    */
   private void initGUI() {
-    this.setLayout(new BorderLayout(10, 10));
+    // Configuration du panneau principal
+    this.setBackground(SwingTheme.BACKGROUND);
+    this.setLayout(new BorderLayout(15, 15));
     this.setBorder(new EmptyBorder(20, 20, 20, 20));
 
     // Panneau de recherche
-    JPanel searchPanel = new JPanel(new BorderLayout(5, 5));
-    searchPanel.setBorder(new TitledBorder("Rechercher des utilisateurs"));
+    JPanel searchPanel = SwingTheme.createStyledPanel("Rechercher des utilisateurs");
 
-    searchBar = new SearchBar("Recherche:", 25, "Rechercher");
-    searchPanel.add(searchBar, BorderLayout.NORTH);
+    // Barre de recherche personnalisée
+    JPanel searchBarPanel = new JPanel(new BorderLayout(10, 0));
+    searchBarPanel.setOpaque(false);
+
+    searchBar = new SearchBar("", 25, "Rechercher");
+    // Styliser la barre de recherche (ajouter une méthode dans SearchBar si nécessaire)
+    searchBar.setBackground(SwingTheme.BACKGROUND);
+    searchBarPanel.add(searchBar, BorderLayout.CENTER);
+
+    searchPanel.add(searchBarPanel, BorderLayout.CENTER);
+    this.add(searchPanel, BorderLayout.NORTH);
 
     // Panneau de résultats
-    JPanel resultsPanel = new JPanel(new BorderLayout(5, 5));
+    JPanel resultsPanel = SwingTheme.createStyledPanel("Résultats de la recherche");
 
-    // Création du modèle de table
+    // Table des résultats avec style amélioré
     String[] columnNames = {"", "Tag", "Nom", "Abonnés"};
     userTableModel = new DefaultTableModel(columnNames, 0) {
       @Override
       public boolean isCellEditable(int row, int column) {
-        return false; // Rendre toutes les cellules non éditables
+        return false;
       }
 
       @Override
       public Class<?> getColumnClass(int columnIndex) {
         if (columnIndex == 0) {
-          return Icon.class; // La première colonne contient des icônes
+          return Icon.class;
         }
         return String.class;
       }
     };
 
     userTable = new JTable(userTableModel);
-    userTable.setRowHeight(30);
-    userTable.getColumnModel().getColumn(0).setMaxWidth(30);
-    userTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-    userTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-    userTable.getColumnModel().getColumn(3).setPreferredWidth(60);
+    SwingTheme.styleTable(userTable);
+    userTable.getColumnModel().getColumn(0).setMaxWidth(40);
+    userTable.getColumnModel().getColumn(1).setPreferredWidth(120);
+    userTable.getColumnModel().getColumn(2).setPreferredWidth(180);
+    userTable.getColumnModel().getColumn(3).setPreferredWidth(80);
 
-    // Ajout d'un écouteur pour le double clic
+    // Double-clic pour voir le profil
     userTable.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -112,43 +125,67 @@ public class SearchView extends JPanel {
     });
 
     JScrollPane scrollPane = new JScrollPane(userTable);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder());
     scrollPane.setPreferredSize(new Dimension(400, 300));
     resultsPanel.add(scrollPane, BorderLayout.CENTER);
 
     // Panneau d'actions
-    JPanel actionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel actionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+    actionsPanel.setOpaque(false);
 
     viewProfileButton = new JButton("Voir profil");
     viewProfileButton.setIcon(IconFactory.createUserIcon(IconFactory.ICON_SMALL));
+    SwingTheme.styleButton(viewProfileButton, true);
     viewProfileButton.setEnabled(false);
     actionsPanel.add(viewProfileButton);
 
     followButton = new JButton("Suivre");
+    SwingTheme.styleButton(followButton, false);
+    followButton.setBackground(SwingTheme.SECONDARY); // Vert pour "Suivre"
     followButton.setEnabled(false);
     actionsPanel.add(followButton);
 
-    // Messages d'état
-    JPanel statusPanel = new JPanel(new GridLayout(2, 1));
+    resultsPanel.add(actionsPanel, BorderLayout.SOUTH);
+    this.add(resultsPanel, BorderLayout.CENTER);
+
+    // Panneau d'état
+    JPanel statusPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+    statusPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
+    statusPanel.setOpaque(false);
 
     errorLabel = new JLabel(" ");
-    errorLabel.setForeground(Color.RED);
+    errorLabel.setForeground(SwingTheme.DANGER);
+    errorLabel.setFont(SwingTheme.TOOLTIP_FONT);
     statusPanel.add(errorLabel);
 
     successLabel = new JLabel(" ");
-    successLabel.setForeground(new Color(0, 128, 0)); // Vert
+    successLabel.setForeground(SwingTheme.SUCCESS);
+    successLabel.setFont(SwingTheme.TOOLTIP_FONT);
     statusPanel.add(successLabel);
 
-    // Assemblage final
-    this.add(searchPanel, BorderLayout.NORTH);
-    this.add(resultsPanel, BorderLayout.CENTER);
-    this.add(actionsPanel, BorderLayout.SOUTH);
     this.add(statusPanel, BorderLayout.SOUTH);
 
-    // Ajout d'un listenr de sélection pour activer/désactiver les boutons
+    // Ajout d'un listener de sélection pour activer/désactiver les boutons
     userTable.getSelectionModel().addListSelectionListener(e -> {
       boolean hasSelection = userTable.getSelectedRow() != -1;
       viewProfileButton.setEnabled(hasSelection);
       followButton.setEnabled(hasSelection);
+
+      // Mise à jour du texte du bouton suivre si sélection
+      if (hasSelection) {
+        int selectedRow = userTable.getSelectedRow();
+        boolean isFollowed = (boolean) userTable.getClientProperty("followed_" + selectedRow);
+        followButton.setText(isFollowed ? "Ne plus suivre" : "Suivre");
+
+        // Ajustement de la couleur en fonction de l'état
+        if (isFollowed) {
+          followButton.setBackground(SwingTheme.ALTERNATE);
+          followButton.setForeground(SwingTheme.TEXT);
+        } else {
+          followButton.setBackground(SwingTheme.SECONDARY);
+          followButton.setForeground(SwingTheme.TEXT_ON_COLOR);
+        }
+      }
     });
   }
 

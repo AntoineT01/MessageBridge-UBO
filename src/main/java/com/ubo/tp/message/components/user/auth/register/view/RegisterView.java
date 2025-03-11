@@ -1,17 +1,13 @@
 package com.ubo.tp.message.components.user.auth.register.view;
 
-import com.ubo.tp.message.common.ui.IconFactory;
+import com.ubo.tp.message.common.ui.EnvUI;
+import com.ubo.tp.message.common.ui.SwingTheme;
+import com.ubo.tp.message.common.utils.ImageUtils;
 import com.ubo.tp.message.core.database.IDatabase;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -20,7 +16,7 @@ import java.awt.event.ActionListener;
 /**
  * Vue pour l'interface d'inscription
  */
-public class RegisterView extends JPanel {
+public class RegisterView extends JPanel implements IRegisterView {
   /**
    * Base de données (pour l'accès par le contrôleur)
    */
@@ -74,144 +70,200 @@ public class RegisterView extends JPanel {
    * Initialisation de l'interface graphique
    */
   private void initGUI() {
+    // Configuration du panneau principal
+    this.setBackground(SwingTheme.BACKGROUND);
     this.setLayout(new GridBagLayout());
-    this.setBorder(new EmptyBorder(20, 20, 20, 20));
+    this.setBorder(new EmptyBorder(30, 40, 30, 40));
 
     GridBagConstraints constraints = new GridBagConstraints();
     constraints.fill = GridBagConstraints.HORIZONTAL;
-    constraints.insets = new Insets(5, 5, 5, 5);
+    constraints.insets = new Insets(EnvUI.SPACING_SMALL, EnvUI.SPACING_STANDARD,
+                                    EnvUI.SPACING_SMALL, EnvUI.SPACING_STANDARD);
 
-    // Titre du panneau
-    JLabel titleLabel = new JLabel("Inscription", JLabel.CENTER);
-    titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-    titleLabel.setIcon(IconFactory.createUserIcon(IconFactory.ICON_MEDIUM));
+    // Logo et titre
+    JLabel logoLabel = new JLabel();
+    ImageIcon logo = ImageUtils.loadScaledIcon("/tux_logo.png", 70, 70);
+    logoLabel.setIcon(logo);
+    logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
     constraints.gridx = 0;
     constraints.gridy = 0;
     constraints.gridwidth = 2;
-    this.add(titleLabel, constraints);
+    this.add(logoLabel, constraints);
 
-    // Champ pour le tag utilisateur
-    JLabel tagLabel = new JLabel("Tag utilisateur:");
+    // Titre stylisé - utilisation de la couleur secondaire pour différencier de la connexion
+    JLabel titleLabel = new JLabel("Créer un compte", SwingConstants.CENTER);
+    titleLabel.setFont(SwingTheme.TITLE_FONT);
+    titleLabel.setForeground(SwingTheme.SECONDARY);
     constraints.gridx = 0;
     constraints.gridy = 1;
+    constraints.gridwidth = 2;
+    this.add(titleLabel, constraints);
+
+    // Sous-titre
+    JLabel subtitleLabel = new JLabel("Rejoignez la communauté MessageApp", SwingConstants.CENTER);
+    subtitleLabel.setFont(SwingTheme.TEXT_REGULAR);
+    subtitleLabel.setForeground(SwingTheme.TEXT);
+    constraints.gridx = 0;
+    constraints.gridy = 2;
+    constraints.gridwidth = 2;
+    this.add(subtitleLabel, constraints);
+
+    // Espaceur
+    constraints.gridy = 3;
+    this.add(Box.createVerticalStrut(15), constraints);
+
+    // Champ de tag utilisateur
+    JLabel tagLabel = new JLabel("Tag utilisateur:");
+    tagLabel.setFont(SwingTheme.TEXT_BOLD);
+    constraints.gridx = 0;
+    constraints.gridy = 4;
     constraints.gridwidth = 1;
     this.add(tagLabel, constraints);
 
     tagField = new JTextField(15);
+    SwingTheme.styleTextComponent(tagField);
     constraints.gridx = 1;
-    constraints.gridy = 1;
+    constraints.gridy = 4;
     this.add(tagField, constraints);
 
-    // Champ pour le nom d'utilisateur
+    // Info bulle pour le tag
+    JLabel tagInfoLabel = new JLabel("Votre identifiant unique (ex: @pseudo)");
+    tagInfoLabel.setFont(SwingTheme.TOOLTIP_FONT);
+    tagInfoLabel.setForeground(SwingTheme.TEXT_SECONDARY);
+    constraints.gridx = 1;
+    constraints.gridy = 5;
+    this.add(tagInfoLabel, constraints);
+
+    // Champ de nom d'utilisateur
     JLabel nameLabel = new JLabel("Nom d'utilisateur:");
+    nameLabel.setFont(SwingTheme.TEXT_BOLD);
     constraints.gridx = 0;
-    constraints.gridy = 2;
+    constraints.gridy = 6;
     this.add(nameLabel, constraints);
 
     nameField = new JTextField(15);
+    SwingTheme.styleTextComponent(nameField);
     constraints.gridx = 1;
-    constraints.gridy = 2;
+    constraints.gridy = 6;
     this.add(nameField, constraints);
 
-    // Champ pour le mot de passe
+    // Champ de mot de passe
     JLabel passwordLabel = new JLabel("Mot de passe:");
+    passwordLabel.setFont(SwingTheme.TEXT_BOLD);
     constraints.gridx = 0;
-    constraints.gridy = 3;
+    constraints.gridy = 7;
     this.add(passwordLabel, constraints);
 
     passwordField = new JPasswordField(15);
+    SwingTheme.styleTextComponent(passwordField);
     constraints.gridx = 1;
-    constraints.gridy = 3;
+    constraints.gridy = 7;
     this.add(passwordField, constraints);
 
-    // Champ pour la confirmation du mot de passe
+    // Info bulle pour le mot de passe
+    JLabel passwordInfoLabel = new JLabel("Choisissez un mot de passe sécurisé");
+    passwordInfoLabel.setFont(SwingTheme.TOOLTIP_FONT);
+    passwordInfoLabel.setForeground(SwingTheme.TEXT_SECONDARY);
+    constraints.gridx = 1;
+    constraints.gridy = 8;
+    this.add(passwordInfoLabel, constraints);
+
+    // Champ de confirmation du mot de passe
     JLabel confirmPasswordLabel = new JLabel("Confirmer mot de passe:");
+    confirmPasswordLabel.setFont(SwingTheme.TEXT_BOLD);
     constraints.gridx = 0;
-    constraints.gridy = 4;
+    constraints.gridy = 9;
     this.add(confirmPasswordLabel, constraints);
 
     confirmPasswordField = new JPasswordField(15);
+    SwingTheme.styleTextComponent(confirmPasswordField);
     constraints.gridx = 1;
-    constraints.gridy = 4;
+    constraints.gridy = 9;
     this.add(confirmPasswordField, constraints);
 
-    // Étiquette pour les erreurs
-    errorLabel = new JLabel("");
-    errorLabel.setForeground(Color.RED);
+    // Message d'erreur stylisé
+    errorLabel = new JLabel(" ");
+    errorLabel.setForeground(SwingTheme.DANGER);
+    errorLabel.setFont(SwingTheme.TOOLTIP_FONT);
     constraints.gridx = 0;
-    constraints.gridy = 5;
+    constraints.gridy = 10;
     constraints.gridwidth = 2;
     this.add(errorLabel, constraints);
 
     // Panneau pour les boutons
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+    buttonPanel.setOpaque(false);
 
-    // Bouton d'inscription
+    // Bouton d'inscription principal - utilise la couleur secondaire (verte)
     registerButton = new JButton("S'inscrire");
+    registerButton.setFont(SwingTheme.TEXT_BOLD);
+    registerButton.setBackground(SwingTheme.SECONDARY);
+    registerButton.setForeground(SwingTheme.TEXT_ON_COLOR);
+    registerButton.setFocusPainted(false);
+    registerButton.setBorder(SwingTheme.createRoundedBorder());
+    registerButton.setPreferredSize(SwingTheme.BUTTON_SIZE);
     buttonPanel.add(registerButton);
 
-    // Bouton de connexion
+    // Bouton de connexion secondaire
     loginButton = new JButton("Se connecter");
+    SwingTheme.styleButton(loginButton, false);
     buttonPanel.add(loginButton);
 
     constraints.gridx = 0;
-    constraints.gridy = 6;
+    constraints.gridy = 11;
     constraints.gridwidth = 2;
+    constraints.insets = new Insets(20, 10, 10, 10);
     this.add(buttonPanel, constraints);
+
+    // Note de confidentialité
+    JLabel privacyLabel = new JLabel("En vous inscrivant, vous acceptez nos conditions d'utilisation", SwingConstants.CENTER);
+    privacyLabel.setFont(SwingTheme.TOOLTIP_FONT);
+    privacyLabel.setForeground(SwingTheme.TEXT_SECONDARY);
+    constraints.gridx = 0;
+    constraints.gridy = 12;
+    constraints.gridwidth = 2;
+    constraints.insets = new Insets(5, 10, 10, 10);
+    this.add(privacyLabel, constraints);
   }
 
-  /**
-   * Définit l'écouteur d'événements pour le bouton d'inscription
-   */
+  // Implémentation des méthodes de l'interface IRegisterView
+
+  @Override
   public void setRegisterButtonListener(ActionListener listener) {
     registerButton.addActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur d'événements pour le bouton de connexion
-   */
+  @Override
   public void setLoginButtonListener(ActionListener listener) {
     loginButton.addActionListener(listener);
   }
 
-  /**
-   * Récupère le tag utilisateur saisi
-   */
+  @Override
   public String getUserTag() {
     return tagField.getText().trim();
   }
 
-  /**
-   * Récupère le nom d'utilisateur saisi
-   */
+  @Override
   public String getUserName() {
     return nameField.getText().trim();
   }
 
-  /**
-   * Récupère le mot de passe saisi
-   */
+  @Override
   public String getUserPassword() {
     return new String(passwordField.getPassword());
   }
 
-  /**
-   * Récupère la confirmation du mot de passe
-   */
+  @Override
   public String getConfirmPassword() {
     return new String(confirmPasswordField.getPassword());
   }
 
-  /**
-   * Affiche un message d'erreur
-   */
+  @Override
   public void setErrorMessage(String message) {
     errorLabel.setText(message);
   }
 
-  /**
-   * Réinitialise les champs de formulaire
-   */
+  @Override
   public void resetFields() {
     tagField.setText("");
     nameField.setText("");
@@ -220,9 +272,6 @@ public class RegisterView extends JPanel {
     errorLabel.setText("");
   }
 
-  /**
-   * Active ou désactive tous les composants de la vue
-   */
   @Override
   public void setEnabled(boolean enabled) {
     super.setEnabled(enabled);
@@ -234,9 +283,7 @@ public class RegisterView extends JPanel {
     loginButton.setEnabled(enabled);
   }
 
-  /**
-   * Récupère la base de données (pour le contrôleur)
-   */
+  @Override
   public IDatabase getDatabase() {
     return database;
   }

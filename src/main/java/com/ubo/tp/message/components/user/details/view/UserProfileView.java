@@ -1,6 +1,7 @@
 package com.ubo.tp.message.components.user.details.view;
 
 import com.ubo.tp.message.common.ui.IconFactory;
+import com.ubo.tp.message.common.ui.SwingTheme;
 import com.ubo.tp.message.components.message.view.MessageBubble;
 import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.datamodel.User;
@@ -8,6 +9,7 @@ import com.ubo.tp.message.core.datamodel.User;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -16,23 +18,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +38,7 @@ import java.util.Set;
 /**
  * Vue pour l'affichage du profil d'un utilisateur.
  */
-public class UserProfileView extends JPanel {
+public class UserProfileView extends JPanel implements IUserProfileView {
 
   /**
    * Tag de l'utilisateur.
@@ -113,156 +110,185 @@ public class UserProfileView extends JPanel {
   /**
    * Initialisation de l'interface graphique.
    */
+  // Dans la méthode initGUI() de UserProfileView
   private void initGUI() {
-    JLabel userIconLabel;
-    this.setLayout(new BorderLayout(10, 10));
+    // Configuration du panneau principal
+    this.setBackground(SwingTheme.BACKGROUND);
+    this.setLayout(new BorderLayout(15, 15));
     this.setBorder(new EmptyBorder(20, 20, 20, 20));
 
     // Panneau d'en-tête avec les informations de l'utilisateur
-    JPanel headerPanel = new JPanel(new BorderLayout(10, 10));
-    headerPanel.setBorder(new TitledBorder("Profil utilisateur"));
+    JPanel headerPanel = SwingTheme.createStyledPanel(null);
 
     // Panneau pour le bouton de retour
     JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    backPanel.setOpaque(false);
     backButton = new JButton("Retour");
+    backButton.setFont(SwingTheme.TEXT_REGULAR);
+    backButton.setBackground(SwingTheme.ALTERNATE);
+    backButton.setForeground(SwingTheme.TEXT);
+    backButton.setFocusPainted(false);
+    backButton.setBorder(SwingTheme.createRoundedBorder());
     backPanel.add(backButton);
     headerPanel.add(backPanel, BorderLayout.NORTH);
 
-    // Panneau pour les informations utilisateur
-    JPanel userInfoPanel = new JPanel(new GridBagLayout());
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.insets = new Insets(5, 5, 5, 5);
+    // Panneau d'informations utilisateur
+    JPanel userInfoPanel = new JPanel(new BorderLayout(20, 10));
+    userInfoPanel.setOpaque(false);
 
-    // Icône utilisateur
-    userIconLabel = new JLabel(IconFactory.createUserIcon(IconFactory.ICON_LARGE));
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    gbc.gridheight = 2;
-    gbc.anchor = GridBagConstraints.CENTER;
-    userInfoPanel.add(userIconLabel, gbc);
+    // Avatar et informations de base
+    JPanel avatarPanel = new JPanel(new BorderLayout(10, 10));
+    avatarPanel.setOpaque(false);
+
+    JLabel userIconLabel = new JLabel(IconFactory.createUserIcon(IconFactory.ICON_LARGE));
+    userIconLabel.setPreferredSize(new Dimension(80, 80));
+    avatarPanel.add(userIconLabel, BorderLayout.CENTER);
+
+    userInfoPanel.add(avatarPanel, BorderLayout.WEST);
+
+    // Détails de l'utilisateur
+    JPanel detailsPanel = new JPanel(new GridBagLayout());
+    detailsPanel.setOpaque(false);
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.insets = new Insets(3, 5, 3, 5);
 
     // Tag utilisateur
-    userTagLabel = new JLabel("");
-    userTagLabel.setFont(new Font("Arial", Font.BOLD, 16));
-    gbc.gridx = 1;
+    userTagLabel = new JLabel();
+    userTagLabel.setFont(SwingTheme.TITLE_FONT);
+    userTagLabel.setForeground(SwingTheme.PRIMARY);
+    gbc.gridx = 0;
     gbc.gridy = 0;
-    gbc.gridheight = 1;
-    gbc.anchor = GridBagConstraints.WEST;
-    userInfoPanel.add(userTagLabel, gbc);
+    detailsPanel.add(userTagLabel, gbc);
 
     // Nom utilisateur
-    userNameLabel = new JLabel("");
-    gbc.gridx = 1;
+    userNameLabel = new JLabel();
+    userNameLabel.setFont(SwingTheme.TEXT_REGULAR);
+    userNameLabel.setForeground(SwingTheme.TEXT);
+    gbc.gridx = 0;
     gbc.gridy = 1;
-    userInfoPanel.add(userNameLabel, gbc);
+    detailsPanel.add(userNameLabel, gbc);
 
-    // Stats utilisateur
+    // Statistiques
     JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
+    statsPanel.setOpaque(false);
 
-    // Nombre de followers
-    JPanel followersPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel followersPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+    followersPanel.setOpaque(false);
     followersPanel.add(new JLabel("Followers:"));
     followersCountLabel = new JLabel("0");
-    followersCountLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    followersCountLabel.setFont(SwingTheme.TEXT_BOLD);
     followersPanel.add(followersCountLabel);
     statsPanel.add(followersPanel);
 
-    // Nombre d'utilisateurs suivis
-    JPanel followingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel followingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+    followingPanel.setOpaque(false);
     followingPanel.add(new JLabel("Abonnements:"));
     followingCountLabel = new JLabel("0");
-    followingCountLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    followingCountLabel.setFont(SwingTheme.TEXT_BOLD);
     followingPanel.add(followingCountLabel);
     statsPanel.add(followingPanel);
 
-    // Bouton pour suivre/ne plus suivre
-    followButton = new JButton("Suivre");
-    statsPanel.add(followButton);
-
-    gbc.gridx = 1;
+    gbc.gridx = 0;
     gbc.gridy = 2;
-    gbc.gridwidth = 2;
-    userInfoPanel.add(statsPanel, gbc);
+    detailsPanel.add(statsPanel, gbc);
+
+    userInfoPanel.add(detailsPanel, BorderLayout.CENTER);
+
+    // Bouton suivre/ne plus suivre
+    followButton = new JButton("Suivre");
+    SwingTheme.styleButton(followButton, false);
+    followButton.setBackground(SwingTheme.SECONDARY);
+
+    JPanel followButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    followButtonPanel.setOpaque(false);
+    followButtonPanel.add(followButton);
+    userInfoPanel.add(followButtonPanel, BorderLayout.EAST);
 
     headerPanel.add(userInfoPanel, BorderLayout.CENTER);
+    this.add(headerPanel, BorderLayout.NORTH);
 
-    // Panneau central pour les onglets
+    // Panneau central avec onglets
     JTabbedPane tabbedPane = new JTabbedPane();
+    tabbedPane.setFont(SwingTheme.TEXT_REGULAR);
+    tabbedPane.setBackground(SwingTheme.PANEL);
 
     // Onglet des messages
     messagesPanel = new JPanel();
     messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.Y_AXIS));
-    messagesPanel.setBackground(new Color(245, 245, 245));
+    messagesPanel.setBackground(SwingTheme.BACKGROUND);
     messagesPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     messagesScrollPane = new JScrollPane(messagesPanel);
     messagesScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
     messagesScrollPane.getVerticalScrollBar().setUnitIncrement(16);
     messagesScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    messagesScrollPane.setBorder(BorderFactory.createEmptyBorder());
     messagesScrollPane.setPreferredSize(new Dimension(400, 300));
 
     tabbedPane.addTab("Messages", messagesScrollPane);
 
     // Onglet des followers
     JPanel followersListPanel = new JPanel(new BorderLayout());
-    followersList = new JList<>();
-    followersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    followersListPanel.setBackground(SwingTheme.PANEL);
 
-    // Écouteur pour le double-clic sur les followers
-    followersList.addMouseListener(new MouseAdapter() {
+    followersList = new JList<>();
+    SwingTheme.styleList(followersList);
+
+    // Style pour les éléments de la liste
+    followersList.setCellRenderer(new DefaultListCellRenderer() {
       @Override
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-          // Double-clic détecté, récupérer l'utilisateur sélectionné
-          int index = followersList.locationToIndex(e.getPoint());
-          if (index != -1) {
-            // Traiter la sélection (à implémenter dans le contrôleur)
-          }
+      public Component getListCellRendererComponent(JList<?> list, Object value,
+                                                    int index, boolean isSelected, boolean cellHasFocus) {
+        JLabel label = (JLabel) super.getListCellRendererComponent(
+          list, value, index, isSelected, cellHasFocus);
+        label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        label.setIcon(IconFactory.createUserIcon(IconFactory.ICON_SMALL));
+        if (!isSelected) {
+          label.setBackground(index % 2 == 0 ? SwingTheme.BACKGROUND : SwingTheme.PANEL);
         }
+        return label;
       }
     });
 
     JScrollPane followersScrollPane = new JScrollPane(followersList);
+    followersScrollPane.setBorder(BorderFactory.createEmptyBorder());
     followersListPanel.add(followersScrollPane, BorderLayout.CENTER);
     tabbedPane.addTab("Followers", followersListPanel);
 
-    // Onglet des utilisateurs suivis
+    // Onglet des abonnements
     JPanel followingListPanel = new JPanel(new BorderLayout());
-    followingList = new JList<>();
-    followingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    followingListPanel.setBackground(SwingTheme.PANEL);
 
-    // Écouteur pour le double-clic sur les utilisateurs suivis
-    followingList.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-          // Double-clic détecté, récupérer l'utilisateur sélectionné
-          int index = followingList.locationToIndex(e.getPoint());
-          if (index != -1) {
-            // Traiter la sélection (à implémenter dans le contrôleur)
-          }
-        }
-      }
-    });
+    followingList = new JList<>();
+    SwingTheme.styleList(followingList);
+
+    // Même style pour les abonnements
+    followingList.setCellRenderer(followersList.getCellRenderer());
 
     JScrollPane followingScrollPane = new JScrollPane(followingList);
+    followingScrollPane.setBorder(BorderFactory.createEmptyBorder());
     followingListPanel.add(followingScrollPane, BorderLayout.CENTER);
     tabbedPane.addTab("Abonnements", followingListPanel);
 
-    // Panneau d'état pour les messages d'erreur et de succès
-    JPanel statusPanel = new JPanel(new GridLayout(2, 1));
+    this.add(tabbedPane, BorderLayout.CENTER);
+
+    // Panneau d'état
+    JPanel statusPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+    statusPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
+    statusPanel.setOpaque(false);
 
     errorLabel = new JLabel(" ");
-    errorLabel.setForeground(Color.RED);
+    errorLabel.setForeground(SwingTheme.DANGER);
+    errorLabel.setFont(SwingTheme.TOOLTIP_FONT);
     statusPanel.add(errorLabel);
 
     successLabel = new JLabel(" ");
-    successLabel.setForeground(new Color(0, 128, 0)); // Vert
+    successLabel.setForeground(SwingTheme.SUCCESS);
+    successLabel.setFont(SwingTheme.TOOLTIP_FONT);
     statusPanel.add(successLabel);
 
-    // Assemblage final
-    this.add(headerPanel, BorderLayout.NORTH);
-    this.add(tabbedPane, BorderLayout.CENTER);
     this.add(statusPanel, BorderLayout.SOUTH);
   }
 
@@ -293,6 +319,7 @@ public class UserProfileView extends JPanel {
    * Met à jour la liste des messages de l'utilisateur.
    * @param messages La liste des messages à afficher.
    */
+  @Override
   public void updateMessages(Set<Message> messages) {
     // Vider le panneau des messages
     messagesPanel.removeAll();
@@ -339,6 +366,7 @@ public class UserProfileView extends JPanel {
    * Met à jour la liste des followers.
    * @param followers La liste des followers à afficher.
    */
+  @Override
   public void updateFollowers(Set<User> followers) {
     DefaultListModel<String> model = new DefaultListModel<>();
 
@@ -358,6 +386,7 @@ public class UserProfileView extends JPanel {
    * Met à jour la liste des utilisateurs suivis.
    * @param following La liste des utilisateurs suivis à afficher.
    */
+  @Override
   public void updateFollowing(Set<User> following) {
     DefaultListModel<String> model = new DefaultListModel<>();
 
@@ -372,10 +401,12 @@ public class UserProfileView extends JPanel {
 
     followingList.setModel(model);
   }
+
   /**
    * Définit l'écouteur pour le bouton de retour.
    * @param listener L'écouteur à définir.
    */
+  @Override
   public void setBackButtonListener(ActionListener listener) {
     backButton.addActionListener(listener);
   }
@@ -384,6 +415,7 @@ public class UserProfileView extends JPanel {
    * Définit l'écouteur pour le bouton de suivi.
    * @param listener L'écouteur à définir.
    */
+  @Override
   public void setFollowButtonListener(ActionListener listener) {
     followButton.addActionListener(listener);
   }
@@ -392,6 +424,7 @@ public class UserProfileView extends JPanel {
    * Affiche un message d'erreur.
    * @param message Le message d'erreur à afficher.
    */
+  @Override
   public void setErrorMessage(String message) {
     errorLabel.setText(message);
     successLabel.setText(" ");
@@ -401,6 +434,7 @@ public class UserProfileView extends JPanel {
    * Affiche un message de succès.
    * @param message Le message de succès à afficher.
    */
+  @Override
   public void setSuccessMessage(String message) {
     successLabel.setText(message);
     errorLabel.setText(" ");
@@ -409,6 +443,7 @@ public class UserProfileView extends JPanel {
   /**
    * Réinitialise la vue.
    */
+  @Override
   public void reset() {
     userTagLabel.setText("");
     userNameLabel.setText("");
@@ -425,5 +460,17 @@ public class UserProfileView extends JPanel {
 
     errorLabel.setText(" ");
     successLabel.setText(" ");
+  }
+
+  /**
+   * Active ou désactive tous les composants de la vue.
+   */
+  @Override
+  public void setEnabled(boolean enabled) {
+    super.setEnabled(enabled);
+    backButton.setEnabled(enabled);
+    followButton.setEnabled(enabled);
+    followersList.setEnabled(enabled);
+    followingList.setEnabled(enabled);
   }
 }

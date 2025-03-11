@@ -1,17 +1,16 @@
 package com.ubo.tp.message.components;
 
-import javax.swing.JComponent;
-
 /**
  * Interface de base pour tous les composants de l'application.
  */
-public interface IComponent {
+public interface IComponent<T> {
 
   /**
    * Récupère le composant Swing principal.
+   *
    * @return Le composant Swing qui représente ce composant.
    */
-  JComponent getComponent();
+  T getComponent();
 
   /**
    * Initialise le composant.

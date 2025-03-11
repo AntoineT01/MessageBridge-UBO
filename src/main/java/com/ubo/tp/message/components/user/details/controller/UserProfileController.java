@@ -1,7 +1,7 @@
 package com.ubo.tp.message.components.user.details.controller;
 
 import com.ubo.tp.message.components.user.details.model.UserProfileModel;
-import com.ubo.tp.message.components.user.details.view.UserProfileView;
+import com.ubo.tp.message.components.user.details.view.IUserProfileView;
 import com.ubo.tp.message.core.datamodel.Message;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
@@ -17,7 +17,7 @@ public class UserProfileController {
   /**
    * Vue associée.
    */
-  private final UserProfileView view;
+  private final IUserProfileView view;
 
   /**
    * Modèle associé.
@@ -40,7 +40,7 @@ public class UserProfileController {
    * @param model Le modèle à utiliser.
    * @param entityManager Le gestionnaire d'entités.
    */
-  public UserProfileController(UserProfileView view, UserProfileModel model, EntityManager entityManager) {
+  public UserProfileController(IUserProfileView view, UserProfileModel model, EntityManager entityManager) {
     this.view = view;
     this.model = model;
     this.entityManager = entityManager;

@@ -1,5 +1,6 @@
 package com.ubo.tp.message.components;
 
+
 import com.ubo.tp.message.app.MessageAppView;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
 import com.ubo.tp.message.components.message.MessageComponent;
@@ -20,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import static com.ubo.tp.message.common.constants.Constants.MESSAGES;
@@ -172,20 +174,19 @@ public class ComponentsController implements ISessionObserver {
 
     // Panneau central avec CardLayout pour les différentes vues
     centerPanel = new JPanel(new CardLayout());
-    centerPanel.add(profileComponent.getComponent(), "profile");
+    centerPanel.add((Component) profileComponent.getComponent(), "profile");
 
     // Panneau pour afficher les messages
     JPanel messagesContainer = new JPanel(new BorderLayout());
-    messagesContainer.add(messageComponent.getMessagePanel(), BorderLayout.CENTER);
+    messagesContainer.add((Component) messageComponent.getComponent(), BorderLayout.CENTER);
     centerPanel.add(messagesContainer, MESSAGES);
-    centerPanel.add(messageComponent.getMessagePanel(), MESSAGES);
-    centerPanel.add(userSearchComponent.getComponent(), "user_search");
-    centerPanel.add(userProfileComponent.getComponent(), "user_profile");
+    centerPanel.add((Component) userSearchComponent.getComponent(), "user_search");
+    centerPanel.add((Component) userProfileComponent.getComponent(), "user_profile");
 
     mainContentPanel.add(centerPanel, BorderLayout.CENTER);
 
     // Ajout des vues au panneau de contenu
-    contentPanel.add(authComponent.getComponent(), "auth");
+    contentPanel.add((Component) authComponent.getComponent(), "auth");
     contentPanel.add(mainContentPanel, "main");
   }
 

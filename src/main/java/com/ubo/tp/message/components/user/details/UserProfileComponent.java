@@ -3,13 +3,13 @@ package com.ubo.tp.message.components.user.details;
 import com.ubo.tp.message.components.IComponent;
 import com.ubo.tp.message.components.user.details.controller.UserProfileController;
 import com.ubo.tp.message.components.user.details.model.UserProfileModel;
+import com.ubo.tp.message.components.user.details.view.IUserProfileView;
 import com.ubo.tp.message.components.user.details.view.UserProfileView;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.core.session.SessionManager;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
@@ -17,7 +17,7 @@ import java.awt.event.ActionListener;
 /**
  * Composant pour afficher le profil détaillé d'un utilisateur (autre que l'utilisateur connecté).
  */
-public class UserProfileComponent implements IComponent {
+public class UserProfileComponent implements IComponent<JPanel> {
 
   /**
    * Panneau principal.
@@ -27,7 +27,7 @@ public class UserProfileComponent implements IComponent {
   /**
    * Vue du profil utilisateur.
    */
-  private final UserProfileView profileView;
+  private final IUserProfileView profileView;
 
   /**
    * Contrôleur du profil utilisateur.
@@ -51,18 +51,23 @@ public class UserProfileComponent implements IComponent {
 
     // Création des composants MVC
     this.profileModel = new UserProfileModel(database, sessionManager);
-    this.profileView = new UserProfileView();
+
+    // Création de la vue concrète
+    UserProfileView concreteView = new UserProfileView();
+    this.profileView = concreteView;
+
+    // Création du contrôleur avec l'interface de vue
     this.profileController = new UserProfileController(profileView, profileModel, entityManager);
 
     // Ajout de la vue au panneau principal
-    this.mainPanel.add(profileView, BorderLayout.CENTER);
+    this.mainPanel.add(concreteView, BorderLayout.CENTER);
 
     // Initialisation
     initialize();
   }
 
   @Override
-  public JComponent getComponent() {
+  public JPanel getComponent() {
     return mainPanel;
   }
 
@@ -105,6 +110,4 @@ public class UserProfileComponent implements IComponent {
   public void showError(String message) {
     profileController.showError(message);
   }
-
-
 }
