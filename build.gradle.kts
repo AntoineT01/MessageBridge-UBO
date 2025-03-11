@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("org.openjfx.javafxplugin") version "0.0.13"
 }
 
 group = "com.ubo"
@@ -10,8 +11,17 @@ repositories {
 }
 
 dependencies {
+    implementation("org.openjfx:javafx-controls:19.0.2.1")
+    implementation("org.openjfx:javafx-fxml:19.0.2.1")
+    implementation("org.openjfx:javafx-base:19.0.2.1")
+    implementation("org.openjfx:javafx-graphics:19.0.2.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+javafx {
+    version = "19.0.2.1"
+    modules = listOf("javafx.controls", "javafx.fxml")
 }
 
 tasks.test {
@@ -37,11 +47,11 @@ tasks.findByName("run")?.let {
 tasks.jar {
     manifest {
         attributes(
-                mapOf(
-                        "Main-Class" to "com.ubo.tp.message.app.MessageAppLauncher",
-                        "Implementation-Title" to project.name,
-                        "Implementation-Version" to project.version
-                )
+            mapOf(
+                "Main-Class" to "com.ubo.tp.message.app.MessageAppLauncher",
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to project.version
+            )
         )
     }
 
