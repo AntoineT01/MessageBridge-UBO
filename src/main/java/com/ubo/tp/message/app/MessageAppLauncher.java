@@ -9,8 +9,9 @@ import com.ubo.tp.message.core.entity.EntityManager;
 import com.ubo.tp.message.mock.MessageAppMock;
 import com.ubo.tp.message.test.ConsoleDatabaseObserver;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * Classe de lancement de l'application.
@@ -62,7 +63,7 @@ public class MessageAppLauncher {
 		controller.setDirectoryController(directoryController);
 
 		// Demander à l'utilisateur de sélectionner un répertoire d'échange si ce n'est pas déjà fait
-		if (directoryController.getExchangeDirectoryPath() == null) {
+		if (true) {
 			boolean directorySelected = directoryController.selectAndChangeExchangeDirectory(mainView);
 
 			// Si aucun répertoire n'a été sélectionné

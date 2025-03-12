@@ -92,6 +92,10 @@ public class RegisterController {
       return;
     }
 
+    if (avatarUrl == null) {
+      avatarUrl = "";
+    }
+
     // Normaliser le tag utilisateur
     String normalizedTag = model.normalizeUserTag(userTag);
 
