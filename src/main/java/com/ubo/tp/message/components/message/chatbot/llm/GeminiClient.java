@@ -91,6 +91,7 @@ public class GeminiClient implements LLMClient {
               .get(0).getAsJsonObject();
             if (firstPart.has("text")) {
               String text = firstPart.get("text").getAsString();
+              System.out.println("[GeminiClient] Réponse extraite : " + text);
               return text.replaceAll("\\n$", "").trim();
             }
           }

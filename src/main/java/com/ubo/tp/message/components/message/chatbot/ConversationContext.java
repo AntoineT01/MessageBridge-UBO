@@ -26,6 +26,15 @@ public class ConversationContext implements IMessageObserver {
   }
 
   public void addHistory(String message) {
+    if (message == null || message.isEmpty()) {
+      return;
+    }
+
+    // Supprimer les messages les plus anciens pour ne garder que 50 messages
+    if (history.size() >= 50) {
+      int messagesToRemove = history.size() - 49;
+      history.subList(0, messagesToRemove).clear();
+    }
     history.add(message);
   }
 

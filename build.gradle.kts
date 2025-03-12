@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.ubo"
-version = "1.1.3"
+version = "1.1.4"
 
 repositories {
     mavenCentral()
@@ -51,7 +51,7 @@ tasks.jar {
     manifest {
         attributes(
             mapOf(
-                "Main-Class" to "com.ubo.tp.message.app.MessageAppLauncher",
+                "Main-Class" to "com.ubo.tp.message.app.DualInterfaceLauncher",
                 "Implementation-Title" to project.name,
                 "Implementation-Version" to project.version
             )
