@@ -4,121 +4,113 @@ import com.ubo.tp.message.components.user.profil.model.ProfileModel;
 import com.ubo.tp.message.components.user.profil.view.IProfileView;
 import com.ubo.tp.message.core.datamodel.User;
 import com.ubo.tp.message.core.entity.EntityManager;
+import com.ubo.tp.message.core.datamodel.Message;
 
-/**
- * Contrôleur pour la gestion du profil utilisateur.
- */
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Set;
+
 public class ProfileController {
-  /**
-   * Vue associée.
-   */
-  private final IProfileView view; // Utilisation de l'interface au lieu de la classe concrète
-
-  /**
-   * Modèle associé.
-   */
+  // Interfaces pour découpler les dépendances
+  private final IProfileView view;
   private final ProfileModel model;
-
-  /**
-   * Gestionnaire d'entités pour écrire les fichiers utilisateur.
-   */
   private final EntityManager entityManager;
 
-  /**
-   * Constructeur.
-   */
   public ProfileController(IProfileView view, ProfileModel model, EntityManager entityManager) {
     this.view = view;
     this.model = model;
     this.entityManager = entityManager;
 
-    // Initialiser les écouteurs d'événements
-    this.initEventListeners();
+    // Initialisation des écouteurs
+    initializeListeners();
 
-    // Initialiser les données du profil
-    this.refreshProfileData();
+    // Initialisation des données
+    refreshProfileData();
   }
 
   /**
-   * Initialise les écouteurs d'événements.
+   * Initialise les écouteurs d'événements
    */
-  private void initEventListeners() {
-    // Écouteur pour le bouton de mise à jour
-    view.setUpdateButtonListener(e -> updateProfile());
+  private void initializeListeners() {
+    view.setUpdateButtonListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        updateProfile();
+      }
+    });
   }
 
   /**
-   * Rafraîchit les données du profil.
+   * Actualise les données du profil
    */
   public void refreshProfileData() {
     User connectedUser = model.getConnectedUser();
     if (connectedUser != null) {
-      // Mettre à jour les informations utilisateur
+      // Mise à jour des informations utilisateur
       view.updateUserInfo(
         connectedUser.getUserTag(),
         connectedUser.getName(),
         model.getFollowersCount()
       );
 
-      // Mettre à jour la liste des messages
-      view.updateUserMessages(model.getUserMessages());
+      // Mise à jour des messages
+      Set<Message> userMessages = model.getUserMessages();
+      view.updateUserMessages(userMessages);
     }
   }
 
   /**
-   * Met à jour le profil de l'utilisateur.
+   * Mise à jour du profil utilisateur
    */
   private void updateProfile() {
+    // Récupération des données du formulaire
     String newName = view.getNewName();
     String newPassword = view.getNewPassword();
     String confirmPassword = view.getConfirmPassword();
 
-    // Vérifier si un des champs est rempli
+    // Validation des données
     if (newName.isEmpty() && newPassword.isEmpty()) {
       view.setErrorMessage("Veuillez remplir au moins un champ pour effectuer une mise à jour.");
       return;
     }
 
-    // Vérifier que les mots de passe correspondent
+    // Vérification de la correspondance des mots de passe
     if (!newPassword.isEmpty() && !newPassword.equals(confirmPassword)) {
       view.setErrorMessage("Les mots de passe ne correspondent pas.");
       return;
     }
 
-    // Effectuer la mise à jour
-    boolean updateResult = model.updateUserInfo(newName, newPassword);
+    // Tentative de mise à jour du profil
+    try {
+      // Mise à jour via le modèle
+      boolean updateResult = model.updateUserInfo(newName, newPassword);
 
-    if (updateResult) {
-      // Écrire les changements dans le fichier utilisateur
-      try {
+      if (updateResult) {
+        // Enregistrement des modifications
         entityManager.writeUserFile(model.getConnectedUser());
-        view.setSuccessMessage("Profil mis à jour avec succès.");
+
+        // Réinitialisation et actualisation
         view.resetFields();
+        view.setSuccessMessage("Profil mis à jour avec succès.");
         refreshProfileData();
-      } catch (Exception e) {
-        view.setErrorMessage("Erreur lors de l'enregistrement du profil: " + e.getMessage());
+      } else {
+        view.setErrorMessage("Erreur lors de la mise à jour du profil.");
       }
-    } else {
-      view.setErrorMessage("Erreur lors de la mise à jour du profil.");
+    } catch (Exception e) {
+      view.setErrorMessage("Erreur lors de l'enregistrement : " + e.getMessage());
     }
   }
 
   /**
-   * Affiche un message d'erreur dans la vue.
+   * Affichage d'un message d'erreur
+   * @param message Message d'erreur
    */
   public void showError(String message) {
     view.setErrorMessage(message);
   }
 
   /**
-   * Affiche un message de succès dans la vue.
-   */
-  public void showSuccess(String message) {
-    view.setSuccessMessage(message);
-  }
-
-  /**
-   * Réinitialise le contrôleur et la vue.
+   * Réinitialisation du contrôleur
    */
   public void reset() {
     view.resetFields();
@@ -126,7 +118,8 @@ public class ProfileController {
   }
 
   /**
-   * Active ou désactive la vue.
+   * Activation/désactivation du contrôleur
+   * @param enabled État d'activation
    */
   public void setEnabled(boolean enabled) {
     view.setEnabled(enabled);
