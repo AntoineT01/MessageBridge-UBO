@@ -34,7 +34,7 @@ public class MessageComponent implements IComponent<JPanel> {
     this.messageModel = new MessageModel(session);
 
     // Créer la vue
-    ModernChatView concreteChatView = new ModernChatView(session, null, null);
+    ModernChatView concreteChatView = new ModernChatView(session, null, null, database);
     this.chatView = concreteChatView;
     this.messagePanel = concreteChatView;
     this.chatView.setModel(messageModel);
