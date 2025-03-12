@@ -10,7 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class GeminiClient implements LLMClient {
-  private static final String BASE_URL = "https://api.gemini.com/v1/generate?key=";
+  private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
   private final String apiKey;
   private final HttpClient httpClient;
 
