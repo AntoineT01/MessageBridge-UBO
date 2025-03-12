@@ -189,7 +189,6 @@ public class ProfileView extends JPanel implements IProfileView {
     updateButton = new JButton("Mettre à jour");
     updateButton.setFont(new Font("Arial", Font.BOLD, 14));
     updateButton.setBackground(new Color(52, 152, 219));
-    updateButton.setForeground(Color.WHITE);
     updateButton.setFocusPainted(false);
     updateButton.setBorder(new RoundedBorder(15));
     updateButton.setPreferredSize(new Dimension(150, 40));

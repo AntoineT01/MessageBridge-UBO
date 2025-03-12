@@ -18,6 +18,7 @@ public class UserAvatarEditor extends JPanel {
     avatarLabel = new JLabel();
     avatarLabel.setPreferredSize(new Dimension(size, size));
     changeButton = new JButton("Choisir avatar");
+    SwingTheme.styleButton(changeButton, true);
     add(avatarLabel, BorderLayout.CENTER);
     add(changeButton, BorderLayout.SOUTH);
     setAvatarPath(null);

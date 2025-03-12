@@ -33,7 +33,7 @@ public class EnvUI {
   /** Couleur de texte secondaire (sous-titres, descriptions) */
   public static final int[] TEXT_SECONDARY_RGB = {127, 140, 141}; // Gris moyen
   /** Couleur de texte sur un fond coloré */
-  public static final int[] TEXT_ON_COLOR_RGB = {255, 255, 255};  // Blanc
+  public static final int[] TEXT_ON_COLOR_RGB = {10, 10, 10}; // Noir presque noir
 
   // POLICES
   /** Famille de police principale */
