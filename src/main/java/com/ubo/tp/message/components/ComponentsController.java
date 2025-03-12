@@ -333,6 +333,7 @@ public class ComponentsController implements ISessionObserver {
       messageComponent.getMessageModel().refresh();
       // Rafraîchir l'affichage
       messageComponent.refreshMessages();
+      connectedUser.addObserver(messageComponent.getMessageModel());
     }
   }
 

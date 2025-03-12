@@ -124,7 +124,7 @@ public class User {
 	 */
 	public void removeFollowing(String tagToRemove) {
 		if(this.mFollows.remove(tagToRemove)) {
-//			notifyFollowChanged();
+			notifyFollowChanged();
 		}
 	}
 
@@ -135,7 +135,7 @@ public class User {
 	 */
 	public void addFollowing(String tagToFollow) {
 		if(this.mFollows.add(tagToFollow)) {
-//			notifyFollowChanged();
+			notifyFollowChanged();
 		}
 	}
 
@@ -173,11 +173,11 @@ public class User {
 		observers.remove(observer);
 	}
 
-//	private void notifyFollowChanged() {
-//		for(IUserObserver observer : observers) {
-//			observer.followListChanged(this);
-//		}
-//	}
+	private void notifyFollowChanged() {
+		for(IUserObserver observer : observers) {
+			observer.followListChanged(this);
+		}
+	}
 
 	public int hashCode() {
 		int hashCode = 0;
