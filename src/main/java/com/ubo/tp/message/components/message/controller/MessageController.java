@@ -4,6 +4,7 @@ import com.ubo.tp.message.common.ui.EnhancedNotification;
 import com.ubo.tp.message.common.ui.IconFactory;
 import com.ubo.tp.message.components.message.model.MessageModel;
 import com.ubo.tp.message.components.message.view.IChatView;
+import com.ubo.tp.message.components.message.view.ModernChatView;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.database.IDatabaseObserver;
 import com.ubo.tp.message.core.datamodel.Message;
@@ -31,7 +32,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
     this.messageView = messageView;
     this.model = model;
 
-    // S'abonner aux notifications de la base de données
+    // S'enregistrer comme observateur de la base de données
     database.addObserver(this);
     this.mEntityManager = entityManager;
   }
@@ -40,7 +41,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
   public void sendMessage(String text) {
     User connectedUser = session.getConnectedUser();
     if (connectedUser == null) {
-      // Aucun utilisateur connecté - afficher un message d'erreur
+      // Notification d'erreur
       JOptionPane.showMessageDialog(null, "Aucun utilisateur connecté.", "Erreur", JOptionPane.ERROR_MESSAGE);
       return;
     }
@@ -51,12 +52,32 @@ public class MessageController implements IMessageController, IDatabaseObserver 
       if (text.length() > MAX_MESSAGE_LENGTH) {
         throw new MessageValidationException("Le texte du message ne peut pas dépasser " + MAX_MESSAGE_LENGTH + " caractères.");
       }
-      Message newMessage = new Message(connectedUser, text);
-      // Envoyer le message
+
+      // Récupération des éventuelles pièces jointes si nous utilisons ModernChatView
+      List<String> attachments = null;
+      if (messageView instanceof ModernChatView) {
+        attachments = ((ModernChatView) messageView).getCurrentAttachments();
+        System.out.println("Récupération des pièces jointes du message: " + attachments.size());
+        for (String attachment : attachments) {
+          System.out.println("  - " + attachment);
+        }
+      }
+
+      // Création du message avec ou sans pièces jointes
+      Message newMessage;
+      if (attachments != null && !attachments.isEmpty()) {
+        System.out.println("Création d'un message avec " + attachments.size() + " pièce(s) jointe(s)");
+        newMessage = new Message(connectedUser, text, attachments);
+      } else {
+        System.out.println("Création d'un message sans pièce jointe");
+        newMessage = new Message(connectedUser, text);
+      }
+
+      // Écriture du message dans le fichier
       mEntityManager.writeMessageFile(newMessage);
       messageView.clearMessageInput();
     } catch (MessageValidationException e) {
-      // Afficher l'erreur de validation
+      // Affichage de l'erreur de validation
       JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur de validation", JOptionPane.ERROR_MESSAGE);
     }
   }
@@ -71,7 +92,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
         String userTag = trimmedQuery.replace("@", "");
         results = allMessages.stream()
           .filter(m -> m.getSender().getUserTag().equalsIgnoreCase("@" + userTag)
-            || m.containsUserTag("@" + userTag))
+            || m.containsUserTag(userTag))
           .toList();
       } else if (trimmedQuery.contains("#") && !trimmedQuery.contains("@")) {
         String tag = trimmedQuery.replace("#", "");
@@ -90,7 +111,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
     return results;
   }
 
-  // Méthode améliorée pour notifier l'utilisateur des nouveaux messages
+  // Implémentation des méthodes IDatabaseObserver
   @Override
   public void notifyMessageAdded(Message addedMessage) {
     SwingUtilities.invokeLater(() -> {
@@ -99,21 +120,25 @@ public class MessageController implements IMessageController, IDatabaseObserver 
         && !addedMessage.getSender().equals(connectedUser)
         && connectedUser.getFollows().contains(addedMessage.getSender().getUserTag())) {
 
-        // Contenu du message tronqué si trop long
+        // Création d'un aperçu du message
         String messagePreview = addedMessage.getText();
         if (messagePreview.length() > 50) {
           messagePreview = messagePreview.substring(0, 50) + "...";
         }
 
-        // Création d'une notification enrichie
+        // Ajout d'une indication s'il y a des pièces jointes
+        if (addedMessage.hasAttachments()) {
+          messagePreview += " [" + addedMessage.getAttachments().size() + " pièce(s) jointe(s)]";
+        }
+
+        // Affichage d'une notification
         EnhancedNotification.showNotification(
           "Nouvelle publication de " + addedMessage.getSender().getName(),
           messagePreview,
           IconFactory.createUserIcon(IconFactory.ICON_SMALL),
-          // Action lors du clic sur la notification
+          // Action quand on clique sur la notification
           () -> {
-            // Mettre en avant le message dans l'interface
-            // (code à adapter selon votre implémentation d'interface)
+            // Afficher uniquement ce message
             List<Message> messageList = model.getMessages();
             messageView.updateSearchResults(messageList.stream()
                                               .filter(m -> m.equals(addedMessage))
@@ -122,7 +147,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
         );
       }
 
-      // Ajouter le message au modèle
+      // Ajout du message au modèle
       model.addMessage(addedMessage);
     });
   }
@@ -134,26 +159,26 @@ public class MessageController implements IMessageController, IDatabaseObserver 
 
   @Override
   public void notifyMessageModified(Message modifiedMessage) {
-    // Implémentation par défaut
+    // Non implémenté
   }
 
   @Override
   public void notifyUserAdded(User addedUser) {
-    // Implémentation par défaut
+    // Non implémenté
   }
 
   @Override
   public void notifyUserDeleted(User deletedUser) {
-    // Implémentation par défaut
+    // Non implémenté
   }
 
   @Override
   public void notifyUserModified(User modifiedUser) {
-    // Implémentation par défaut
+    // Non implémenté
   }
 
   @Override
   public void onMessageSent(Message message) {
-    // Implémentation par défaut
+    // Non implémenté
   }
 }

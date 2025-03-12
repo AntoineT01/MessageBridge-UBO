@@ -2,68 +2,64 @@ package com.ubo.tp.message.core.datamodel;
 
 import com.ubo.tp.message.common.constants.Constants;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
- * Classe du modèle représentant un message.
- *
- * @author S.Lucas
+ * Classe représentant un message, étendue pour prendre en charge les pièces jointes
  */
 public class Message {
-	/**
-	 * Identifiant unique du message.
-	 */
+	// UUID du message
 	protected final UUID mUuid;
 
-	/**
-	 * Utilisateur source du message.
-	 */
+	// Utilisateur expéditeur du message
 	protected final User mSender;
 
-	/**
-	 * Date d'émission du message.
-	 */
+	// Date d'émission du message
 	protected final long mEmissionDate;
 
-	/**
-	 * Corps du message.
-	 */
+	// Texte du message
 	protected final String mText;
 
-	/**
-	 * Liste des tags représentant un utilisateur présent dans le message.
-	 */
+	// Tags utilisateurs
 	protected final Set<String> mUserTags;
 
-	/**
-	 * Liste des tags présent dans le message.
-	 */
+	// Tags mots
 	protected final Set<String> mTags;
+
+	// Liste des pièces jointes (chemin vers les fichiers)
+	protected final List<String> mAttachments;
 
 	/**
 	 * Constructeur.
-	 *
-	 * @param sender utilisateur à l'origine du message.
-	 * @param text   , corps du message.
 	 */
 	public Message(User sender, String text) {
-		this(UUID.randomUUID(), sender, System.currentTimeMillis(), text);
+		this(UUID.randomUUID(), sender, System.currentTimeMillis(), text, new ArrayList<>());
 	}
 
 	/**
-	 * Constructeur.
-	 *
-	 * @param messageUuid  , identifiant du message.
-	 * @param sender       , utilisateur à l'origine du message.
-	 * @param emissionDate , date d'émission du message.
-	 * @param text         , corps du message.
+	 * Constructeur avec pièces jointes.
+	 */
+	public Message(User sender, String text, List<String> attachments) {
+		this(UUID.randomUUID(), sender, System.currentTimeMillis(), text, attachments);
+	}
+
+	/**
+	 * Constructeur complet.
 	 */
 	public Message(UUID messageUuid, User sender, long emissionDate, String text) {
+		this(messageUuid, sender, emissionDate, text, new ArrayList<>());
+	}
+
+	/**
+	 * Constructeur complet avec pièces jointes.
+	 */
+	public Message(UUID messageUuid, User sender, long emissionDate, String text, List<String> attachments) {
 		mUuid = messageUuid;
 		mSender = sender;
 		mEmissionDate = emissionDate;
@@ -71,33 +67,40 @@ public class Message {
 		mTags = new HashSet<>();
 		mUserTags = new HashSet<>();
 
-		// Initialisation des mots-clés
+		// Normaliser les chemins des pièces jointes
+		mAttachments = new ArrayList<>();
+		if (attachments != null) {
+			for (String attachment : attachments) {
+				if (attachment != null && !attachment.isEmpty()) {
+					// Normaliser le chemin (remplacer les antislashes par des slashes)
+					mAttachments.add(attachment.replace('\\', '/'));
+				}
+			}
+		}
+
+		// Initialisation des tags
 		this.initTags(mText);
 	}
 
 	/**
-	 * Initialisation de la liste de tags présents dans le corps du message.
+	 * Initialise les tags.
 	 */
 	protected void initTags(String text) {
 		if (text != null) {
-			// Ajoute les tags correspondants aux utilisateurs.
+			// Initialisation des tags utilisateurs
 			mUserTags.addAll(this.extractTags(text, Constants.USER_TAG_DELIMITER));
 
-			// Ajoute les tags correspondants aux mots-cl�s.
+			// Initialisation des tags mots
 			mTags.addAll(this.extractTags(text, Constants.WORD_TAG_DELIMITER));
 		}
 	}
 
 	/**
-	 * Retourne les tags présents dans le texte en fonction du caractère de
-	 * détection.
-	 *
-	 * @param text         , Texte à analyser.
-	 * @param tagDelimiter , Caractère de délimitation des tags à rechercher.
+	 * Extrait les tags en fonction du délimiteur.
 	 */
 	protected Set<String> extractTags(String text, String tagDelimiter) {
 		Set<String> tags = new HashSet<>();
-		// Regex qui recherche le délimiteur suivi d'une séquence de lettres, chiffres ou underscores.
+		// Extraction des tags
 		String regex = Pattern.quote(tagDelimiter) + "(\\w+)";
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(text);
@@ -108,72 +111,78 @@ public class Message {
 	}
 
 	/**
-	 * @return l'identifiant du message.
+	 * Renvoie l'uuid du message.
 	 */
 	public UUID getUuid() {
 		return mUuid;
 	}
 
 	/**
-	 * @return l'utilisateur source du message.
+	 * Renvoie l'utilisateur expéditeur.
 	 */
 	public User getSender() {
 		return mSender;
 	}
 
 	/**
-	 * @return le corps du message.
+	 * Renvoie le texte du message.
 	 */
 	public String getText() {
 		return mText;
 	}
 
 	/**
-	 * Retourne la date d'émission.
+	 * Renvoie la date d'émission du message.
 	 */
 	public long getEmissionDate() {
 		return this.mEmissionDate;
 	}
 
 	/**
-	 * Retourne une liste clonée des tags du message. <br/>
-	 * <i> Les tags sont les mots du message précédés par la
-	 * {@link Constants#WORD_TAG_DELIMITER}</i>
+	 * Renvoie les tags du message.
 	 */
 	public Set<String> getTags() {
 		return new HashSet<>(mTags);
 	}
 
 	/**
-	 * Retourne une liste clonée des tags du message représentant un utilisateur.
-	 * <br/>
-	 * <i> Les tags utilisateurs sont les mots du message précédés par la
-	 * {@link Constants#USER_TAG_DELIMITER}</i>
+	 * Renvoie les tags utilisateurs.
 	 */
 	public Set<String> getUserTags() {
 		return new HashSet<>(mUserTags);
 	}
 
 	/**
-	 * Indique si le message possède le tag donné.
-	 *
-	 * @param aTag , tag à rechercher.
+	 * Renvoie la liste des pièces jointes.
+	 */
+	public List<String> getAttachments() {
+		// Retourner une copie de la liste pour éviter les modifications directes
+		return new ArrayList<>(mAttachments);
+	}
+
+	/**
+	 * Vérifie si le message contient des pièces jointes.
+	 */
+	public boolean hasAttachments() {
+		return !mAttachments.isEmpty();
+	}
+
+	/**
+	 * Vérifie si le message contient un tag.
 	 */
 	public boolean containsTag(String aTag) {
 		return this.getTags().contains(aTag);
 	}
 
 	/**
-	 * Indique si le message possède le tag utilisateur donné.
-	 *
-	 * @param anUserTag , tag utilisateur à rechercher.
+	 * Vérifie si le message contient un tag utilisateur.
 	 */
 	public boolean containsUserTag(String anUserTag) {
 		return this.getUserTags().contains(anUserTag);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Calcul du hash code.
 	 */
 	@Override
 	public int hashCode() {
@@ -187,7 +196,7 @@ public class Message {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Equals.
 	 */
 	@Override
 	public boolean equals(Object other) {
@@ -204,7 +213,7 @@ public class Message {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Représentation texte.
 	 */
 	@Override
 	public String toString() {
@@ -217,6 +226,9 @@ public class Message {
 		sb.append(" {");
 		sb.append(this.getText());
 		sb.append("}");
+		if (hasAttachments()) {
+			sb.append(" [Pièces jointes: ").append(mAttachments.size()).append("]");
+		}
 
 		return sb.toString();
 	}
