@@ -119,7 +119,7 @@ public class ModernChatView extends JPanel implements IChatView {
     boolean isOutgoing = (connectedUser != null && connectedUser.equals(message.getSender()));
     String senderDisplayName = message.getSender().getName() + " (" + message.getSender().getUserTag() + ")";
     // Formater l'heure (HH:mm)
-    String timeString = new SimpleDateFormat("HH:mm").format(new Date(message.getEmissionDate()));
+    String timeString = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date(message.getEmissionDate()));
     MessageBubble bubble = new MessageBubble(senderDisplayName, message.getText(), isOutgoing, timeString);
     chatPanel.addMessageBubble(bubble, isOutgoing);
   }

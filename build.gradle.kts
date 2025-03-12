@@ -15,6 +15,9 @@ dependencies {
     implementation("org.openjfx:javafx-fxml:19.0.2.1")
     implementation("org.openjfx:javafx-base:19.0.2.1")
     implementation("org.openjfx:javafx-graphics:19.0.2.1")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation ("org.yaml:snakeyaml:2.0")
+    implementation("io.github.cdimascio:java-dotenv:5.2.2")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }

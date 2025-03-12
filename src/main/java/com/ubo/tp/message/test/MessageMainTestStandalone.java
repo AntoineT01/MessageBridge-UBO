@@ -53,8 +53,8 @@ public class MessageMainTestStandalone {
     JFrame frame = new JFrame("Test Multi-User Messaging");
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.setLayout(new GridLayout(1, 2));
-    frame.add(integrationA.getMessagePanel());
-    frame.add(integrationB.getMessagePanel());
+//    frame.add(integrationA.getMessagePanel());
+//    frame.add(integrationB.getMessagePanel());
     frame.setSize(900, 600);
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);

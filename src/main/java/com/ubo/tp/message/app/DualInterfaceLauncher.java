@@ -38,11 +38,15 @@ public class DualInterfaceLauncher {
 
     // Création des objets partagés pour les deux interfaces
     IDatabase database = new Database();
+    IDatabase database2 = new Database();
     database.addObserver(new com.ubo.tp.message.test.ConsoleDatabaseObserver());
+    database2.addObserver(new com.ubo.tp.message.test.ConsoleDatabaseObserver());
     EntityManager entityManager = new EntityManager(database);
+    EntityManager entityManager2 = new EntityManager(database2);
 
     // Initialisation du répertoire d'échange
     DirectoryController directoryController = new DirectoryController(entityManager);
+    DirectoryController directoryController2 = new DirectoryController(entityManager2);
 
     // Traitement du choix
     switch (choice) {
@@ -54,7 +58,7 @@ public class DualInterfaceLauncher {
         break;
       case 2: // Les deux
         launchSwingInterface(database, entityManager, directoryController);
-        launchJavaFxInterface(database, entityManager, directoryController);
+        launchJavaFxInterface(database2, entityManager2, directoryController2);
         break;
       default: // Annuler ou fermeture de la fenêtre
         System.exit(0);

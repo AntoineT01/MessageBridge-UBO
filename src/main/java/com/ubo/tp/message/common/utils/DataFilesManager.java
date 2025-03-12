@@ -28,6 +28,9 @@ public class DataFilesManager {
 	public static final User UNKNOWN_USER = new User(Constants.UNKNONWN_USER_UUID, "<Inconnu>", "--", "<Inconnu>",
 	                                                 new HashSet<>(), "");
 
+	public static final User CHATBOT_USER = new User(Constants.GEMINI_FLASH_UUID, "@gemini", "test", "<Gemini>",
+		new HashSet<>(), "");
+
 	/**
 	 * Clé du fichier de propriété pour l'attribut uuid
 	 */

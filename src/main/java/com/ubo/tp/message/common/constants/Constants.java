@@ -43,6 +43,8 @@ public class Constants {
 	 */
 	public static final UUID UNKNONWN_USER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
+	public static final UUID GEMINI_FLASH_UUID = UUID.fromString("11111111-1111-1111-1111-111111111111");
+
 	/**
 	 * Fichier de configuration de l'application.
 	 */

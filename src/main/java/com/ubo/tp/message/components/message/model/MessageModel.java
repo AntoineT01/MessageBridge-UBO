@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public class MessageModel implements IUserObserver {
 
@@ -51,7 +50,7 @@ public class MessageModel implements IUserObserver {
         message.getSender().getUuid().equals(connectedUser.getUuid()) ||
         connectedUser.getFollows().contains(message.getSender().getUserTag())
       )
-      .collect(Collectors.toList());
+      .toList();
   }
 
   public void addMessage(Message message) {

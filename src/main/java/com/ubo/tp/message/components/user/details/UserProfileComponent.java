@@ -50,14 +50,15 @@ public class UserProfileComponent implements IComponent<JPanel> {
     this.mainPanel = new JPanel(new BorderLayout());
 
     // Création des composants MVC
-    this.profileModel = new UserProfileModel(database, sessionManager);
+    this.profileModel = new UserProfileModel();
 
     // Création de la vue concrète
     UserProfileView concreteView = new UserProfileView();
     this.profileView = concreteView;
 
     // Création du contrôleur avec l'interface de vue
-    this.profileController = new UserProfileController(profileView, profileModel, entityManager);
+    this.profileController = new UserProfileController(profileView, profileModel,
+      database, sessionManager, entityManager);
 
     // Ajout de la vue au panneau principal
     this.mainPanel.add(concreteView, BorderLayout.CENTER);

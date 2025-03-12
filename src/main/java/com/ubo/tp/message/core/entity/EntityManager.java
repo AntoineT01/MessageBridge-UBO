@@ -58,8 +58,8 @@ public class EntityManager implements IWatchableDirectoryObserver {
 		this.mUserFileMap = new HashMap<>();
 
 		// Ajout de l'utilisateur inconnu
-		User unknowUser = DataFilesManager.UNKNOWN_USER;
-		this.mUserMap.put(unknowUser.getUuid(), unknowUser);
+		User unknownUser = DataFilesManager.UNKNOWN_USER;
+		this.mUserMap.put(unknownUser.getUuid(), unknownUser);
 	}
 
 	/**
@@ -115,6 +115,23 @@ public class EntityManager implements IWatchableDirectoryObserver {
 				this.mMessageFileMap.put(messageFile.getName(), newMessage);
 			}
 		}
+	}
+
+	/**
+	 * Méthode pour récupérer l'utilisateur chatbot.
+	 */
+	public User getChatbotUser() {
+		for (User user : mUserMap.values()) {
+			if (user.getUserTag().equalsIgnoreCase(DataFilesManager.CHATBOT_USER.getUserTag())) {
+				return user;
+			}
+		}
+		// Cas très improbable (si jamais l'utilisateur a été supprimé) : on le recrée.
+		User geminiFlash = DataFilesManager.CHATBOT_USER;
+		mDatabase.addUser(geminiFlash);
+		writeUserFile(geminiFlash);
+		mUserMap.put(geminiFlash.getUuid(), geminiFlash);
+		return geminiFlash;
 	}
 
 	/**
