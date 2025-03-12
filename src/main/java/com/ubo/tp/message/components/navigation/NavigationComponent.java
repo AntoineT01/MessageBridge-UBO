@@ -16,66 +16,49 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 
-/**
- * Composant de navigation principal utilisant des JMenus.
- * Intègre le modèle, les vues et le contrôleur de navigation.
- */
+
 public class NavigationComponent implements IComponent<JPanel> {
 
-  /**
-   * Panneau principal.
-   */
+  // Panel principal
   private final JPanel mainPanel;
 
-  /**
-   * Modèle de navigation.
-   */
+  // Modèle
   private final NavigationModel model;
 
-  /**
-   * Vue pour utilisateur connecté.
-   */
+  // Vues
   private final INavigationViewConnected connectedView;
-
-  /**
-   * Vue pour utilisateur déconnecté.
-   */
   private final INavigationViewDisconnected disconnectedView;
 
-  /**
-   * Contrôleur de navigation.
-   */
+  // Contrôleur
   private final NavigationController controller;
 
-  /**
-   * Frame principale
-   */
+  // Frame principale
   private JFrame mainFrame;
 
 
   public NavigationComponent(SessionManager sessionManager) {
-    // Initialisation du modèle
+    // Initialiser le modèle
     model = new NavigationModel(sessionManager);
 
-    // Initialisation des vues concrètes
+    // Initialiser les vues
     NavigationViewConnected concreteConnectedView = new NavigationViewConnected();
     NavigationViewDisconnected concreteDisconnectedView = new NavigationViewDisconnected();
 
-    // Affectation aux interfaces
+    // Affecter les vues aux interfaces
     this.connectedView = concreteConnectedView;
     this.disconnectedView = concreteDisconnectedView;
 
-    // Initialisation du contrôleur avec les interfaces
+    // Initialiser le contrôleur
     controller = new NavigationController(model, connectedView, disconnectedView);
 
-    // S'abonner aux événements de session
+    // S'abonner aux notifications de session
     sessionManager.addSessionObserver(controller);
 
-    // Initialisation du panneau principal
+    // Initialiser le panel principal
     mainPanel = new JPanel(new BorderLayout());
     mainPanel.add(concreteDisconnectedView, BorderLayout.CENTER);
 
-    // Affichage de la vue appropriée
+    // Afficher la vue appropriée
     if (model.isUserConnected()) {
       showConnectedView();
     } else {
@@ -90,12 +73,12 @@ public class NavigationComponent implements IComponent<JPanel> {
 
   @Override
   public void initialize() {
-    // Rien à faire ici
+    // Rien à faire
   }
 
   @Override
   public void reset() {
-    // Rien à faire ici
+    // Rien à faire
   }
 
   @Override
@@ -105,32 +88,26 @@ public class NavigationComponent implements IComponent<JPanel> {
     mainPanel.setEnabled(enabled);
   }
 
-  /**
-   * Définit la frame principale
-   */
+  // Définir la frame principale
   public void setMainFrame(JFrame mainFrame) {
     this.mainFrame = mainFrame;
 
-    // Mettre à jour les vues avec la frame parente
+    // Propager à chaque vue
     connectedView.setParentFrame(mainFrame);
     disconnectedView.setParentFrame(mainFrame);
 
-    // Mettre à jour la barre de menu de la frame
+    // Mettre à jour le menu
     updateMenu();
   }
 
-  /**
-   * Définit le contrôleur de répertoire
-   */
+  // Définir le contrôleur de répertoire
   public void setDirectoryController(DirectoryController directoryController) {
-    // Mettre à jour les vues avec le contrôleur
+    // Propager à chaque vue
     connectedView.setDirectoryController(directoryController);
     disconnectedView.setDirectoryController(directoryController);
   }
 
-  /**
-   * Met à jour la barre de menu de la frame principale
-   */
+  // Mettre à jour le menu
   private void updateMenu() {
     if (mainFrame != null) {
       if (controller.isShowingConnectedView()) {
@@ -142,82 +119,66 @@ public class NavigationComponent implements IComponent<JPanel> {
     }
   }
 
+  // Afficher la vue connectée
   public void showConnectedView() {
     controller.showConnectedView();
     mainPanel.removeAll();
-    // Utilisez un cast explicite
+    // Ajouter la vue connectée au panel principal
     mainPanel.add((Component) connectedView, BorderLayout.CENTER);
     mainPanel.revalidate();
     mainPanel.repaint();
 
-    // Mettre à jour la barre de menu
+    // Mettre à jour le menu
     updateMenu();
   }
 
+  // Afficher la vue déconnectée
   public void showDisconnectedView() {
     controller.showDisconnectedView();
     mainPanel.removeAll();
-    // Utilisez un cast explicite
+    // Ajouter la vue déconnectée au panel principal
     mainPanel.add((Component) disconnectedView, BorderLayout.CENTER);
     mainPanel.revalidate();
     mainPanel.repaint();
 
-    // Mettre à jour la barre de menu
+    // Mettre à jour le menu
     updateMenu();
   }
 
-  /**
-   * Définit l'écouteur pour l'action de profil.
-   */
+  // Méthodes pour définir les écouteurs
   public void setProfileActionListener(ActionListener listener) {
     controller.setProfileActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur pour l'action de messages.
-   */
   public void setMessagesActionListener(ActionListener listener) {
     controller.setMessagesActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur pour l'action de recherche.
-   */
   public void setSearchActionListener(ActionListener listener) {
     controller.setSearchActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur pour l'action de déconnexion.
-   */
+  // Nouvelle méthode pour l'écouteur des paramètres
+  public void setSettingsActionListener(ActionListener listener) {
+    controller.setSettingsActionListener(listener);
+  }
+
   public void setLogoutActionListener(ActionListener listener) {
     controller.setLogoutActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur pour l'action de connexion.
-   */
   public void setLoginActionListener(ActionListener listener) {
     controller.setLoginActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur pour l'action d'inscription.
-   */
   public void setRegisterActionListener(ActionListener listener) {
     controller.setRegisterActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur pour l'action "À propos".
-   */
   public void setAboutActionListener(ActionListener listener) {
     controller.setAboutActionListener(listener);
   }
 
-  /**
-   * Définit l'écouteur pour l'action de quitter.
-   */
   public void setExitActionListener(ActionListener listener) {
     controller.setExitActionListener(listener);
   }

@@ -5,6 +5,7 @@ import com.ubo.tp.message.app.MessageAppView;
 import com.ubo.tp.message.components.directory.controller.DirectoryController;
 import com.ubo.tp.message.components.message.MessageComponent;
 import com.ubo.tp.message.components.navigation.NavigationComponent;
+import com.ubo.tp.message.components.settings.notification.SettingsComponent;
 import com.ubo.tp.message.components.user.auth.AuthComponent;
 import com.ubo.tp.message.components.user.auth.IAuthComponent;
 import com.ubo.tp.message.components.user.details.UserProfileComponent;
@@ -27,172 +28,121 @@ import java.awt.event.ActionEvent;
 import static com.ubo.tp.message.common.constants.Constants.MESSAGES;
 
 
-/**
- * Contrôleur principal de l'application
- * Gère les transitions entre les différentes vues et les composants
- * Version mise à jour pour intégrer la recherche et les profils utilisateurs
- */
+
 public class ComponentsController implements ISessionObserver {
-  /**
-   * Vue principale de l'application
-   */
+  // Vue principale
   protected MessageAppView mainView;
 
-  /**
-   * Panneau de contenu principal
-   */
+  // Panels
   protected JPanel contentPanel;
-
-  /**
-   * Panneau central avec CardLayout
-   */
   protected JPanel centerPanel;
 
-  /**
-   * Gestionnaire de session
-   */
+  // Gestionnaire de session
   protected SessionManager sessionManager;
 
-  /**
-   * Base de données
-   */
+  // Base de données
   protected IDatabase database;
 
-  /**
-   * Gestionnaire d'entités
-   */
+  // Gestionnaire d'entités
   protected EntityManager entityManager;
 
-  /**
-   * Composant d'authentification
-   */
+  // Composants
   protected IAuthComponent authComponent;
-
-  /**
-   * Composant de profil
-   */
   protected IProfileComponent profileComponent;
-
-  /**
-   * Composant de navigation
-   */
   protected NavigationComponent navigationComponent;
-
-  /**
-   * Composant de recherche d'utilisateurs
-   */
   protected UserSearchComponent userSearchComponent;
-
-  /**
-   * Composant de profil utilisateur détaillé
-   */
   protected UserProfileComponent userProfileComponent;
-
-  /**
-   * Panel de messages
-   */
   protected MessageComponent messageComponent;
+  protected SettingsComponent settingsComponent; // Nouveau composant de paramètres
 
-  /**
-   * Contrôleur de répertoire
-   */
+  // Contrôleur de répertoire
   protected DirectoryController directoryController;
 
 
-  /**
-   * Constructeur
-   */
+  // Constructeur
   public ComponentsController(MessageAppView mainView, IDatabase database, EntityManager entityManager) {
     this.mainView = mainView;
     this.database = database;
     this.entityManager = entityManager;
 
-    // Créer le gestionnaire de session
+    // Initialiser le gestionnaire de session
     this.sessionManager = new SessionManager();
 
-    // S'enregistrer comme observateur de session
+    // S'abonner aux notifications de session
     this.sessionManager.addSessionObserver(this);
 
     // Initialiser l'interface
     this.initGUI();
 
-    // Configurer les événements pour la vue principale
+    // Configurer les événements de la vue
     this.setupViewEvents();
 
-    // Afficher la vue de connexion par défaut
+    // Afficher la vue de connexion
     this.showLoginView();
   }
 
-  /**
-   * Configure le contrôleur de répertoire
-   */
+  // Définir le contrôleur de répertoire
   public void setDirectoryController(DirectoryController directoryController) {
     this.directoryController = directoryController;
 
-    // Connecter le contrôleur de répertoire au composant de navigation
+    // Propager au composant de navigation
     if (navigationComponent != null) {
       navigationComponent.setDirectoryController(directoryController);
     }
   }
 
-  /**
-   * Initialisation de l'interface graphique
-   */
+  // Initialiser l'interface
   protected void initGUI() {
-    // Initialisation du panneau de contenu principal avec CardLayout
+    // Initialiser le panel de contenu
     contentPanel = new JPanel(new CardLayout());
     mainView.setContentPanel(contentPanel);
 
-    // Création des composants d'authentification et de profil
+    // Initialiser les composants
     authComponent = new AuthComponent(database, entityManager, sessionManager);
     profileComponent = new ProfileComponent(database, entityManager, sessionManager);
 
-    // Création du composant de navigation
+    // Initialiser le composant de navigation
     navigationComponent = new NavigationComponent(sessionManager);
     navigationComponent.setMainFrame(mainView);
 
-    // ***** Modification ici : on stocke le MessageComponent dans un champ *****
+    // Initialiser les composants de contenu
     messageComponent = new MessageComponent(database, sessionManager.getSession(), entityManager);
-    // Créer le composant de recherche d'utilisateurs
     userSearchComponent = new UserSearchComponent(database, sessionManager, entityManager);
-
-    // Créer le composant de profil utilisateur détaillé
     userProfileComponent = new UserProfileComponent(database, sessionManager, entityManager);
+    settingsComponent = new SettingsComponent(); // Initialiser le composant de paramètres
 
-    // Création du panneau principal pour le contenu (profil et messages)
-    // Configurer les actions pour le composant d'authentification
+    // Configurer les écouteurs d'événements
     authComponent.setAuthSuccessListener(_ -> showUserProfileView());
 
-    // Configurer les actions pour le composant de navigation
+    // Configurer les actions de navigation
     setupNavigationActions();
 
-    // Configurer les actions pour le composant de recherche d'utilisateurs
+    // Configurer les actions de recherche d'utilisateurs
     setupUserSearchActions();
 
-    // Créer un panneau pour le contenu principal
+    // Initialiser le panel de contenu principal
     JPanel mainContentPanel = new JPanel(new BorderLayout());
 
-    // Panneau central avec CardLayout pour les différentes vues
+    // Initialiser le panel central
     centerPanel = new JPanel(new CardLayout());
     centerPanel.add((Component) profileComponent.getComponent(), "profile");
 
-    // Panneau pour afficher les messages
+    // Panel de messages
     JPanel messagesContainer = new JPanel(new BorderLayout());
     messagesContainer.add((Component) messageComponent.getComponent(), BorderLayout.CENTER);
     centerPanel.add(messagesContainer, MESSAGES);
     centerPanel.add((Component) userSearchComponent.getComponent(), "user_search");
     centerPanel.add((Component) userProfileComponent.getComponent(), "user_profile");
+    centerPanel.add((Component) settingsComponent.getComponent(), "settings"); // Ajouter le composant de paramètres
 
     mainContentPanel.add(centerPanel, BorderLayout.CENTER);
 
-    // Ajout des vues au panneau de contenu
+    // Ajouter les panels au panel de contenu
     contentPanel.add((Component) authComponent.getComponent(), "auth");
     contentPanel.add(mainContentPanel, "main");
   }
 
-  /**
-   * Configure les actions pour le composant de navigation
-   */
+  // Configurer les actions de navigation
   private void setupNavigationActions() {
     // Action pour afficher le profil
     navigationComponent.setProfileActionListener(_ -> showUserProfileView());
@@ -200,37 +150,38 @@ public class ComponentsController implements ISessionObserver {
     // Action pour afficher les messages
     navigationComponent.setMessagesActionListener(_ -> showMessagesView());
 
-    // Action pour la recherche
+    // Action pour afficher la recherche d'utilisateurs
     navigationComponent.setSearchActionListener(_ -> { showSearchUserView(); userSearchComponent.initialize(); });
 
-    // Action pour la déconnexion
+    // Action pour afficher les paramètres
+    navigationComponent.setSettingsActionListener(_ -> showSettingsView());
+
+    // Action pour se déconnecter
     navigationComponent.setLogoutActionListener(_ -> sessionManager.logout());
 
-    // Action pour la connexion
+    // Action pour se connecter
     navigationComponent.setLoginActionListener(_ -> showLoginView());
 
-    // Action pour l'inscription
+    // Action pour s'inscrire
     navigationComponent.setRegisterActionListener(_ -> showRegisterView());
 
-    // Action pour "À propos"
+    // Action pour afficher "À propos"
     navigationComponent.setAboutActionListener(_ -> mainView.showAboutDialog());
 
     // Action pour quitter
     navigationComponent.setExitActionListener(_ -> {
-      // Utiliser le même comportement que pour la croix de la fenêtre
+      // Déléguer au gestionnaire de sortie de la vue principale
       if (mainView.getExitListener() != null) {
         mainView.getExitListener().actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "exit"));
       }
     });
   }
 
-  /**
-   * Configure les actions pour le composant de recherche d'utilisateurs
-   */
+  // Configurer les actions de recherche d'utilisateurs
   private void setupUserSearchActions() {
     // Action pour afficher le profil d'un utilisateur
     userSearchComponent.setViewProfileListener(e -> {
-      // L'événement contient l'utilisateur à afficher
+      // Vérifier que l'événement contient bien un utilisateur
       if (e.getSource() instanceof User userToDisplay) {
         showUserProfileView(userToDisplay);
       }
@@ -240,13 +191,11 @@ public class ComponentsController implements ISessionObserver {
     userProfileComponent.setBackToListListener(_ -> showSearchUserView());
   }
 
-  /**
-   * Configure les événements pour la vue principale
-   */
+  // Configurer les événements de la vue
   public void setupViewEvents() {
     // Configurer l'action de sortie
     mainView.setExitListener(_ -> {
-      // Demander confirmation à l'utilisateur
+      // Demander confirmation
       int response = JOptionPane.showConfirmDialog(
         mainView,
         "Voulez-vous vraiment quitter l'application ?",
@@ -256,7 +205,7 @@ public class ComponentsController implements ISessionObserver {
       );
 
       if (response == JOptionPane.YES_OPTION) {
-        // Arrêter proprement l'application
+        // Arrêter le contrôleur de répertoire
         if (directoryController != null) {
           directoryController.shutdown();
         }
@@ -265,35 +214,29 @@ public class ComponentsController implements ISessionObserver {
     });
   }
 
-  /**
-   * Affiche la vue de connexion
-   */
+  // Afficher la vue de connexion
   public void showLoginView() {
     authComponent.showLoginView();
     CardLayout cl = (CardLayout) contentPanel.getLayout();
     cl.show(contentPanel, "auth");
 
-    // Afficher la vue de navigation déconnectée
+    // Mettre à jour la navigation
     navigationComponent.showDisconnectedView();
   }
 
-  /**
-   * Affiche la vue d'inscription
-   */
+  // Afficher la vue d'inscription
   public void showRegisterView() {
     authComponent.showRegisterView();
     CardLayout cl = (CardLayout) contentPanel.getLayout();
     cl.show(contentPanel, "auth");
 
-    // Afficher la vue de navigation déconnectée
+    // Mettre à jour la navigation
     navigationComponent.showDisconnectedView();
   }
 
-  /**
-   * Affiche la vue de profil utilisateur
-   */
+  // Afficher la vue de profil de l'utilisateur connecté
   public void showUserProfileView() {
-    // Vérifier si l'utilisateur est connecté
+    // Vérifier qu'un utilisateur est connecté
     if (!sessionManager.isUserConnected()) {
       return;
     }
@@ -301,21 +244,18 @@ public class ComponentsController implements ISessionObserver {
     // Rafraîchir les données du profil
     profileComponent.refreshProfileData();
 
-    // Afficher la vue principale
+    // Afficher le contenu principal
     CardLayout mainCl = (CardLayout) contentPanel.getLayout();
     mainCl.show(contentPanel, "main");
 
-    // Afficher le profil dans le panneau central
+    // Afficher le profil
     CardLayout centerCl = (CardLayout) centerPanel.getLayout();
     centerCl.show(centerPanel, "profile");
   }
 
-  /**
-   * Affiche le profil d'un utilisateur spécifique
-   * @param user L'utilisateur dont le profil doit être affiché
-   */
+  // Afficher la vue de profil d'un utilisateur spécifique
   public void showUserProfileView(User user) {
-    // Vérifier si l'utilisateur est connecté
+    // Vérifier qu'un utilisateur est connecté
     if (!sessionManager.isUserConnected()) {
       return;
     }
@@ -323,88 +263,91 @@ public class ComponentsController implements ISessionObserver {
     // Définir l'utilisateur à afficher
     userProfileComponent.setUserToDisplay(user);
 
-    // Afficher la vue principale
+    // Afficher le contenu principal
     CardLayout mainCl = (CardLayout) contentPanel.getLayout();
     mainCl.show(contentPanel, "main");
 
-    // Afficher le profil utilisateur détaillé dans le panneau central
+    // Afficher le profil de l'utilisateur
     CardLayout centerCl = (CardLayout) centerPanel.getLayout();
     centerCl.show(centerPanel, "user_profile");
   }
 
-  /**
-   * Affiche la vue de messages
-   */
+  // Afficher la vue de messages
   public void showMessagesView() {
-    // Vérifier si l'utilisateur est connecté
+    // Vérifier qu'un utilisateur est connecté
     if (!sessionManager.isUserConnected()) {
       return;
     }
 
-    // Afficher la vue principale
+    // Afficher le contenu principal
     CardLayout mainCl = (CardLayout) contentPanel.getLayout();
     mainCl.show(contentPanel, "main");
 
-    // Afficher les messages dans le panneau central
+    // Afficher les messages
     CardLayout centerCl = (CardLayout) centerPanel.getLayout();
     centerCl.show(centerPanel, MESSAGES);
   }
 
-  /**
-   * Affiche la vue de recherche d'utilisateurs
-   */
+  // Afficher la vue de recherche d'utilisateurs
   public void showSearchUserView() {
-    // Vérifier si l'utilisateur est connecté
+    // Vérifier qu'un utilisateur est connecté
     if (!sessionManager.isUserConnected()) {
       return;
     }
 
-    // Afficher la vue principale
+    // Afficher le contenu principal
     CardLayout mainCl = (CardLayout) contentPanel.getLayout();
     mainCl.show(contentPanel, "main");
 
-    // Afficher la recherche d'utilisateurs dans le panneau central
+    // Afficher la recherche d'utilisateurs
     CardLayout centerCl = (CardLayout) centerPanel.getLayout();
     centerCl.show(centerPanel, "user_search");
   }
 
-  /**
-   * Notification de connexion réussie
-   */
+  // Afficher la vue de paramètres
+  public void showSettingsView() {
+    // Vérifier qu'un utilisateur est connecté
+    if (!sessionManager.isUserConnected()) {
+      return;
+    }
+
+    // Afficher le contenu principal
+    CardLayout mainCl = (CardLayout) contentPanel.getLayout();
+    mainCl.show(contentPanel, "main");
+
+    // Afficher les paramètres
+    CardLayout centerCl = (CardLayout) centerPanel.getLayout();
+    centerCl.show(centerPanel, "settings");
+  }
+
+  // Notification de connexion
   @Override
   public void notifyLogin(User connectedUser) {
-    // Afficher la vue de navigation connectée et le profil
+    // Mettre à jour la navigation
     navigationComponent.showConnectedView();
     showUserProfileView();
 
-    // Forcer le rafraîchissement des messages filtrés
-    // Ici, on suppose que le MessageComponent détient une référence vers le MessageModel
+    // Rafraîchir les messages si nécessaire
     if (messageComponent != null) {
-      // Dans votre MessageComponent, vous pouvez exposer le modèle pour rafraîchir :
+      // Rafraîchir le modèle
       messageComponent.getMessageModel().refresh();
-      // Ou, si vous avez une méthode refreshMessages() qui recrée l'affichage à partir de getMessages(),
-      // vous l'appelez ici.
+      // Rafraîchir l'affichage
       messageComponent.refreshMessages();
     }
   }
 
-  /**
-   * Notification de déconnexion
-   */
+  // Notification de déconnexion
   @Override
   public void notifyLogout() {
-    // Afficher la vue de navigation déconnectée
+    // Mettre à jour la navigation
     navigationComponent.showDisconnectedView();
 
-    // Revenir à la vue de connexion
+    // Afficher la vue de connexion
     showLoginView();
   }
 
-  /**
-   * Récupère le gestionnaire de session
-   */
+  // Obtenir le gestionnaire de session
   public SessionManager getSessionManager() {
     return sessionManager;
   }
-
 }

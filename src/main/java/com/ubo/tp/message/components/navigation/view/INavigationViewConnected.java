@@ -6,68 +6,71 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import java.awt.event.ActionListener;
 
-/**
- * Interface pour la vue de navigation lorsque l'utilisateur est connecté.
- */
+
 public interface INavigationViewConnected {
 
   /**
-   * Met à jour les informations de l'utilisateur.
+   * Mettre à jour les informations d'utilisateur
    */
   void updateUserInfo(String name, String tag);
 
   /**
-   * Définit l'écouteur pour le bouton de profil.
+   * Définir l'écouteur du bouton de profil
    */
   void setProfileButtonListener(ActionListener listener);
 
   /**
-   * Définit l'écouteur pour le bouton de messages.
+   * Définir l'écouteur du bouton de messages
    */
   void setMessagesButtonListener(ActionListener listener);
 
   /**
-   * Définit l'écouteur pour le bouton de recherche.
+   * Définir l'écouteur du bouton de recherche
    */
   void setSearchButtonListener(ActionListener listener);
 
   /**
-   * Définit l'écouteur pour le bouton de déconnexion.
+   * Définir l'écouteur du bouton de déconnexion
    */
   void setLogoutButtonListener(ActionListener listener);
 
   /**
-   * Définit l'écouteur pour le bouton "À propos".
+   * Définir l'écouteur du bouton À propos
    */
   void setAboutButtonListener(ActionListener listener);
 
   /**
-   * Définit l'écouteur pour le bouton de changement de répertoire.
+   * Définir l'écouteur du bouton de changement de répertoire
    */
   void setChangeDirectoryButtonListener(ActionListener listener);
 
   /**
-   * Définit le contrôleur de répertoire
+   * Définir l'écouteur du bouton de paramètres
+   */
+  void setSettingsButtonListener(ActionListener listener);
+
+  /**
+   * Définir le contrôleur de répertoire
    */
   void setDirectoryController(DirectoryController directoryController);
 
   /**
-   * Définit l'écouteur pour le bouton de quitter.
+   * Définir l'écouteur du bouton de sortie
    */
   void setExitButtonListener(ActionListener listener);
 
   /**
-   * Définit la frame parente
+   * Définir la frame parent
    */
   void setParentFrame(JFrame parentFrame);
 
   /**
-   * Obtient la barre de menu
+   * Obtenir la barre de menu
    */
   JMenuBar getMenuBar();
 
   /**
-   * Active ou désactive la vue.
+   * Activer/désactiver les composants
    */
   void setEnabled(boolean enabled);
 }

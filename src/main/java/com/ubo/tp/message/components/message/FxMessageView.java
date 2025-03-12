@@ -1,5 +1,6 @@
 package com.ubo.tp.message.components.message;
 
+import com.ubo.tp.message.common.ui.FxNotification;
 import com.ubo.tp.message.core.database.IDatabase;
 import com.ubo.tp.message.core.database.IDatabaseObserver;
 import com.ubo.tp.message.core.datamodel.Message;
@@ -14,83 +15,93 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Vue des messages en JavaFX.
- * Adapte les fonctionnalités de MessageComponent en JavaFX.
- */
+
 public class FxMessageView extends BorderPane implements IDatabaseObserver {
 
-  // Services
+  // Attributs existants
   private final IDatabase database;
   private final ISession session;
   private final EntityManager entityManager;
 
-  // Composants de recherche
+  // Champs pour l'interface
   private TextField searchField;
   private Button searchButton;
 
-  // Composants de saisie de message
+  // Champs pour la saisie de messages
   private TextArea messageTextArea;
   private Button sendButton;
 
-  // Liste des messages
+  // Liste de messages
   private ListView<FxMessageBubble> messagesListView;
   private ObservableList<FxMessageBubble> messagesList;
 
-  // Navigation
+  // Bouton pour accéder au profil
   private Button profileButton;
 
-  // Messages d'état
+  // Champs pour les messages d'erreur et de succès
   private Text errorText;
   private Text successText;
 
-  // Écouteur pour la navigation vers le profil
+  // Écouteur pour l'affichage du profil
   private EventHandler<ActionEvent> showProfileListener;
 
   // Constantes
   private static final int MAX_MESSAGE_LENGTH = 200;
+  private static final Image USER_ICON;
 
-  /**
-   * Constructeur.
-   */
+  // Initialisation statique pour l'icône
+  static {
+    Image icon = null;
+    try {
+      InputStream iconStream = FxMessageView.class.getResourceAsStream("/tux_logo.png");
+      if (iconStream != null) {
+        icon = new Image(iconStream);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    USER_ICON = icon;
+  }
+
+  // Constructeur
   public FxMessageView(IDatabase database, ISession session, EntityManager entityManager) {
     this.database = database;
     this.session = session;
     this.entityManager = entityManager;
 
-    // Initialisation de l'interface
+    // Définir le padding
     setPadding(new Insets(20));
 
-    // Création des composants
+    // Initialiser les composants
     initComponents();
 
-    // Configuration des actions
+    // Configurer les gestionnaires d'événements
     setupEventHandlers();
 
-    // S'inscrire comme observateur de la base de données
+    // S'abonner aux changements de la base de données
     database.addObserver(this);
   }
 
-  /**
-   * Initialise les composants.
-   */
+  // Initialisation des composants
   private void initComponents() {
-    // Panneau principal avec espacement vertical
+    // Conteneur principal
     VBox mainBox = new VBox(15);
     mainBox.setPadding(new Insets(10));
     setCenter(mainBox);
 
-    // En-tête - Navigation et recherche
+    // En-tête
     HBox headerBox = new HBox(15);
     headerBox.setAlignment(Pos.CENTER_LEFT);
     headerBox.setStyle("-fx-background-color: white; -fx-padding: 15px; -fx-background-radius: 10px;");
@@ -112,7 +123,7 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
 
     headerBox.getChildren().addAll(messagesTitle, profileButton, spacer, searchField, searchButton);
 
-    // Liste des messages
+    // Liste de messages
     messagesList = FXCollections.observableArrayList();
     messagesListView = new ListView<>(messagesList);
     messagesListView.setCellFactory(param -> new ListCell<>() {
@@ -124,16 +135,16 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
           setText(null);
         } else {
           setGraphic(item);
-          // Pour éviter que le texte s'affiche en plus de la bulle
+          // Pas de texte
           setText(null);
-          // Style pour la cellule
+          // Fond transparent
           setStyle("-fx-background-color: transparent;");
         }
       }
     });
     messagesListView.setPrefHeight(300);
 
-    // Panneau des messages avec style
+    // Boîte de messages
     VBox messagesBox = new VBox(10);
     messagesBox.setStyle("-fx-background-color: #f5f8fa; -fx-padding: 15px; -fx-background-radius: 10px;");
 
@@ -142,7 +153,7 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
 
     messagesBox.getChildren().addAll(feedTitle, messagesListView);
 
-    // Panneau de saisie de nouveau message
+    // Boîte de saisie
     VBox inputBox = new VBox(10);
     inputBox.setStyle("-fx-background-color: white; -fx-padding: 15px; -fx-background-radius: 10px;");
 
@@ -172,21 +183,19 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
 
     inputBox.getChildren().addAll(newMessageTitle, messageTextArea, messageControls);
 
-    // Ajout de tous les panneaux
+    // Assembler le tout
     mainBox.getChildren().addAll(headerBox, messagesBox, inputBox);
   }
 
-  /**
-   * Configure les gestionnaires d'événements.
-   */
+  // Configurer les gestionnaires d'événements
   private void setupEventHandlers() {
     // Envoi de message
     sendButton.setOnAction(e -> sendMessage());
 
-    // Recherche de messages
+    // Recherche
     searchButton.setOnAction(e -> searchMessages());
 
-    // Navigation vers le profil
+    // Affichage du profil
     profileButton.setOnAction(e -> {
       if (showProfileListener != null) {
         showProfileListener.handle(new ActionEvent());
@@ -194,17 +203,15 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
     });
   }
 
-  /**
-   * Envoie un nouveau message.
-   */
+  // Envoi d'un message
   private void sendMessage() {
-    // Effacer les messages précédents
+    // Réinitialiser les messages
     errorText.setText("");
     successText.setText("");
 
     String text = messageTextArea.getText().trim();
 
-    // Vérification du texte
+    // Vérifier si le message est vide
     if (text.isEmpty()) {
       errorText.setText("Le texte du message ne peut pas être vide");
       return;
@@ -222,25 +229,23 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
     }
 
     try {
-      // Création du message
+      // Créer le message
       Message newMessage = new Message(connectedUser, text);
 
-      // Écriture dans le fichier
+      // Enregistrer le message
       entityManager.writeMessageFile(newMessage);
 
-      // Message envoyé avec succès
+      // Afficher un message de succès
       successText.setText("Message envoyé");
 
-      // Effacer le champ de saisie
+      // Vider le champ de texte
       messageTextArea.clear();
     } catch (Exception e) {
       errorText.setText("Erreur lors de l'envoi du message: " + e.getMessage());
     }
   }
 
-  /**
-   * Recherche des messages.
-   */
+  // Recherche de messages
   private void searchMessages() {
     String query = searchField.getText().trim();
 
@@ -251,25 +256,25 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
 
     List<Message> results;
 
-    // Filtrage des messages en fonction des critères
+    // Déterminer les critères de recherche
     if (query.isEmpty()) {
-      // Sans critère, on affiche tous les messages pertinents
+      // Pas de critère - afficher tous les messages pertinents
       results = getFilteredMessages();
     } else if (query.contains("@") && !query.contains("#")) {
-      // Recherche par tag utilisateur
+      // Recherche par utilisateur
       String userTag = query.replace("@", "");
       results = getFilteredMessages().stream()
         .filter(m -> m.getSender().getUserTag().equalsIgnoreCase("@" + userTag) ||
           m.containsUserTag(userTag))
         .collect(Collectors.toList());
     } else if (query.contains("#") && !query.contains("@")) {
-      // Recherche par mot-clé
+      // Recherche par tag
       String tag = query.replace("#", "");
       results = getFilteredMessages().stream()
         .filter(m -> m.containsTag(tag))
         .collect(Collectors.toList());
     } else {
-      // Recherche mixte
+      // Recherche générale
       String cleanedQuery = query.replace("@", "").replace("#", "");
       results = getFilteredMessages().stream()
         .filter(m -> m.getSender().getUserTag().equalsIgnoreCase("@" + cleanedQuery) ||
@@ -278,13 +283,11 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
         .collect(Collectors.toList());
     }
 
-    // Mise à jour de l'affichage
+    // Mettre à jour l'affichage
     updateMessagesList(results);
   }
 
-  /**
-   * Retourne la liste des messages filtrés pour l'utilisateur connecté.
-   */
+  // Obtenir les messages filtrés
   private List<Message> getFilteredMessages() {
     User connectedUser = session.getConnectedUser();
     if (connectedUser == null) {
@@ -300,9 +303,7 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
       .collect(Collectors.toList());
   }
 
-  /**
-   * Met à jour la liste des messages affichés.
-   */
+  // Mettre à jour la liste des messages
   private void updateMessagesList(List<Message> messages) {
     Platform.runLater(() -> {
       messagesList.clear();
@@ -320,26 +321,52 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
     });
   }
 
-  /**
-   * Rafraîchit tous les messages.
-   */
+  // Rafraîchir la liste des messages
   public void refreshMessages() {
-    // Mise à jour de la liste des messages
+    // Mettre à jour la liste avec les messages filtrés
     updateMessagesList(getFilteredMessages());
   }
 
-  /**
-   * Définit l'écouteur pour l'événement de navigation vers le profil.
-   */
+  // Définir l'écouteur pour l'affichage du profil
   public void setShowProfileListener(EventHandler<ActionEvent> listener) {
     this.showProfileListener = listener;
   }
 
-  // Implémentation des méthodes de l'observateur de base de données
+  // Méthodes de l'interface IDatabaseObserver
 
   @Override
   public void notifyMessageAdded(Message addedMessage) {
-    refreshMessages();
+    Platform.runLater(() -> {
+      User connectedUser = session.getConnectedUser();
+
+      // Vérifier si l'utilisateur connecté suit l'expéditeur du message
+      if (connectedUser != null
+        && !addedMessage.getSender().getUuid().equals(connectedUser.getUuid())
+        && connectedUser.getFollows().contains(addedMessage.getSender().getUserTag())) {
+
+        // Préparer le contenu du message pour l'aperçu
+        String messagePreview = addedMessage.getText();
+        if (messagePreview.length() > 50) {
+          messagePreview = messagePreview.substring(0, 50) + "...";
+        }
+
+        // Afficher une notification
+        FxNotification.showNotification(
+          "Nouvelle publication de " + addedMessage.getSender().getName(),
+          messagePreview,
+          USER_ICON,
+          // Action lors du clic sur la notification - mettre en évidence le message
+          () -> {
+            List<Message> singleMessage = new ArrayList<>();
+            singleMessage.add(addedMessage);
+            updateMessagesList(singleMessage);
+          }
+        );
+      }
+
+      // Rafraîchir la liste de messages
+      refreshMessages();
+    });
   }
 
   @Override
@@ -354,12 +381,12 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
 
   @Override
   public void notifyUserAdded(User addedUser) {
-    // Non utilisé
+    // Pas d'action nécessaire
   }
 
   @Override
   public void notifyUserDeleted(User deletedUser) {
-    // Non utilisé
+    // Pas d'action nécessaire
   }
 
   @Override
@@ -370,21 +397,17 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
     }
   }
 
-  /**
-   * Classe interne pour représenter une bulle de message dans l'interface JavaFX.
-   */
+  // Classe interne pour les bulles de message
   public static class FxMessageBubble extends VBox {
 
-    /**
-     * Constructeur.
-     */
+    // Constructeur
     public FxMessageBubble(Message message, boolean isOutgoing) {
-      // Configuration de base
+      // Définir la largeur maximale
       setMaxWidth(400);
       setPadding(new Insets(10));
       setSpacing(5);
 
-      // Style de la bulle selon l'expéditeur
+      // Styler la bulle selon l'expéditeur
       if (isOutgoing) {
         setStyle("-fx-background-color: #DCF8C6; -fx-background-radius: 15px;");
         setAlignment(Pos.CENTER_RIGHT);
@@ -393,7 +416,7 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
         setAlignment(Pos.CENTER_LEFT);
       }
 
-      // En-tête avec le nom de l'expéditeur et la date
+      // En-tête du message
       HBox header = new HBox(10);
 
       SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -408,14 +431,14 @@ public class FxMessageView extends BorderPane implements IDatabaseObserver {
 
       header.getChildren().addAll(senderLabel, dateLabel);
 
-      // Corps du message
+      // Contenu du message
       Label textLabel = new Label(message.getText());
       textLabel.setWrapText(true);
 
-      // Ajout des composants
+      // Assemblage
       getChildren().addAll(header, textLabel);
 
-      // Pour que la bulle s'adapte au contenu
+      // Hauteur minimale
       setMinHeight(USE_PREF_SIZE);
     }
   }

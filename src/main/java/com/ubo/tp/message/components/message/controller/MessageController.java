@@ -1,6 +1,7 @@
 package com.ubo.tp.message.components.message.controller;
 
-import com.ubo.tp.message.common.ui.ToastNotification;
+import com.ubo.tp.message.common.ui.EnhancedNotification;
+import com.ubo.tp.message.common.ui.IconFactory;
 import com.ubo.tp.message.components.message.model.MessageModel;
 import com.ubo.tp.message.components.message.view.IChatView;
 import com.ubo.tp.message.core.database.IDatabase;
@@ -30,7 +31,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
     this.messageView = messageView;
     this.model = model;
 
-    // S'inscrire comme observateur de la base de données
+    // S'abonner aux notifications de la base de données
     database.addObserver(this);
     this.mEntityManager = entityManager;
   }
@@ -39,7 +40,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
   public void sendMessage(String text) {
     User connectedUser = session.getConnectedUser();
     if (connectedUser == null) {
-      // Utiliser null au lieu de messageView comme parent
+      // Aucun utilisateur connecté - afficher un message d'erreur
       JOptionPane.showMessageDialog(null, "Aucun utilisateur connecté.", "Erreur", JOptionPane.ERROR_MESSAGE);
       return;
     }
@@ -51,11 +52,11 @@ public class MessageController implements IMessageController, IDatabaseObserver 
         throw new MessageValidationException("Le texte du message ne peut pas dépasser " + MAX_MESSAGE_LENGTH + " caractères.");
       }
       Message newMessage = new Message(connectedUser, text);
-      // L'ajout en base déclenche notifyMessageAdded
+      // Envoyer le message
       mEntityManager.writeMessageFile(newMessage);
       messageView.clearMessageInput();
     } catch (MessageValidationException e) {
-      // Utiliser null au lieu de messageView comme parent
+      // Afficher l'erreur de validation
       JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur de validation", JOptionPane.ERROR_MESSAGE);
     }
   }
@@ -70,7 +71,7 @@ public class MessageController implements IMessageController, IDatabaseObserver 
         String userTag = trimmedQuery.replace("@", "");
         results = allMessages.stream()
           .filter(m -> m.getSender().getUserTag().equalsIgnoreCase("@" + userTag)
-                       || m.containsUserTag("@" + userTag))
+            || m.containsUserTag("@" + userTag))
           .toList();
       } else if (trimmedQuery.contains("#") && !trimmedQuery.contains("@")) {
         String tag = trimmedQuery.replace("#", "");
@@ -81,26 +82,47 @@ public class MessageController implements IMessageController, IDatabaseObserver 
         String cleanedQuery = trimmedQuery.replace("@", "").replace("#", "");
         results = allMessages.stream()
           .filter(m -> m.getSender().getUserTag().equalsIgnoreCase("@" + cleanedQuery)
-                       || m.containsUserTag(cleanedQuery)
-                       || m.containsTag(cleanedQuery))
+            || m.containsUserTag(cleanedQuery)
+            || m.containsTag(cleanedQuery))
           .toList();
       }
     }
     return results;
   }
 
-  // Cette méthode est appelée par la base via l'observer.
+  // Méthode améliorée pour notifier l'utilisateur des nouveaux messages
   @Override
   public void notifyMessageAdded(Message addedMessage) {
     SwingUtilities.invokeLater(() -> {
       User connectedUser = session.getConnectedUser();
       if (connectedUser != null
-          && !addedMessage.getSender().equals(connectedUser)
-          && connectedUser.getFollows().contains(addedMessage.getSender().getUserTag())) {
-        // Affichage du toast
-        ToastNotification.showToast("Nouvelle publication de " + addedMessage.getSender().getUserTag(), 3000);
+        && !addedMessage.getSender().equals(connectedUser)
+        && connectedUser.getFollows().contains(addedMessage.getSender().getUserTag())) {
+
+        // Contenu du message tronqué si trop long
+        String messagePreview = addedMessage.getText();
+        if (messagePreview.length() > 50) {
+          messagePreview = messagePreview.substring(0, 50) + "...";
+        }
+
+        // Création d'une notification enrichie
+        EnhancedNotification.showNotification(
+          "Nouvelle publication de " + addedMessage.getSender().getName(),
+          messagePreview,
+          IconFactory.createUserIcon(IconFactory.ICON_SMALL),
+          // Action lors du clic sur la notification
+          () -> {
+            // Mettre en avant le message dans l'interface
+            // (code à adapter selon votre implémentation d'interface)
+            List<Message> messageList = model.getMessages();
+            messageView.updateSearchResults(messageList.stream()
+                                              .filter(m -> m.equals(addedMessage))
+                                              .collect(Collectors.toList()));
+          }
+        );
       }
-      // Ajout dans le modèle, ce qui déclenchera la mise à jour de la vue
+
+      // Ajouter le message au modèle
       model.addMessage(addedMessage);
     });
   }
@@ -112,26 +134,26 @@ public class MessageController implements IMessageController, IDatabaseObserver 
 
   @Override
   public void notifyMessageModified(Message modifiedMessage) {
-    // À implémenter si nécessaire
+    // Implémentation par défaut
   }
 
   @Override
   public void notifyUserAdded(User addedUser) {
-    // Optionnel
+    // Implémentation par défaut
   }
 
   @Override
   public void notifyUserDeleted(User deletedUser) {
-    // Optionnel
+    // Implémentation par défaut
   }
 
   @Override
   public void notifyUserModified(User modifiedUser) {
-    // Optionnel
+    // Implémentation par défaut
   }
 
   @Override
   public void onMessageSent(Message message) {
-    // Cette méthode n'est plus utilisée directement dans cette architecture.
+    // Implémentation par défaut
   }
 }

@@ -8,50 +8,27 @@ import com.ubo.tp.message.core.session.ISessionObserver;
 
 import java.awt.event.ActionListener;
 
-/**
- * Contrôleur pour la navigation.
- * Gère les transitions entre les vues connectées et déconnectées.
- */
+
 public class NavigationController implements ISessionObserver {
 
-  /**
-   * Le modèle de navigation.
-   */
+  // Attributs existants
   private final NavigationModel model;
-
-  /**
-   * La vue pour un utilisateur connecté.
-   */
   private final INavigationViewConnected connectedView;
-
-  /**
-   * La vue pour un utilisateur déconnecté.
-   */
   private final INavigationViewDisconnected disconnectedView;
-
-  /**
-   * La vue actuellement affichée.
-   */
   private boolean showingConnectedView;
 
-  /**
-   * Les différents écouteurs pour les actions de navigation.
-   */
+  // Écouteurs d'événements
   private ActionListener profileActionListener;
   private ActionListener messagesActionListener;
   private ActionListener searchActionListener;
+  private ActionListener settingsActionListener; // Nouvel écouteur pour les paramètres
   private ActionListener logoutActionListener;
   private ActionListener loginActionListener;
   private ActionListener registerActionListener;
   private ActionListener aboutActionListener;
   private ActionListener changeDirectoryActionListener;
 
-  /**
-   * Constructeur.
-   * @param model Le modèle de navigation
-   * @param connectedView La vue pour un utilisateur connecté
-   * @param disconnectedView La vue pour un utilisateur déconnecté
-   */
+  // Constructeur
   public NavigationController(NavigationModel model,
                               INavigationViewConnected connectedView,
                               INavigationViewDisconnected disconnectedView) {
@@ -59,18 +36,16 @@ public class NavigationController implements ISessionObserver {
     this.connectedView = connectedView;
     this.disconnectedView = disconnectedView;
 
-    // Initialisation des vues
+    // Configurer les vues
     setupViews();
 
-    // Affichage de la vue appropriée selon l'état de connexion
+    // Mettre à jour l'affichage selon l'état de connexion
     updateViewBasedOnConnectionStatus();
   }
 
-  /**
-   * Configure les vues.
-   */
+  // Configuration des vues
   private void setupViews() {
-    // Configuration de la vue connectée
+    // Vue connectée
     connectedView.setProfileButtonListener(e -> {
       if (profileActionListener != null) {
         profileActionListener.actionPerformed(e);
@@ -86,6 +61,12 @@ public class NavigationController implements ISessionObserver {
     connectedView.setSearchButtonListener(e -> {
       if (searchActionListener != null) {
         searchActionListener.actionPerformed(e);
+      }
+    });
+
+    connectedView.setSettingsButtonListener(e -> {
+      if (settingsActionListener != null) {
+        settingsActionListener.actionPerformed(e);
       }
     });
 
@@ -108,7 +89,7 @@ public class NavigationController implements ISessionObserver {
       }
     });
 
-    // Configuration de la vue déconnectée
+    // Vue déconnectée
     disconnectedView.setLoginButtonListener(e -> {
       if (loginActionListener != null) {
         loginActionListener.actionPerformed(e);
@@ -128,9 +109,7 @@ public class NavigationController implements ISessionObserver {
     });
   }
 
-  /**
-   * Met à jour la vue en fonction de l'état de connexion.
-   */
+  // Mise à jour de la vue en fonction de l'état de connexion
   private void updateViewBasedOnConnectionStatus() {
     if (model.isUserConnected()) {
       showConnectedView();
@@ -139,18 +118,13 @@ public class NavigationController implements ISessionObserver {
     }
   }
 
-  /**
-   * Définit l'écouteur pour l'action de quitter.
-   * @param listener L'écouteur à définir
-   */
+  // Définir l'écouteur du bouton de quitter
   public void setExitActionListener(ActionListener listener) {
     connectedView.setExitButtonListener(listener);
     disconnectedView.setExitButtonListener(listener);
   }
 
-  /**
-   * Affiche la vue pour un utilisateur connecté.
-   */
+  // Afficher la vue connectée
   public void showConnectedView() {
     if (!showingConnectedView) {
       connectedView.updateUserInfo(model.getConnectedUserName(), model.getConnectedUserTag());
@@ -158,15 +132,14 @@ public class NavigationController implements ISessionObserver {
     }
   }
 
-  /**
-   * Affiche la vue pour un utilisateur déconnecté.
-   */
+  // Afficher la vue déconnectée
   public void showDisconnectedView() {
     if (showingConnectedView) {
       showingConnectedView = false;
     }
   }
 
+  // Définitions des écouteurs (méthodes existantes)
   public void setProfileActionListener(ActionListener listener) {
     this.profileActionListener = listener;
   }
@@ -177,6 +150,11 @@ public class NavigationController implements ISessionObserver {
 
   public void setSearchActionListener(ActionListener listener) {
     this.searchActionListener = listener;
+  }
+
+  // Nouvelle méthode pour l'écouteur des paramètres
+  public void setSettingsActionListener(ActionListener listener) {
+    this.settingsActionListener = listener;
   }
 
   public void setLogoutActionListener(ActionListener listener) {
@@ -194,18 +172,16 @@ public class NavigationController implements ISessionObserver {
   public void setAboutActionListener(ActionListener listener) {
     this.aboutActionListener = listener;
   }
-  /**
-   * Indique si la vue connectée est affichée.
-   * @return true si la vue connectée est affichée, false sinon
-   */
+
   public boolean isShowingConnectedView() {
     return showingConnectedView;
   }
 
+  // Méthodes de l'interface ISessionObserver
   @Override
   public void notifyLogin(User connectedUser) {
     showConnectedView();
-    // Mettre à jour les informations de l'utilisateur dans la vue
+    // Mettre à jour les informations de l'utilisateur
     connectedView.updateUserInfo(connectedUser.getName(), connectedUser.getUserTag());
   }
 

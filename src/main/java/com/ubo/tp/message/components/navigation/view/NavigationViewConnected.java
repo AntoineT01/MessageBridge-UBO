@@ -15,40 +15,28 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
-/**
- * Vue de la barre de navigation pour un utilisateur connecté.
- * Version modifiée pour utiliser les JMenus.
- */
+
 public class NavigationViewConnected extends JPanel implements INavigationViewConnected {
 
-  /**
-   * Barre de menu
-   */
+  // Menu principal
   private JMenuBar menuBar;
 
-  /**
-   * Items de menu
-   */
+  // Éléments de menu
   private JMenuItem profileMenuItem;
   private JMenuItem messagesMenuItem;
   private JMenuItem searchMenuItem;
+  private JMenuItem settingsMenuItem; // Nouveau élément de menu pour les paramètres
   private JMenuItem logoutMenuItem;
   private JMenuItem aboutMenuItem;
   private JMenuItem exitMenuItem;
 
-  /**
-   * Zone d'information utilisateur
-   */
+  // Informations utilisateur
   private JLabel userInfoLabel;
 
-  /**
-   * Contrôleur de répertoire
-   */
+  // Contrôleur de répertoire
   private DirectoryController directoryController;
 
-  /**
-   * Frame parente
-   */
+  // Frame parent
   private JFrame parentFrame;
 
   /**
@@ -59,21 +47,21 @@ public class NavigationViewConnected extends JPanel implements INavigationViewCo
   }
 
   /**
-   * Initialisation de l'interface graphique
+   * Initialiser l'interface graphique
    */
   private void initGUI() {
     JMenuItem changeDirectoryMenuItem;
     JMenu helpMenu;
     JMenu userMenu;
     JMenu fileMenu;
-    // Utiliser un BorderLayout pour le panneau principal
+    // Définir la disposition
     setLayout(new BorderLayout());
     setBorder(new EmptyBorder(5, 0, 5, 0));
 
     // Créer la barre de menu
     menuBar = new JMenuBar();
 
-    // 1) Menu Fichier
+    // Menu Fichier
     fileMenu = new JMenu("Fichier");
     fileMenu.setToolTipText("Opérations sur les fichiers");
 
@@ -87,7 +75,7 @@ public class NavigationViewConnected extends JPanel implements INavigationViewCo
     exitMenuItem.setToolTipText("Fermer l'application");
     fileMenu.add(exitMenuItem);
 
-    // 2) Menu Utilisateur
+    // Menu Utilisateur
     userMenu = new JMenu("Utilisateur");
     userMenu.setToolTipText("Actions liées à l'utilisateur");
 
@@ -107,11 +95,18 @@ public class NavigationViewConnected extends JPanel implements INavigationViewCo
 
     userMenu.addSeparator();
 
+    // Ajout du menu Paramètres
+    settingsMenuItem = new JMenuItem("Paramètres");
+    settingsMenuItem.setToolTipText("Configurer les paramètres de l'application");
+    userMenu.add(settingsMenuItem);
+
+    userMenu.addSeparator();
+
     logoutMenuItem = new JMenuItem("Se déconnecter");
     logoutMenuItem.setToolTipText("Se déconnecter de l'application");
     userMenu.add(logoutMenuItem);
 
-    // 3) Menu A propos
+    // Menu Aide
     helpMenu = new JMenu("?");
     helpMenu.setToolTipText("Aide et informations");
 
@@ -120,22 +115,22 @@ public class NavigationViewConnected extends JPanel implements INavigationViewCo
     aboutMenuItem.setToolTipText("Informations sur l'application");
     helpMenu.add(aboutMenuItem);
 
-    // Ajout des menus à la barre
+    // Ajouter les menus à la barre
     menuBar.add(fileMenu);
     menuBar.add(userMenu);
     menuBar.add(helpMenu);
 
-    // Création du panel d'information utilisateur (à droite)
+    // Panel d'informations utilisateur
     JPanel userInfoPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     userInfoLabel = new JLabel("");
     userInfoLabel.setIcon(IconFactory.createUserIcon(IconFactory.ICON_SMALL));
     userInfoPanel.add(userInfoLabel);
 
-    // Ajout des composants au panneau principal
+    // Ajouter les éléments au panel
     add(menuBar, BorderLayout.CENTER);
     add(userInfoPanel, BorderLayout.EAST);
 
-    // Action par défaut pour le changement de répertoire
+    // Configurer l'action sur le répertoire d'échange
     changeDirectoryMenuItem.addActionListener(e -> {
       if (directoryController != null && parentFrame != null) {
         boolean success = directoryController.selectAndChangeExchangeDirectory(parentFrame);
@@ -153,77 +148,84 @@ public class NavigationViewConnected extends JPanel implements INavigationViewCo
   }
 
   /**
-   * Met à jour les informations de l'utilisateur.
+   * Mettre à jour les informations d'utilisateur
    */
   public void updateUserInfo(String name, String tag) {
     userInfoLabel.setText(name + " (" + tag + ")");
   }
 
   /**
-   * Définit l'écouteur pour le bouton de profil.
+   * Définir l'écouteur pour le bouton de profil
    */
   public void setProfileButtonListener(ActionListener listener) {
     profileMenuItem.addActionListener(listener);
   }
 
   /**
-   * Définit l'écouteur pour le bouton de messages.
+   * Définir l'écouteur pour le bouton de messages
    */
   public void setMessagesButtonListener(ActionListener listener) {
     messagesMenuItem.addActionListener(listener);
   }
 
   /**
-   * Définit l'écouteur pour le bouton de recherche.
+   * Définir l'écouteur pour le bouton de recherche
    */
   public void setSearchButtonListener(ActionListener listener) {
     searchMenuItem.addActionListener(listener);
   }
 
   /**
-   * Définit l'écouteur pour le bouton de déconnexion.
+   * Définir l'écouteur pour le bouton de déconnexion
    */
   public void setLogoutButtonListener(ActionListener listener) {
     logoutMenuItem.addActionListener(listener);
   }
 
   /**
-   * Définit l'écouteur pour le bouton "À propos".
+   * Définir l'écouteur pour le bouton "À propos"
    */
   public void setAboutButtonListener(ActionListener listener) {
     aboutMenuItem.addActionListener(listener);
   }
 
   /**
-   * Définit l'écouteur pour le bouton de changement de répertoire.
+   * Définir l'écouteur pour le bouton de changement de répertoire
    */
   public void setChangeDirectoryButtonListener(ActionListener listener) {
-    // Nous gérons maintenant directement cette action
+    // Méthode vide, l'action est déjà configurée
   }
 
   /**
-   * Définit le contrôleur de répertoire
+   * Définir l'écouteur pour le bouton de paramètres
+   */
+  public void setSettingsButtonListener(ActionListener listener) {
+    settingsMenuItem.addActionListener(listener);
+  }
+
+  /**
+   * Définir le contrôleur de répertoire
    */
   public void setDirectoryController(DirectoryController directoryController) {
     this.directoryController = directoryController;
   }
 
   /**
-   * Définit l'écouteur pour le bouton de quitter.
+   * Définir l'écouteur pour le bouton de sortie
    */
   public void setExitButtonListener(ActionListener listener) {
     exitMenuItem.addActionListener(listener);
   }
 
   /**
-   * Définit la frame parente
+   * Définir la frame parent
    */
   public void setParentFrame(JFrame parentFrame) {
     this.parentFrame = parentFrame;
   }
 
   /**
-   * Obtient la barre de menu
+   * Obtenir la barre de menu
    */
   public JMenuBar getMenuBar() {
     return menuBar;
