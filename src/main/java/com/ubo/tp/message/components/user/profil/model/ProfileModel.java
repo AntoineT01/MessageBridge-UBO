@@ -67,24 +67,20 @@ public class ProfileModel {
    * @param password Nouveau mot de passe (peut être vide si pas de changement).
    * @return Vrai si la mise à jour a réussi, faux sinon.
    */
-  public boolean updateUserInfo(String name, String password) {
+  public boolean updateUserInfo(String name, String password, String avatarPath) {
     User connectedUser = getConnectedUser();
     if (connectedUser == null) {
       return false;
     }
-
-    // Mise à jour du nom si fourni
     if (name != null && !name.isEmpty()) {
       connectedUser.setName(name);
     }
-
-    // Mise à jour du mot de passe si fourni
     if (password != null && !password.isEmpty()) {
       connectedUser.setUserPassword(password);
     }
-
-    // Notification de la base de données
+    if (avatarPath != null && !avatarPath.isEmpty()) {
+      connectedUser.setAvatarPath(avatarPath);
+    }
     database.modifiyUser(connectedUser);
     return true;
-  }
-}
+  }}

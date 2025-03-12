@@ -58,4 +58,6 @@ public interface IRegisterView {
    * Récupère la base de données (pour le contrôleur).
    */
   IDatabase getDatabase();
+
+  String getAvatarPath();
 }

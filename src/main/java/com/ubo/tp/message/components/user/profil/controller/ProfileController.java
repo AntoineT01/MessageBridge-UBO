@@ -50,7 +50,8 @@ public class ProfileController {
       view.updateUserInfo(
         connectedUser.getUserTag(),
         connectedUser.getName(),
-        model.getFollowersCount()
+        model.getFollowersCount(),
+        connectedUser.getAvatarPath()
       );
 
       // Mise à jour des messages
@@ -69,7 +70,7 @@ public class ProfileController {
     String confirmPassword = view.getConfirmPassword();
 
     // Validation des données
-    if (newName.isEmpty() && newPassword.isEmpty()) {
+    if (newName.isEmpty() && newPassword.isEmpty() && view.getAvatarPath().isEmpty()) {
       view.setErrorMessage("Veuillez remplir au moins un champ pour effectuer une mise à jour.");
       return;
     }
@@ -83,7 +84,7 @@ public class ProfileController {
     // Tentative de mise à jour du profil
     try {
       // Mise à jour via le modèle
-      boolean updateResult = model.updateUserInfo(newName, newPassword);
+      boolean updateResult = model.updateUserInfo(newName, newPassword, view.getAvatarPath());
 
       if (updateResult) {
         // Enregistrement des modifications
