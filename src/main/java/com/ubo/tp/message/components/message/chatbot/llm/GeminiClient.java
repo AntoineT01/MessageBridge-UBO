@@ -4,29 +4,33 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ubo.tp.message.common.utils.EnvLoader;
 import io.github.cdimascio.dotenv.Dotenv;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class GeminiClient implements LLMClient {
-  private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
+  private static final String BASE_URL = "https://api.gemini.com/v1/generate?key=";
   private final String apiKey;
   private final HttpClient httpClient;
 
   public GeminiClient() {
-    // Charger le .env pour récupérer la clé API
     Dotenv dotenv = EnvLoader.getDotenv();
-    this.apiKey = dotenv.get("GEMINI_API_KEY");
-    if (this.apiKey == null || this.apiKey.isEmpty()) {
-      throw new RuntimeException("La clé GEMINI_API_KEY n'est pas définie dans le .env ou dans l'environnement.");
+    String key = dotenv.get("GEMINI_API_KEY");
+    if (key == null || key.isEmpty()) {
+      System.err.println("Warning: La clé GEMINI_API_KEY n'est pas définie. La fonctionnalité de chatbot sera désactivée.");
+      this.apiKey = "";
+    } else {
+      this.apiKey = key;
     }
     httpClient = HttpClient.newHttpClient();
   }
 
   @Override
   public String generateContent(String prompt, GenerationConfig config) throws Exception {
+    if (apiKey.isEmpty()) {
+      return "Fonctionnalité de génération de réponse indisponible (Gemini API key non définie).";
+    }
     String jsonPayload = buildJsonPayload(prompt, config);
     String url = BASE_URL + apiKey;
     HttpRequest request = HttpRequest.newBuilder()
@@ -34,16 +38,10 @@ public class GeminiClient implements LLMClient {
       .header("Content-Type", "application/json")
       .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
       .build();
-
-    System.out.println("[GeminiClient] Envoi de la requête vers : " + url);
-    System.out.println("[GeminiClient] Payload : " + jsonPayload);
-
     HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-    System.out.println("[GeminiClient] Réponse (" + response.statusCode() + ") : " + response.body());
     if (response.statusCode() != 200) {
       throw new RuntimeException("Erreur lors de l'appel à l'API Gemini, code HTTP : " + response.statusCode());
     }
-    // Extraction du texte généré (à adapter en fonction du format de réponse réel)
     return extractGeneratedText(response.body());
   }
 
@@ -81,7 +79,6 @@ public class GeminiClient implements LLMClient {
 
   private String extractGeneratedText(String responseBody) {
     try {
-      // Utiliser Gson pour parser la réponse JSON
       com.google.gson.JsonElement root = JsonParser.parseString(responseBody);
       if (root.isJsonObject()) {
         JsonObject rootObj = root.getAsJsonObject();
@@ -94,7 +91,6 @@ public class GeminiClient implements LLMClient {
               .get(0).getAsJsonObject();
             if (firstPart.has("text")) {
               String text = firstPart.get("text").getAsString();
-              // Supprime le dernier \n s'il existe, puis effectue un trim
               return text.replaceAll("\\n$", "").trim();
             }
           }

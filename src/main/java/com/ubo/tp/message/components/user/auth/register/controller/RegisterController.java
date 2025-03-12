@@ -81,6 +81,7 @@ public class RegisterController {
     String userName = view.getUserName();
     String password = view.getUserPassword();
     String confirmPassword = view.getConfirmPassword();
+    String avatarUrl = view.getAvatarPath();
 
     // Valider les données avec le modèle
     String errorMessage = model.validateFields(userTag, userName, password, confirmPassword);
@@ -96,7 +97,7 @@ public class RegisterController {
 
     try {
       // Créer le nouvel utilisateur
-      User newUser = new User(UUID.randomUUID(), normalizedTag, password, userName, new HashSet<>(), "");
+      User newUser = new User(UUID.randomUUID(), normalizedTag, password, userName, new HashSet<>(), avatarUrl);
 
       // Ajouter l'utilisateur à la base de données
       view.getDatabase().addUser(newUser);
